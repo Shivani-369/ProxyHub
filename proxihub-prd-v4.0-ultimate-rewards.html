@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ProxiHub PRD v4.0 - Ultimate Hyperlocal Platform with ProxiRewards</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #64748b;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gold: #f59e0b;
+      --gold-dark: #d97706;
+      --voice: #8b5cf6;
+      --voice-dark: #7c3aed;
+      --collective: #06b6d4;
+      --collective-dark: #0891b2;
+      --hub: #ec4899;
+      --hub-dark: #db2777;
+      --rewards: #10b981;
+      --rewards-dark: #059669;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --border: #e2e8f0;
+      --sidebar-width: 300px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar Navigation */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      padding: 20px 12px;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 100;
+      font-size: 0.85rem;
+    }
+    .sidebar-header {
+      padding: 12px 8px 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .sidebar-header h2 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sidebar-header p { font-size: 0.75rem; color: var(--text-light); margin-top: 4px; }
+    .sidebar-nav ul { list-style: none; }
+    .sidebar-nav li { margin-bottom: 2px; }
+    .sidebar-nav a {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+    .sidebar-nav a:hover, .sidebar-nav a.active {
+      background: var(--primary);
+      color: white;
+    }
+    .sidebar-nav a.voice { color: var(--voice); }
+    .sidebar-nav a.voice:hover, .sidebar-nav a.voice.active { background: var(--voice); color: white; }
+    .sidebar-nav a.collective { color: var(--collective); }
+    .sidebar-nav a.collective:hover, .sidebar-nav a.collective.active { background: var(--collective); color: white; }
+    .sidebar-nav a.hub { color: var(--hub); }
+    .sidebar-nav a.hub:hover, .sidebar-nav a.hub.active { background: var(--hub); color: white; }
+    .sidebar-nav a.gold { color: var(--gold-dark); }
+    .sidebar-nav a.gold:hover, .sidebar-nav a.gold.active { background: var(--gold); color: white; }
+    .sidebar-nav a.rewards { color: var(--rewards-dark); }
+    .sidebar-nav a.rewards:hover, .sidebar-nav a.rewards.active { background: var(--rewards); color: white; }
+    
+    /* Main Content */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 24px 32px;
+      max-width: 1400px;
+    }
+    
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #065f46, #047857, #10b981);
+      color: white;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+    }
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header .subtitle {
+      font-size: 1rem;
+      opacity: 0.95;
+      margin-bottom: 14px;
+    }
+    .meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    .meta span { display: flex; align-items: center; gap: 5px; }
+    
+    /* Sections */
+    section {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+    }
+    section h2 {
+      font-size: 1.4rem;
+      color: var(--primary-dark);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    section h3 {
+      font-size: 1.15rem;
+      color: var(--text);
+      margin: 20px 0 12px;
+    }
+    
+    /* Value Prop Boxes */
+    .value-prop {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border-left: 4px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 18px 0;
+      font-size: 0.95rem;
+    }
+    .value-prop.voice { background: linear-gradient(135deg, #f5f3ff, #ede9fe); border-left-color: var(--voice); }
+    .value-prop.collective { background: linear-gradient(135deg, #ecfeff, #cffafe); border-left-color: var(--collective); }
+    .value-prop.hub { background: linear-gradient(135deg, #fdf2f8, #fce7f3); border-left-color: var(--hub); }
+    .value-prop.gold { background: linear-gradient(135deg, #fffbeb, #fef3c7); border-left-color: var(--gold); }
+    .value-prop.rewards { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-left-color: var(--rewards); }
+    
+    /* Feature Grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1);
+    }
+    .feature-card.voice { border-top: 3px solid var(--voice); }
+    .feature-card.collective { border-top: 3px solid var(--collective); }
+    .feature-card.hub { border-top: 3px solid var(--hub); }
+    .feature-card.gold { border-top: 3px solid var(--gold); }
+    .feature-card.rewards { border-top: 3px solid var(--rewards); }
+    
+    .feature-card h4 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1rem;
+    }
+    .feature-card.voice h4 { color: var(--voice-dark); }
+    .feature-card.collective h4 { color: var(--collective-dark); }
+    .feature-card.hub h4 { color: var(--hub-dark); }
+    .feature-card.gold h4 { color: var(--gold-dark); }
+    .feature-card.rewards h4 { color: var(--rewards-dark); }
+    
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      margin-right: 6px;
+    }
+    .badge-mvp { background: #dcfce7; color: #166534; }
+    .badge-phase2 { background: #fef3c7; color: #92400e; }
+    .badge-phase3 { background: #ede9fe; color: #5b21b6; }
+    .badge-advanced { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+    .badge-gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+    .badge-voice { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
+    .badge-collective { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; }
+    .badge-hub { background: linear-gradient(135deg, #ec4899, #db2777); color: white; }
+    .badge-rewards { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .badge-removed { background: #fee2e2; color: #991b1b; text-decoration: line-through; }
+    
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      display: block;
+    }
+    thead { background: #f1f5f9; }
+    th, td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th { font-weight: 600; color: var(--text); }
+    tr:hover { background: #f8fafc; }
+    .priority-high { color: var(--danger); font-weight: 600; }
+    .priority-med { color: var(--warning); font-weight: 600; }
+    .priority-low { color: var(--success); font-weight: 600; }
+    
+    /* Roadmap */
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .roadmap-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      background: var(--card);
+    }
+    .roadmap-item h4 {
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1rem;
+    }
+    .roadmap-item ul { margin-left: 16px; font-size: 0.9rem; }
+    .roadmap-item li { margin-bottom: 4px; }
+    
+    /* Flow Diagrams */
+    .flow-box {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 14px 0;
+      border-left: 4px solid var(--primary);
+      font-size: 0.9rem;
+    }
+    .flow-box.voice { border-left-color: var(--voice); background: #f5f3ff; }
+    .flow-box.collective { border-left-color: var(--collective); background: #ecfeff; }
+    .flow-box.hub { border-left-color: var(--hub); background: #fdf2f8; }
+    .flow-box.gold { border-left-color: var(--gold); background: #fffbeb; }
+    .flow-box.rewards { border-left-color: var(--rewards); background: #ecfdf5; }
+    .flow-box ol, .flow-box ul { margin-left: 18px; margin-top: 8px; }
+    .flow-box li { margin-bottom: 6px; }
+    
+    /* Code Blocks */
+    .code-block {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 14px;
+      border-radius: 8px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+    
+    /* Section Notes */
+    .section-note {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      font-style: italic;
+      margin: 14px 0;
+      padding: 10px 14px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      border-left: 3px solid var(--secondary);
+    }
+    
+    /* Footer */
+    footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 2px solid var(--border);
+      color: var(--text-light);
+      font-size: 0.85rem;
+      text-align: center;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .sidebar { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+      .main-content { margin-left: 0; padding: 20px; }
+      header h1 { font-size: 1.6rem; }
+    }
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar { padding: 12px; }
+      .sidebar-nav a { padding: 6px 10px; font-size: 0.8rem; }
+      .main-content { padding: 16px; }
+      section { padding: 18px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .roadmap { grid-template-columns: 1fr; }
+    }
+    
+    /* Animations */
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    .badge-gold, .badge-voice, .badge-collective, .badge-hub, .badge-rewards {
+      animation: pulse 3s infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h2>🗂️ PRD Navigation</h2>
+      <p>v4.0 • Ultimate + ProxiRewards</p>
+    </div>
+    <div class="sidebar-nav">
+      <ul>
+        <li><a href="#executive" class="active">📋 Executive Summary</a></li>
+        <li><a href="#users">👥 Target Users</a></li>
+        <li><a href="#core-features">✨ Core Features</a></li>
+        <li><a href="#voicefirst" class="voice">🗣️ VoiceFirst UI</a></li>
+        <li><a href="#collective" class="collective">🤝 Community Collective</a></li>
+        <li><a href="#hub" class="hub">🌐 Neighborhood Hub</a></li>
+        <li><a href="#goldrush" class="gold">🪙 Local Gold Rush</a></li>
+        <li><a href="#rewards" class="rewards">💰 ProxiRewards</a></li>
+        <li><a href="#privacy">🔐 Privacy & Compliance</a></li>
+        <li><a href="#tech">🛠️ Technical Architecture</a></li>
+        <li><a href="#roadmap">🗓️ Roadmap</a></li>
+        <li><a href="#metrics">📊 Success Metrics</a></li>
+        <li><a href="#risks">⚠️ Risks & Mitigation</a></li>
+        <li><a href="#monetization">💰 Monetization</a></li>
+        <li><a href="#appendix">📎 Appendix</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Header -->
+    <header>
+      <h1>🚀 ProxiHub <span style="font-weight:300">v4.0</span></h1>
+      <p class="subtitle">Ultimate Hyperlocal Platform • VoiceFirst • Community • Gold Rush • ProxiRewards</p>
+      <div class="meta">
+        <span>📄 Version: 4.0 (Final Production-Ready)</span>
+        <span>📅 Date: April 2026</span>
+        <span>🏢 Project Owner: UVFarms, Chennai</span>
+        <span>🎯 Focus: Inclusive, Gamified, Monetized 5km Discovery</span>
+      </div>
+    </header>
+
+    <!-- Executive Summary -->
+    <section id="executive">
+      <h2>📋 Executive Summary</h2>
+      <div class="value-prop">
+        <strong>Core Mission:</strong> ProxiHub eliminates the digital visibility gap for India's 60M+ unorganized local vendors by creating a real-time, proximity-first discovery platform within a strict 5km radius—now evolved into an <strong>inclusive, community-powered, monetized ecosystem</strong> with voice navigation, group buying, neighborhood engagement, gamified urgency, AND rewarded advertising.
+      </div>
+      <p><strong>Why Now?</strong> India's hyperlocal commerce is fragmented: delivery apps ignore unorganized vendors, directories lack real-time data, low-literacy users are excluded, and vendors lack sustainable monetization. ProxiHub bridges this with:</p>
+      <ul>
+        <li>🗣️ <strong>VoiceFirst UI:</strong> Vernacular voice navigation for Tamil, Hindi, Telugu speakers with low digital literacy</li>
+        <li>🤝 <strong>Community Collective:</strong> Group buying & neighborhood order pooling to drive volume for small vendors</li>
+        <li>🌐 <strong>Neighborhood Hub:</strong> Hyperlocal community feed for announcements, events, and trust-building</li>
+        <li>🪙 <strong>Local Gold Rush:</strong> Gamified time-sensitive deals that create urgency and foot traffic</li>
+        <li>💰 <strong>ProxiRewards:</strong> Users earn ₹3-₹10 per ad view; advertisers get guaranteed hyperlocal engaged viewership</li>
+      </ul>
+      <p><strong>Key Differentiator:</strong> No other platform combines <em>voice accessibility + community commerce + gamified discovery + rewarded ads + real-time vendor tracking</em> for India's unorganized local economy.</p>
+    </section>
+
+    <!-- Target Users -->
+    <section id="users">
+      <h2>👥 Target Users & Enhanced Needs</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h4>🛒 Local Consumers</h4>
+          <p><strong>Core Need:</strong> Find immediate solutions without delivery wait or city-wide noise.</p>
+          <p><strong>Enhanced Needs:</strong></p>
+          <ul>
+            <li>Voice search in Tamil/Hindi for low-literacy users</li>
+            <li>Join neighborhood group orders for bulk discounts</li>
+            <li>See community announcements (power cuts, events, safety alerts)</li>
+            <li>Compete in Gold Rushes for exclusive nearby deals</li>
+            <li><strong>✨ NEW:</strong> Earn passive income (₹3-₹10) by watching relevant local ads</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>🏪 Stationary Vendors</h4>
+          <p><strong>Core Need:</strong> Digital visibility to compete with organized retail.</p>
+          <p><strong>Enhanced Needs:</strong></p>
+          <ul>
+            <li>Voice-based inventory updates while hands are busy</li>
+            <li>Create collective deals with neighboring shops</li>
+            <li>Post community announcements (festivals, new arrivals)</li>
+            <li>Launch Gold Rushes to fill off-peak hours</li>
+            <li><strong>✨ NEW:</strong> Run hyperlocal ad campaigns with guaranteed engaged viewers</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>🛒 Mobile Vendors</h4>
+          <p><strong>Core Need:</strong> Announce arrival digitally; build follower base.</p>
+          <p><strong>Enhanced Needs:</strong></p>
+          <ul>
+            <li>Voice commands to broadcast location while moving</li>
+            <li>Coordinate with other carts for neighborhood "market days"</li>
+            <li>Share route updates via Neighborhood Hub feed</li>
+            <li>Trigger Gold Rush pings when entering high-density zones</li>
+            <li><strong>✨ NEW:</strong> Promote daily specials via rewarded ads to nearby users</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>🔧 Service Providers</h4>
+          <p><strong>Core Need:</strong> Find jobs within short commute.</p>
+          <p><strong>Enhanced Needs:</strong></p>
+          <ul>
+            <li>Voice-to-text job descriptions for quick quoting</li>
+            <li>Join service collectives for complex multi-skill jobs</li>
+            <li>Post availability updates to neighborhood feed</li>
+            <li>Offer "First Responder" Gold Rush discounts for urgent jobs</li>
+            <li><strong>✨ NEW:</strong> Boost visibility during low-demand hours via rewarded ads</li>
+          </ul>
+        </div>
+        <div class="feature-card rewards">
+          <h4><span class="badge badge-rewards">NEW</span> Advertisers (External Brands)</h4>
+          <p><strong>Need:</strong> Guaranteed engaged viewership with precise 5km hyperlocal targeting.</p>
+          <ul>
+            <li>Upload image ads or YouTube videos for hyperlocal campaigns</li>
+            <li>Set budget, CPV (₹5-₹15), duration, and geographic radius</li>
+            <li>Real-time analytics: views, completion rate, geographic heatmap</li>
+            <li>KYC-verified wallet with Razorpay top-up & automated billing</li>
+            <li>Fraud-protected: Multi-layer detection ensures genuine engaged views</li>
+          </ul>
+        </div>
+        <div class="feature-card rewards">
+          <h4><span class="badge badge-rewards">NEW</span> Earning-Focused Users</h4>
+          <p><strong>Need:</strong> Passive income opportunities through simple app engagement.</p>
+          <ul>
+            <li>View location-tagged ads within 5km to earn ₹3-₹10 per view</li>
+            <li>Instant wallet credit; withdraw via UPI when balance ≥ ₹100</li>
+            <li>Daily earning limit (₹100) prevents abuse while enabling meaningful income</li>
+            <li>Transparent fraud protection ensures fair rewards for genuine engagement</li>
+            <li>Optional: Higher rewards for video ads vs. image ads</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Features Overview -->
+    <section id="core-features">
+      <h2>✨ Core Features (Prioritized)</h2>
+      <div class="section-note">💡 Feature Tags: <span class="badge badge-mvp">MVP</span> <span class="badge badge-phase2">Phase 2</span> <span class="badge badge-phase3">Phase 3</span> <span class="badge badge-advanced">Advanced</span> <span class="badge badge-gold">Gold Rush</span> <span class="badge badge-voice">VoiceFirst</span> <span class="badge badge-collective">Collective</span> <span class="badge badge-hub">Hub</span> <span class="badge badge-rewards">ProxiRewards</span></div>
+      
+      <div class="feature-grid">
+        <!-- MVP Foundation -->
+        <div class="feature-card">
+          <h4><span class="badge badge-mvp">MVP</span> 5km Hard-Fence Discovery</h4>
+          <p>Strict proximity filtering with GPS + manual fallback.</p>
+          <ul>
+            <li>Auto-detect location + manual override</li>
+            <li>Visual 5km radius indicator on map</li>
+            <li>Color-coded markers by vendor type</li>
+            <li>Sort by proximity, rating, or recency</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4><span class="badge badge-mvp">MVP</span> Dynamic Map Markers</h4>
+          <p>Real-time visual system for all vendor types.</p>
+          <ul>
+            <li>🔵 Blue: Stationary shops</li>
+            <li>🚚 Animated: Mobile vendors (GPS-tracked)</li>
+            <li>🔧 Wrench: Available service providers</li>
+            <li>Adaptive polling: 30-60s based on movement</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4><span class="badge badge-mvp">MVP</span> Vendor Profile Management</h4>
+          <p>Mobile-first setup for all vendor categories.</p>
+          <ul>
+            <li>Digital inventory: photo, price, stock toggle</li>
+            <li>Shop hours + auto "Closed" status</li>
+            <li>Mobile vendors: Start/End Route buttons</li>
+            <li>Service providers: Catalog + price ranges</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4><span class="badge badge-mvp">MVP</span> In-App Messaging</h4>
+          <p>Privacy-protected chat for orders & queries.</p>
+          <ul>
+            <li>Text + images (voice notes Phase 2)</li>
+            <li>Quick-reply templates ("In stock?", "Price?")</li>
+            <li>Masked contact info via Twilio</li>
+            <li>30-day chat retention + archive</li>
+          </ul>
+        </div>
+
+        <!-- VoiceFirst UI -->
+        <div class="feature-card voice">
+          <h4><span class="badge badge-voice">VoiceFirst</span> Vernacular Voice Navigation</h4>
+          <p>Hands-free, voice-first interface for low-literacy users.</p>
+          <ul>
+            <li>Voice commands in Tamil, Hindi, Telugu, English</li>
+            <li>"எனக்கு அருகில் உள்ள பழக்கடை எங்கே?" → Shows fruit vendors</li>
+            <li>Audio confirmations: "3 மளிகை கடைகள் 1 கி.மீ. தொலைவில்"</li>
+            <li>Voice-to-text for chat messages & inventory updates</li>
+            <li>Offline voice recognition for basic commands</li>
+            <li>Family proxy mode: Record voice for elderly relatives</li>
+          </ul>
+        </div>
+
+        <!-- Community Collective -->
+        <div class="feature-card collective">
+          <h4><span class="badge badge-collective">Collective</span> Group Buying & Order Pooling</h4>
+          <p>Neighborhood collective purchasing to drive vendor volume.</p>
+          <ul>
+            <li>Create/join "Collectives": Apartment complexes, streets, RWAs</li>
+            <li>Pool orders: "10 neighbors want Basmati Rice → Get 15% off"</li>
+            <li>Vendor dashboard: See collective demand, accept bulk orders</li>
+            <li>Auto-split payments via UPI; single delivery coordination</li>
+            <li>Collective leaderboards: Top neighborhoods by savings</li>
+            <li>Recurring collectives: Weekly vegetable box subscriptions</li>
+          </ul>
+        </div>
+
+        <!-- Neighborhood Hub -->
+        <div class="feature-card hub">
+          <h4><span class="badge badge-hub">Hub</span> Hyperlocal Community Feed</h4>
+          <p>Neighborhood announcements, events, and trust-building content.</p>
+          <ul>
+            <li>Verified posts: RWAs, local authorities, trusted vendors</li>
+            <li>Categories: Announcements, Events, Safety Alerts, Lost & Found</li>
+            <li>Vendor posts: "Fresh stock arrived", "Festival special menu"</li>
+            <li>User posts: "Looking for plumber recommendation", "Garage sale"</li>
+            <li>Moderation: RWA-approved + AI filtering + community reporting</li>
+            <li>Location-fenced: Only visible to users within 5km</li>
+          </ul>
+        </div>
+
+        <!-- Local Gold Rush -->
+        <div class="feature-card gold">
+          <h4><span class="badge badge-gold">Gold Rush</span> Gamified Time-Sensitive Deals</h4>
+          <p>Urgency-driven discovery with rewards for early engagement.</p>
+          <ul>
+            <li>Vendors launch 15-60 min "rushes" with exclusive deals</li>
+            <li>Live heatmap: Pulsing gold markers show active rushes</li>
+            <li>First-to-claim rewards: Discounts, badges, loyalty points</li>
+            <li>GPS-fenced verification + optional QR check-in</li>
+            <li>Leaderboards: Top "neighborhood explorers" weekly</li>
+            <li>Monetization: Rush credits (₹49/5) for vendors</li>
+          </ul>
+        </div>
+
+        <!-- ProxiRewards: Rewarded Ads -->
+        <div class="feature-card rewards">
+          <h4><span class="badge badge-rewards">ProxiRewards</span> Earn-by-View Hyperlocal Ads</h4>
+          <p>Users earn money watching location-tagged ads; advertisers get guaranteed engaged viewership.</p>
+          <ul>
+            <li><strong>User Flow:</strong> Browse nearby ads → Watch 30s video/image → Claim ₹3-₹10 → Withdraw via UPI (min ₹100)</li>
+            <li><strong>Ad Formats:</strong> Static images + YouTube-hosted videos (15s-5min, embeddable)</li>
+            <li><strong>Hyperlocal Targeting:</strong> Ads strictly tagged to 5km radius; users only see relevant neighborhood ads</li>
+            <li><strong>Real-Time Tracking:</strong> WebSocket heartbeat validation ensures users actually watch before reward</li>
+            <li><strong>Advanced Fraud Prevention:</strong> Device fingerprinting, GPS validation, behavioral analysis, rate limiting</li>
+            <li><strong>Advertiser Dashboard:</strong> Campaign management, budget controls, performance analytics, geographic heatmaps</li>
+          </ul>
+        </div>
+
+        <!-- ProxiRewards: Technical Deep Dive -->
+        <div class="feature-card rewards">
+          <h4><span class="badge badge-rewards">ProxiRewards</span> Technical Implementation</h4>
+          <p>Robust architecture for secure, scalable rewarded advertising.</p>
+          <ul>
+            <li><strong>Frontend:</strong> React YouTube IFrame API + custom controls; background/tab detection; progress tracking</li>
+            <li><strong>Backend:</strong> Next.js API Routes + PostgreSQL + Redis for real-time view validation</li>
+            <li><strong>YouTube Integration:</strong> API validation for embeddable videos, duration checks (15s-5min), thumbnail fetch</li>
+            <li><strong>Fraud Detection Pipeline:</strong> 5-layer system: Device → Location → Behavior → Network → ML Pattern Analysis</li>
+            <li><strong>Rate Limiting:</strong> Redis-based: ₹100/day earning cap, 10 views/hour, 20 views/device/day, 50 views/IP/hour</li>
+            <li><strong>Payments:</strong> Razorpay for advertiser top-ups + Razorpay Payouts for user withdrawals (24-48h processing)</li>
+          </ul>
+        </div>
+
+        <!-- Phase 2 Enhancements -->
+        <div class="feature-card">
+          <h4><span class="badge badge-phase2">Phase 2</span> Advanced Search & Filters</h4>
+          <p>Enhanced discovery with voice + smart sorting.</p>
+          <ul>
+            <li>Voice search integration (Google Speech API)</li>
+            <li>Filters: Category, Status, Distance, Rating, <strong>Gold Rush Active</strong>, <strong>Collective Deals</strong>, <strong>Rewarded Ads Available</strong></li>
+            <li>Sort: Nearest, Highest Rated, <strong>Rush Urgency</strong>, <strong>Collective Savings</strong>, <strong>Reward Amount</strong></li>
+            <li>Auto-suggest based on local popularity + voice history</li>
+          </ul>
+        </div>
+
+        <!-- Phase 3 Monetization -->
+        <div class="feature-card">
+          <h4><span class="badge badge-phase3">Phase 3</span> Premium Vendor Tools</h4>
+          <p>Advanced features for growing vendor businesses.</p>
+          <ul>
+            <li>Premium push notification tiers (₹99/₹499/month)</li>
+            <li>Featured listings in search + heatmap</li>
+            <li>Advanced analytics: Foot traffic, conversion, ROI</li>
+            <li><strong>Voice Analytics:</strong> Top voice queries, conversion by language</li>
+            <li><strong>Collective Insights:</strong> Demand forecasting by neighborhood</li>
+            <li><strong>Hub Promotion:</strong> Boost posts to wider 5km audience</li>
+            <li><strong>ProxiRewards Pro:</strong> Advanced ad targeting, A/B testing, conversion tracking</li>
+          </ul>
+        </div>
+
+        <!-- Removed Features -->
+        <div class="feature-card">
+          <h4><span class="badge badge-removed">Removed</span> Low-Priority / Deferred</h4>
+          <p>Features deferred to post-PMF or removed for focus.</p>
+          <ul>
+            <li>❌ YouTuber review partnership program (replaced by advertiser YouTube video uploads)</li>
+            <li>❌ In-house video production team (deferred)</li>
+            <li>❌ AR-based shop navigation</li>
+            <li>❌ AI chatbot for FAQs (use rule-based replies)</li>
+            <li>❌ A/B testing for push notifications (Phase 3)</li>
+            <li>❌ Franchise/chain business support (conflicts with unorganized focus)</li>
+            <li>❌ Pan-India multi-city search (Phase 4)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ProxiRewards Deep Dive Section -->
+    <section id="rewards">
+      <h2>💰 ProxiRewards: Deep Dive</h2>
+      <div class="value-prop rewards">
+        <strong>Why ProxiRewards?</strong> Creates a sustainable monetization loop: Advertisers pay for guaranteed engaged hyperlocal viewership → Users earn passive income → ProxiHub takes 20-40% commission → More advertisers join → More users earn → Network effects accelerate growth.
+      </div>
+      
+      <h3>🎯 Core Value Proposition</h3>
+      <div class="feature-grid">
+        <div class="feature-card rewards">
+          <h4>For Users: Earn Passive Income</h4>
+          <ul>
+            <li>₹3-₹10 per completed ad view, credited instantly to wallet</li>
+            <li>Minimum withdrawal: ₹100 via UPI/bank transfer (24-48h processing)</li>
+            <li>Daily earning limit: ₹100 (prevents abuse, enables meaningful income)</li>
+            <li>Only see ads relevant to your 5km neighborhood</li>
+            <li>Optional: Higher rewards for video ads vs. image ads</li>
+          </ul>
+        </div>
+        <div class="feature-card rewards">
+          <h4>For Advertisers: Guaranteed Engaged Viewership</h4>
+          <ul>
+            <li>Precise 5km hyperlocal targeting: Reach only nearby potential customers</li>
+            <li>Multi-format support: Static images + YouTube-hosted videos (15s-5min)</li>
+            <li>Real-time analytics: Views, completion rate, geographic heatmap, ROI tracking</li>
+            <li>Fraud-protected: Multi-layer detection ensures genuine engaged views</li>
+            <li>Flexible budgeting: Total budget, daily cap, CPV bidding (₹5-₹15)</li>
+          </ul>
+        </div>
+        <div class="feature-card rewards">
+          <h4>For ProxiHub: Sustainable Revenue Stream</h4>
+          <ul>
+            <li>Platform commission: 20-40% of ad spend (₹1-₹4 per view)</li>
+            <li>Example: Advertiser pays ₹10 → User earns ₹6 → ProxiHub keeps ₹4</li>
+            <li>Scalable model: More users = more ad inventory = more advertiser demand</li>
+            <li>Defensible moat: Hyperlocal + fraud prevention + engaged user base</li>
+            <li>Projected Year 1 Revenue: ₹9.45L - ₹60.75L (conservative to optimistic)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>🔄 User Earning Flow</h3>
+      <div class="flow-box rewards">
+        <strong>Step-by-Step Journey:</strong>
+        <ol>
+          <li><strong>Discovery:</strong> User opens "Earn Rewards" tab → System fetches nearby ads (5km radius) → Display: Ad preview + Reward amount + Duration</li>
+          <li><strong>View Initiation:</strong> User taps ad card → Full-screen viewer opens → Countdown timer starts (e.g., 30 sec) → Progress bar shows completion %</li>
+          <li><strong>Active Viewing:</strong> User must keep app in foreground → Background detection pauses timer → GPS validation continues (stay in radius) → Optional: Interaction prompts (prevent bots)</li>
+          <li><strong>Completion & Reward:</strong> Timer reaches required duration → "Claim Reward" button activates → User taps to confirm → Reward credited to wallet → Push notification: "₹5 earned!"</li>
+          <li><strong>Withdrawal:</strong> Balance ≥ ₹100 → User requests withdrawal → KYC verification (if first time) → Processing (24-48 hours) → Funds transferred via Razorpay Payouts</li>
+        </ol>
+      </div>
+
+      <h3>🔄 Advertiser Campaign Flow</h3>
+      <div class="flow-box rewards">
+        <strong>Step-by-Step Journey:</strong>
+        <ol>
+          <li><strong>Onboarding:</strong> Sign up as Advertiser → KYC verification (PAN/GST) → Wallet top-up via Razorpay (min ₹1000)</li>
+          <li><strong>Campaign Creation:</strong> Select ad type (Image/YouTube Video) → Upload creative or paste YouTube URL → Set target location (pin drop + radius) → Configure budget & bidding (Total budget, CPV, Daily cap) → Set campaign dates</li>
+          <li><strong>Approval:</strong> Submit for admin review → Content moderation check → Budget verification → Approval within 24 hours</li>
+          <li><strong>Live Campaign:</strong> Ad enters discovery pool → Shown to users in target area → Real-time budget deduction → Performance tracking active</li>
+          <li><strong>Optimization:</strong> View analytics dashboard → Adjust targeting/budget → Pause or extend campaign → Download performance reports</li>
+        </ol>
+      </div>
+
+      <h3>🛡️ Fraud Detection: 5-Layer Architecture</h3>
+      <div class="feature-grid">
+        <div class="feature-card rewards">
+          <h4>Layer 1: Device Fingerprinting</h4>
+          <ul>
+            <li>FingerprintJS for unique device identification</li>
+            <li>Root/jailbreak detection (+40 risk score)</li>
+            <li>Emulator detection (+60 risk score)</li>
+            <li>Multi-account device check (+30 risk score)</li>
+            <li>VPN/Proxy detection via IP quality APIs (+25 risk score)</li>
+            <li>Threshold: Risk score ≥70 = auto-reject</li>
+          </ul>
+        </div>
+        <div class="feature-card rewards">
+          <h4>Layer 2: Geolocation Validation</h4>
+          <ul>
+            <li>Haversine formula: Verify user GPS within ad radius</li>
+            <li>IP vs GPS mismatch detection (+40 risk score if >50km)</li>
+            <li>Mock location app detection (Android) (+70 risk score)</li>
+            <li>Impossible travel speed check (+35 risk score if >100km/h)</li>
+            <li>Real-time GPS validation during view session</li>
+          </ul>
+        </div>
+        <div class="feature-card rewards">
+          <h4>Layer 3: Behavioral Analysis</h4>
+          <ul>
+            <li>Completion rate analysis: Bots often have ~100% completion (+30 risk)</li>
+            <li>Exact timing pattern detection: Too many exact-duration views (+40 risk)</li>
+            <li>Interaction score: Less than 1 interaction/10s = passive viewing (+25 risk)</li>
+            <li>Background time check: App in background >30% of view time (+35 risk)</li>
+            <li>Viewing velocity: >10 views/hour = suspicious (+45 risk)</li>
+          </ul>
+        </div>
+        <div class="feature-card rewards">
+          <h4>Layer 4: Rate Limiting (Redis)</h4>
+          <ul>
+            <li>Daily earning limit: ₹100 max per user per day</li>
+            <li>Hourly view limit: Max 10 views per user per hour</li>
+            <li>Device limit: Max 20 views per device per day</li>
+            <li>IP limit: Max 50 views per IP per hour</li>
+            <li>Atomic Redis operations with pipeline for performance</li>
+          </ul>
+        </div>
+        <div class="feature-card rewards">
+          <h4>Layer 5: Pattern ML (Phase 2)</h4>
+          <ul>
+            <li>Historical pattern analysis for anomaly detection</li>
+            <li>Clustering to identify bot farm behavior</li>
+            <li>Real-time scoring with adaptive thresholds</li>
+            <li>Feedback loop: Flagged views improve model accuracy</li>
+            <li>Admin dashboard for manual review of edge cases</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>💰 Revenue Model Breakdown</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Amount</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>User Reward</strong></td>
+            <td>₹3 - ₹10 per view</td>
+            <td>Direct earnings to user wallet (70% of CPV)</td>
+          </tr>
+          <tr>
+            <td><strong>Platform Commission</strong></td>
+            <td>20-40% of ad spend</td>
+            <td>ProxiHub revenue (₹1-₹4 per view)</td>
+          </tr>
+          <tr>
+            <td><strong>Advertiser Cost (CPV)</strong></td>
+            <td>₹5 - ₹15 per view</td>
+            <td>Total cost per view (User Reward + Platform Commission)</td>
+          </tr>
+          <tr>
+            <td><strong>Payment Gateway Fee</strong></td>
+            <td>2% on top-ups</td>
+            <td>Razorpay processing fee (passed to advertiser)</td>
+          </tr>
+          <tr>
+            <td><strong>Withdrawal Fee</strong></td>
+            <td>₹2-₹5 per transaction</td>
+            <td>Razorpay Payouts fee (absorbed by ProxiHub)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="section-note">💡 Example Transaction: Advertiser pays ₹10 for 1 view → User earns ₹6 → ProxiHub keeps ₹4 → Payment gateway: ₹0.20 → Net platform revenue: ₹3.80</div>
+
+      <h3>🛠️ Technical Implementation Highlights</h3>
+      <div class="code-block">
+// Frontend: RewardedVideoPlayer.tsx (Key Logic)
+const onStateChange = (event) => {
+  if (event.data === 1) { // Playing
+    setIsPlaying(true);
+    startTimer(); // Start reward countdown
+    socket.emit('ad:view:start', { adId, deviceId, timestamp });
+    // Start heartbeat every 5s for real-time validation
+    heartbeatRef.current = setInterval(() => {
+      socket.emit('ad:view:heartbeat', { adId, watchedSeconds, gpsLocation });
+    }, 5000);
+  } else if (event.data === 2) { // Paused
+    pauseTimer(); // Pause reward countdown
+  } else if (event.data === 0) { // Ended
+    handleVideoEnd(); // Enable claim button if duration met
+  }
+};
+
+// Background/tab detection to prevent passive viewing
+useEffect(() => {
+  const handleVisibilityChange = () => {
+    if (document.hidden && isPlaying) {
+      player?.pauseVideo();
+      // Penalty: Reset progress if hidden for >5 seconds
+      setTimeout(() => {
+        if (document.hidden) {
+          setWatchedSeconds(0);
+          setCanClaim(false);
+        }
+      }, 5000);
+    }
+  };
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+}, [isPlaying, player]);
+      </div>
+      <div class="section-note">💡 Backend validation includes: Duration check, fraud scoring via 5-layer pipeline, duplicate view prevention (1 view/ad/user/day), budget validation, and atomic transaction for wallet updates.</div>
+    </section>
+
+    <!-- Privacy & Compliance -->
+    <section id="privacy">
+      <h2>🔐 Privacy, Security & Compliance</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>Implementation</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Location Data</td>
+            <td>Explicit opt-in per category; granular controls; 30-day retention then anonymization</td>
+            <td class="priority-high">High</td>
+          </tr>
+          <tr>
+            <td>Voice Data</td>
+            <td>On-device processing preferred; cloud audio deleted after 24h; no voice profiling without consent</td>
+            <td class="priority-high">High</td>
+          </tr>
+          <tr>
+            <td>Collective Privacy</td>
+            <td>Member locations approximated to 100m; collective data visible only to members + verified vendors</td>
+            <td class="priority-high">High</td>
+          </tr>
+          <tr>
+            <td>Hub Content</td>
+            <td>User posts require explicit consent for location tagging; auto-blur faces in photos; right to deletion</td>
+            <td class="priority-high">High</td>
+          </tr>
+          <tr>
+            <td>Rewards Data</td>
+            <td>Earning history encrypted; withdrawal KYC stored securely; fraud logs retained for audit; DPDP-compliant data minimization</td>
+            <td class="priority-high">High</td>
+          </tr>
+          <tr>
+            <td>Chat Privacy</td>
+            <td>End-to-end encryption (AES-256); masked numbers via Twilio; ephemeral messages option</td>
+            <td class="priority-high">High</td>
+          </tr>
+          <tr>
+            <td>DPDP Act 2023</td>
+            <td>Data minimization; user consent logs; right to deletion; transparent privacy policy; Indian data residency</td>
+            <td class="priority-high">High</td>
+          </tr>
+          <tr>
+            <td>Payment Security</td>
+            <td>PCI-DSS compliance via Razorpay; tokenization; no raw card data stored; webhook signature verification</td>
+            <td class="priority-high">High</td>
+          </tr>
+          <tr>
+            <td>Abuse Prevention</td>
+            <td>Rate limiting on messages/pushes/posts; user reporting; AI spam detection; fraud detection for rushes/collectives/rewards</td>
+            <td class="priority-med">Medium</td>
+          </tr>
+          <tr>
+            <td>Dispute Resolution</td>
+            <td>In-app escalation flow; mediated chat; vendor rating impact; audit logs for rushes/collectives/rewards</td>
+            <td class="priority-med">Medium</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Technical Architecture -->
+    <section id="tech">
+      <h2>🛠️ Technical Architecture (v4.0)</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h4>Frontend</h4>
+          <ul>
+            <li>Next.js 14+ (App Router) + TypeScript</li>
+            <li>TailwindCSS + PWA for mobile experience</li>
+            <li>Google Maps JS API + custom overlays (gold markers, collective zones, ad heatmaps)</li>
+            <li>Offline support via Workbox + IndexedDB</li>
+            <li><strong>VoiceFirst:</strong> Web Speech API + on-device TensorFlow Lite</li>
+            <li><strong>ProxiRewards:</strong> YouTube IFrame API + custom view tracking + background detection</li>
+            <li><strong>Hub:</strong> Infinite scroll feed with location-based virtualization</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>Backend</h4>
+          <ul>
+            <li>Next.js API Routes (serverless) + Python microservices for AI/voice</li>
+            <li>PostgreSQL 15+ with Prisma ORM + PostGIS for geospatial</li>
+            <li>Redis 7+: Geo-queries, caching, rate limiting, BullMQ for jobs, Pub/Sub for real-time</li>
+            <li>Socket.io + Redis for real-time chat, rush updates, hub notifications, ad view tracking</li>
+            <li><strong>Voice:</strong> Rasa NLU + Google Speech APIs + custom Indian language models</li>
+            <li><strong>Collective:</strong> Aggregation services + UPI split payment orchestration</li>
+            <li><strong>ProxiRewards:</strong> Fraud detection pipeline + YouTube API validation + atomic wallet transactions</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>Infrastructure</h4>
+          <ul>
+            <li>Google Cloud Run (auto-scaling serverless)</li>
+            <li>Cloud SQL (managed PostgreSQL) + Memorystore (Redis)</li>
+            <li>Cloudflare CDN + DDoS protection + edge functions</li>
+            <li>Docker containers for Python voice/AI/fraud services</li>
+            <li><strong>Offline-First:</strong> Service workers + background sync + conflict resolution</li>
+            <li><strong>Observability:</strong> Prometheus + Grafana + Sentry for monitoring</li>
+            <li><strong>ProxiRewards:</strong> Redis pipelines for high-throughput rate limiting; WebSocket clustering for view tracking</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>Key Integrations</h4>
+          <ul>
+            <li>Twilio: Masked calling/SMS</li>
+            <li>Razorpay: Payments + split payments + escrow + Payouts for withdrawals</li>
+            <li>FCM: Push notifications</li>
+            <li>Google Speech-to-Text / TTS: Voice capabilities</li>
+            <li>Google Maps: Geocoding, Directions, Places, Geofencing</li>
+            <li>YouTube Data API v3: Video validation, metadata fetch</li>
+            <li>FingerprintJS: Device fingerprinting for fraud prevention</li>
+            <li><strong>VoiceFirst:</strong> TensorFlow Lite for on-device recognition</li>
+            <li><strong>Collective:</strong> Razorpay Route / NPCI UPI Collective APIs</li>
+          </ul>
+        </div>
+      </div>
+      <div class="section-note">💡 Architecture designed for India: Offline-first, low-bandwidth modes, regional language support, DPDP Act 2023 compliance, and fraud-resilient rewarded ads system.</div>
+    </section>
+
+    <!-- Roadmap -->
+    <section id="roadmap">
+      <h2>🗓️ Product Roadmap</h2>
+      <div class="roadmap">
+        <div class="roadmap-item">
+          <h4>🚀 Phase 1: MVP Foundation (Q2 2026)</h4>
+          <ul>
+            <li>5km discovery + dynamic markers</li>
+            <li>Vendor profiles + basic inventory</li>
+            <li>Simplified in-app messaging</li>
+            <li>Follow + basic push notifications</li>
+            <li>Service provider dispatch flow</li>
+            <li>Chennai pilot (Tamil + English)</li>
+            <li>Offline mode + accessibility basics</li>
+            <li><em>Foundation:</em> Basic voice command framework + ProxiRewards database schema</li>
+          </ul>
+        </div>
+        <div class="roadmap-item">
+          <h4>🗣️🤝🌐🪙💰 Phase 2: Advanced Features (Q3 2026)</h4>
+          <ul>
+            <li><strong>✨ VoiceFirst MVP:</strong> Tamil/Hindi voice search + navigation</li>
+            <li><strong>✨ Community Collective:</strong> Group order creation + UPI split payments</li>
+            <li><strong>✨ Neighborhood Hub:</strong> Basic feed + RWA verification</li>
+            <li><strong>✨ Gold Rush MVP:</strong> Heatmap + rush creation + first-to-claim</li>
+            <li><strong>✨ ProxiRewards MVP:</strong> Image ads + basic view tracking + wallet + withdrawals</li>
+            <li>User-generated video uploads</li>
+            <li>Advanced search + voice filters</li>
+            <li>Ratings & reviews system</li>
+            <li>Expand to Mumbai, Delhi NCR</li>
+          </ul>
+        </div>
+        <div class="roadmap-item">
+          <h4>💰 Phase 3: Monetization + Scale (Q4 2026)</h4>
+          <ul>
+            <li>Premium push notification tiers</li>
+            <li>Featured listings + lead fees</li>
+            <li><strong>✨ Voice Premium:</strong> Advanced voice analytics + multi-language</li>
+            <li><strong>✨ Collective Pro:</strong> Recurring orders + demand forecasting</li>
+            <li><strong>✨ Hub Promotion:</strong> Boost posts + event ticketing</li>
+            <li><strong>✨ Gold Rush Credits:</strong> Pay-per-rush bundles</li>
+            <li><strong>✨ ProxiRewards Pro:</strong> YouTube video ads + advanced fraud detection + advertiser analytics</li>
+            <li>Advanced analytics dashboard</li>
+            <li>Transaction commission (2-5%)</li>
+            <li>Regional language expansion (Telugu, Bengali)</li>
+          </ul>
+        </div>
+        <div class="roadmap-item">
+          <h4>🇮🇳 Phase 4: Pan-India + AI (2027)</h4>
+          <ul>
+            <li>Multi-city search + location switching</li>
+            <li>State-specific categories + hyperlocal AI recommendations</li>
+            <li><strong>✨ VoiceFirst 2.0:</strong> 10+ Indian languages + conversational AI</li>
+            <li><strong>✨ Collective Network:</strong> Cross-neighborhood bulk sourcing</li>
+            <li><strong>✨ Hub 2.0:</strong> Community moderation tools + local news partnerships</li>
+            <li><strong>✨ Gold Rush 2.0:</strong> Multi-vendor rushes + brand partnerships</li>
+            <li><strong>✨ ProxiRewards 2.0:</strong> ML-based fraud detection + programmatic ad buying + cross-platform analytics</li>
+            <li>Partner integrations (UPI, logistics, government schemes)</li>
+            <li><em>Re-evaluate:</em> AR navigation, franchise support</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Success Metrics -->
+    <section id="metrics">
+      <h2>📊 Success Metrics (v4.0)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Key Metrics</th>
+            <th>Target (Year 1)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>User</strong></td>
+            <td>DAU, Retention (D30), Session Duration, Voice Usage %, Collective Participation, Rewards Engagement</td>
+            <td>100K DAU, >50% D30 retention, >7 min/session, >35% voice queries, >25% join collectives, >40% view ≥1 ad/week</td>
+          </tr>
+          <tr>
+            <td><strong>Vendor</strong></td>
+            <td>Signups, Active %, Profile Completeness, Rush/Collective/Hub/Ads Adoption</td>
+            <td>20K signups, >70% weekly active, >90% complete profiles, >50% use ≥1 advanced feature</td>
+          </tr>
+          <tr>
+            <td><strong>Advertiser</strong></td>
+            <td>Active Advertisers, Avg. Campaign Budget, Retention, CPV, ROI</td>
+            <td>100 active advertisers, ₹5K avg. budget, >75% retention, ₹8 avg. CPV, >4:1 ROI</td>
+          </tr>
+          <tr>
+            <td><strong>Engagement</strong></td>
+            <td>Messages/Day, Orders/Day, Rush Claim Rate, Collective Volume, Hub Posts, Ad Views</td>
+            <td>200K messages, 12K orders, >70% rush claims, 5K collective orders/month, 1K hub posts/day, 500K ad views/month</td>
+          </tr>
+          <tr>
+            <td><strong>VoiceFirst</strong></td>
+            <td>Voice Query Success Rate, Language Coverage, Accessibility Adoption</td>
+            <td>>92% intent recognition, 4 languages at launch, >30% of low-literacy users adopt voice</td>
+          </tr>
+          <tr>
+            <td><strong>Community</strong></td>
+            <td>Collectives Created, Avg. Members/Collective, Avg. Savings/Order</td>
+            <td>1K collectives, >20 members/collective, >20% avg. savings vs. retail</td>
+          </tr>
+          <tr>
+            <td><strong>ProxiRewards</strong></td>
+            <td>Ad Completion Rate, Fraud Rate, Avg. Earnings/User, Withdrawal Rate</td>
+            <td>>85% completion, <3% fraud, ₹20/day avg. earnings, >50% withdrawal rate</td>
+          </tr>
+          <tr>
+            <td><strong>Revenue</strong></td>
+            <td>MRR, CAC, LTV, Advanced Feature Adoption, Ad Commission Revenue</td>
+            <td>₹20L MRR, CAC <₹150, LTV:CAC >15:1, >40% premium uptake, ₹6L/month ad commission</td>
+          </tr>
+          <tr>
+            <td><strong>Trust</strong></td>
+            <td>Avg. Rating, Dispute Resolution Time, Hub Content Accuracy, Rewards Fraud Appeals</td>
+            <td>>4.4/5 stars, <12h resolution SLA, >97% verified post accuracy, <1% reward dispute rate</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Risks & Mitigation -->
+    <section id="risks">
+      <h2>⚠️ Risks & Mitigation (v4.0)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Risk</th>
+            <th>Mitigation Strategy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ProxiRewards Fraud</strong><br><em>Bot farms or fake views draining advertiser budgets</em></td>
+            <td>• 5-layer fraud detection pipeline (Device + Location + Behavior + Rate Limits + ML)<br>• Real-time WebSocket heartbeat validation<br>• Manual review queue for edge cases<br>• Insurance fund: 5% of commission revenue reserved for fraud losses<br>• Transparent reporting: Advertisers see fraud-filtered metrics</td>
+          </tr>
+          <tr>
+            <td><strong>Regulatory Compliance</strong><br><em>Rewards classified as "income" requiring TDS/GST</em></td>
+            <td>• Legal review: Position rewards as "engagement incentives", not salary<br>• KYC for withdrawals >₹10,000 (PAN verification)<br>• Auto-TDS deduction (1%) on winnings >₹10,000/year per user<br>• Clear terms: "Rewards are promotional incentives, not taxable income under ₹10,000"<br>• DPDP Act 2023 compliance: Data minimization, consent logs, right to deletion</td>
+          </tr>
+          <tr>
+            <td><strong>Cash Flow Management</strong><br><em>Users withdraw before advertisers pay or campaigns complete</em></td>
+            <td>• Prepaid model: Advertisers must top-up wallet before campaigns go live<br>• Minimum withdrawal threshold: ₹100 (reduces transaction frequency)<br>• Processing time: 24-48 hours for withdrawals (buffer for reconciliation)<br>• Reserve fund: Maintain 20% of commission revenue as operational buffer<br>• Auto-pause campaigns when advertiser balance < ₹500</td>
+          </tr>
+          <tr>
+            <td><strong>Advertiser Adoption</strong><br><em>Insufficient ad inventory limits user earning potential</em></td>
+            <td>• Free trial credits: ₹500 for first campaign to lower barrier<br>• On-ground sales team: Target local businesses in pilot cities<br>• Case studies: Share pilot results (engagement rates, foot traffic lift)<br>• Partnership program: Local business associations, Chambers of Commerce<br>• Lower CPV for early adopters: ₹5-₹7 vs. standard ₹7-₹15</td>
+          </tr>
+          <tr>
+            <td><strong>User Churn</strong><br><em>Initial excitement fades; users stop engaging with rewards</em></td>
+            <td>• Gamification: Badges for streaks ("7-Day Earner"), milestones ("₹500 Total")<br>• Daily challenges: "Watch 3 ads today → Bonus ₹5"<br>• Referral program: "Invite friend → Both get ₹20 bonus"<br>• Personalization: Show ads matching user interests (groceries, repairs, food)<br>• Community integration: "Your neighborhood earned ₹X this week" in Hub feed</td>
+          </tr>
+          <tr>
+            <td><strong>YouTube API Limits</strong><br><em>Rate limiting or quota exceeded for video validation</em></td>
+            <td>• Cache video metadata (title, duration, thumbnail) for 24 hours<br>• Request increased quota from Google for production use<br>• Fallback: Manual validation workflow for high-volume advertisers<br>• Monitor quota usage with alerts at 50%/80%/95% thresholds<br>• Alternative: Support direct video upload (Cloudinary) for non-YouTube ads (Phase 3)</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Monetization -->
+    <section id="monetization">
+      <h2>💰 Monetization Strategy (v4.0)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Price</th>
+            <th>Core Features</th>
+            <th>Advanced Features</th>
+            <th>Target Segment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Free</strong></td>
+            <td>₹0</td>
+            <td>5 pushes/month, basic profile, messaging</td>
+            <td>1 free Gold Rush/month, basic voice commands, join collectives, view hub, 3 rewarded ad views/day</td>
+            <td>All vendors + users (onboarding)</td>
+          </tr>
+          <tr>
+            <td><strong>Starter</strong></td>
+            <td>₹99/month</td>
+            <td>20 pushes, scheduling, basic analytics</td>
+            <td>5 Gold Rush credits, voice inventory updates, create collectives, post to hub, 10 rewarded ad views/day, basic ad campaign (image only)</td>
+            <td>Small shops, new mobile vendors, micro-advertisers</td>
+          </tr>
+          <tr>
+            <td><strong>Growth</strong></td>
+            <td>₹299/month</td>
+            <td>Unlimited pushes, segmentation, advanced analytics</td>
+            <td>20 Gold Rush credits + ROI dashboard, multi-language voice, collective analytics, hub promotion, unlimited rewarded ad views, YouTube video ad campaigns</td>
+            <td>Established vendors, service providers, local brands</td>
+          </tr>
+          <tr>
+            <td><strong>Enterprise</strong></td>
+            <td>₹799/month</td>
+            <td>All Growth features + priority support</td>
+            <td>Unlimited Gold Rush credits, voice analytics dashboard, collective demand forecasting, verified hub badge, ProxiRewards Pro: Advanced targeting, A/B testing, conversion tracking</td>
+            <td>High-volume vendors, RWA partners, regional brands</td>
+          </tr>
+          <tr>
+            <td><strong>Pay-per-Use</strong></td>
+            <td>Variable</td>
+            <td>₹10/push beyond tier limits</td>
+            <td>₹49/5 Gold Rush credits, ₹99/voice analytics report, ₹199/collective promotion boost, ₹299/ad campaign setup (one-time)</td>
+            <td>Seasonal vendors, event-based promotions, test advertisers</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="section-note">💡 Added: 14-day free trial for Starter/Growth/Enterprise tiers; advanced features unlock gradually to avoid overwhelming new vendors; revenue share with RWAs for collective coordination; 20% commission reserve fund for fraud protection.</div>
+      
+      <h3>📈 Projected Revenue (Year 1)</h3>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h4>Vendor Monetization</h4>
+          <ul>
+            <li>20,000 vendors onboarded</li>
+            <li>40% premium uptake (8,000 paying vendors)</li>
+            <li>Average ₹250/month per paying vendor (blended)</li>
+            <li><strong>Vendor MRR: ₹20 lakhs</strong></li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>ProxiRewards Commission</h4>
+          <ul>
+            <li>500K ad views/month (conservative)</li>
+            <li>Avg. CPV: ₹8; Platform commission: 30% = ₹2.4/view</li>
+            <li>Monthly commission: ₹12 lakhs</li>
+            <li><strong>Annual Ad Commission: ₹1.44 Crores</strong></li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>Advanced Feature Revenue</h4>
+          <ul>
+            <li>Gold Rush credits: ₹3.5 lakhs/month</li>
+            <li>Voice/Collective/Hub promotions: ₹2.8 lakhs/month</li>
+            <li>Transaction commissions (2-5%): ₹1.7 lakhs/month</li>
+            <li><strong>Advanced MRR: ₹8.0 lakhs</strong></li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>Total Year 1 Projection</h4>
+          <ul>
+            <li><strong>Total MRR: ₹40.4 lakhs</strong></li>
+            <li><strong>Annual Recurring Revenue: ₹4.85 Crores</strong></li>
+            <li>Customer Acquisition Cost: <₹150</li>
+            <li>LTV:CAC Ratio: >15:1</li>
+            <li>Break-even: Month 7-8</li>
+            <li><em>Note: Excludes variable payment gateway fees (~2%)</em></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Appendix -->
+    <section id="appendix">
+      <h2>📎 Appendix</h2>
+      
+      <h3>ProxiRewards: Database Schema Highlights</h3>
+      <div class="code-block">
+// Prisma Schema: Core Models for Rewarded Ads
+model Advertiser {
+  id            String    @id @default(uuid())
+  businessName  String
+  kycStatus     KYCStatus @default(PENDING)
+  wallet        AdvertiserWallet?
+  campaigns     Ad[]
+  // ... other fields
+}
+
+model Ad {
+  id                  String    @id @default(uuid())
+  advertiserId        String
+  type                AdType    // IMAGE or YOUTUBE_VIDEO
+  mediaUrl            String
+  youtubeVideoId      String?
+  locationLat         Decimal   @db.Decimal(10, 8)
+  locationLng         Decimal   @db.Decimal(11, 8)
+  radiusKm            Decimal   @default(5.0)
+  userRewardAmount    Decimal   @db.Decimal(5, 2)  // ₹3-₹10
+  platformCommission  Decimal   @db.Decimal(5, 2)  // ₹1-₹4
+  costPerView         Decimal   @db.Decimal(5, 2)  // Total CPV
+  totalBudget         Decimal   @db.Decimal(10, 2)
+  viewDurationSec     Int       // Required watch time (e.g., 30)
+  status              AdStatus  @default(PENDING)
+  views               UserAdView[]
+  // ... other fields
+}
+
+model UserAdView {
+  id              String    @id @default(uuid())
+  userId          String
+  adId            String
+  viewedAt        DateTime  @default(now())
+  viewDurationSec Int
+  rewardEarned    Decimal   @db.Decimal(5, 2)
+  status          ViewStatus // COMPLETED, PARTIAL, FRAUD_FLAGGED
+  fraudReason     String?
+  deviceId        String
+  gpsLocation     Json?     // {lat, lng} at view time
+  ipAddress       String?
+  // ... relations
+  @@index([userId, viewedAt])
+  @@index([adId, viewedAt])
+}
+
+enum ViewStatus {
+  COMPLETED
+  PARTIAL
+  FRAUD_FLAGGED
+}
+      </div>
+
+      <h3>ProxiRewards: API Endpoints Reference</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Description</th>
+            <th>Auth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GET</td>
+            <td>/api/v1/ads/available</td>
+            <td>Fetch available ads near user location (5km radius)</td>
+            <td>Required</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/api/v1/ads/:id/start-view</td>
+            <td>Initialize ad view tracking + WebSocket connection</td>
+            <td>Required</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/api/v1/ads/:id/complete-view</td>
+            <td>Complete view & claim reward (with fraud validation)</td>
+            <td>Required</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/v1/wallet/balance</td>
+            <td>Get user wallet balance + earning history</td>
+            <td>Required</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/api/v1/wallet/withdraw</td>
+            <td>Request withdrawal (min ₹100) via Razorpay Payouts</td>
+            <td>Required + KYC</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/api/v1/advertisers/register</td>
+            <td>Register new advertiser + create wallet</td>
+            <td>Public</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/api/v1/advertisers/kyc/submit</td>
+            <td>Submit KYC documents (PAN/GST) for verification</td>
+            <td>Required</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>/api/v1/ads/create</td>
+            <td>Create new ad campaign (image/YouTube video)</td>
+            <td>Required + Verified Advertiser</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>/api/v1/ads/:id/analytics</td>
+            <td>Get campaign performance: views, completion rate, heatmap</td>
+            <td>Required + Campaign Owner</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Implementation Timeline: ProxiRewards</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>Duration</th>
+            <th>Key Deliverables</th>
+            <th>Team</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Foundation</td>
+            <td>Weeks 1-3</td>
+            <td>Database schema, User wallet system, Basic ad model, Razorpay integration</td>
+            <td>Backend (2), DevOps (1)</td>
+          </tr>
+          <tr>
+            <td>Core Features</td>
+            <td>Weeks 4-6</td>
+            <td>YouTube IFrame integration, Ad viewer component, View tracking (WebSocket), Reward crediting logic, Basic fraud detection</td>
+            <td>Frontend (2), Backend (2)</td>
+          </tr>
+          <tr>
+            <td>Advertiser Portal</td>
+            <td>Weeks 7-9</td>
+            <td>Advertiser registration, KYC workflow, Campaign builder UI, Wallet top-up flow, Analytics dashboard</td>
+            <td>Full-stack (3)</td>
+          </tr>
+          <tr>
+            <td>Advanced Fraud</td>
+            <td>Weeks 10-12</td>
+            <td>Device fingerprinting, Geolocation validation, Behavioral analysis, Rate limiting (Redis), Fraud dashboard</td>
+            <td>Backend (2), Security (1)</td>
+          </tr>
+          <tr>
+            <td>Withdrawals</td>
+            <td>Weeks 13-14</td>
+            <td>Razorpay Payouts integration, Withdrawal request flow, Admin approval workflow, Bank/UPI verification</td>
+            <td>Backend (2), Frontend (1)</td>
+          </tr>
+          <tr>
+            <td>Testing & QA</td>
+            <td>Weeks 15-16</td>
+            <td>Unit & integration tests, Load testing (10k concurrent), Security audit, Fraud simulation tests, UAT with beta users</td>
+            <td>QA (2), All devs</td>
+          </tr>
+          <tr>
+            <td>Pilot Launch</td>
+            <td>Week 17</td>
+            <td>Chennai pilot (100 users), 10 advertiser partners, Monitoring & bug fixes, Performance optimization</td>
+            <td>All teams</td>
+          </tr>
+          <tr>
+            <td>Full Launch</td>
+            <td>Week 18+</td>
+            <td>Marketing campaign, Advertiser outreach, Scale to 10k users, Feature iterations</td>
+            <td>All teams + Marketing</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="section-note">💡 Total Development Time: 18 weeks (4.5 months) | Team Size: 8-10 developers | Estimated Cost: ₹45-55 lakhs (salaries + infrastructure + marketing)</div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p><strong>ProxiHub v4.0 - Ultimate Edition with ProxiRewards</strong> • Inclusive • Community-Driven • Gamified • Monetized • Production-Ready</p>
+      <p>📧 Contact: uvfarmsindia@gmail.com | 🔐 DPDP Act 2023 Compliant | 🌐 Built for India, Scaled for Bharat</p>
+      <p><em>Document generated: April 2026 • Next review: Post-ProxiRewards pilot results • Version control: GitHub /proxiHub/prd</em></p>
+      <p style="margin-top:12px;font-size:0.85rem">💡 This PRD is a living document. All features prioritized for maximum impact on India's unorganized local commerce ecosystem while enabling sustainable monetization through ProxiRewards.</p>
+    </footer>
+
+  </main>
+
+  <script>
+    // Simple active link highlighting on scroll
+    document.addEventListener('DOMContentLoaded', function() {
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('.sidebar-nav a');
+      
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop - 100;
+          if (pageYOffset >= sectionTop) {
+            current = section.getAttribute('id');
+          }
+        });
+        
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href').slice(1) === current) {
+            link.classList.add('active');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
