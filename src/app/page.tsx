@@ -40,6 +40,27 @@ import {
   ShieldCheck
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter
+} from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+
 // Mock Database initial states
 const INITIAL_VENDORS = [
   { id: 1, name: "Saravana Grocery Store", type: "stationary", category: "Grocery", lat: 13.041, lng: 80.245, distance: 0.8, status: "Open", rating: 4.6, items: ["Rice", "Sugar", "Carrots", "Onions"], priceRange: "₹50 - ₹200" },
@@ -221,14 +242,11 @@ export default function ProxiHubDashboard() {
       let angle = 0;
       interval = setInterval(() => {
         angle += 0.15;
-        // Crawl cart coordinates in a small circle around Anna Nagar center
         setVendors(prev => 
           prev.map(vendor => {
             if (vendor.id === 2) {
               const newLat = 13.048 + Math.sin(angle) * 0.004;
               const newLng = 80.252 + Math.cos(angle) * 0.004;
-              
-              // Record route coordinate trail
               setRouteCoordinates(trail => [...trail.slice(-10), {lat: newLat, lng: newLng}]);
               return { ...vendor, lat: newLat, lng: newLng };
             }
@@ -294,7 +312,6 @@ export default function ProxiHubDashboard() {
     };
   }, [adTimerActive, playingAd]);
 
-  // Voice Command processor
   const runVoiceCommand = () => {
     if (isListening) {
       setIsListening(false);
@@ -318,7 +335,7 @@ export default function ProxiHubDashboard() {
 
       rec.onerror = () => {
         setIsListening(false);
-        setSpeechTranscript("Could not capture speech. Try typing or simulation below.");
+        setSpeechTranscript("Could not capture speech. Try typing or simulation.");
       };
     } else {
       setIsListening(true);
@@ -472,41 +489,32 @@ export default function ProxiHubDashboard() {
           <div className="bg-slate-950 p-2.5 rounded-2xl border border-slate-900 flex flex-col gap-2.5 shadow-inner">
             <p className="text-[9px] text-slate-550 font-black uppercase tracking-wider pl-2">SELECT PORTAL VIEW</p>
             
-            <button
+            <Button
+              variant={currentRole === "customer" ? "default" : "ghost"}
               onClick={() => { setCurrentRole("customer"); setActiveTab("map"); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                currentRole === "customer" 
-                  ? "bg-blue-600 text-white shadow" 
-                  : "text-slate-400 hover:bg-slate-900/40 hover:text-slate-200"
-              }`}
+              className="w-full justify-start text-xs font-bold uppercase tracking-wider h-11 px-4 py-3 rounded-xl transition-all"
             >
-              <User className="w-4 h-4" />
+              <User className="w-4 h-4 mr-2" />
               <span>Customer Discovery</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
+              variant={currentRole === "vendor" ? "default" : "ghost"}
               onClick={() => { setCurrentRole("vendor"); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                currentRole === "vendor" 
-                  ? "bg-amber-500 text-slate-950 shadow" 
-                  : "text-slate-400 hover:bg-slate-900/40 hover:text-slate-200"
-              }`}
+              className="w-full justify-start text-xs font-bold uppercase tracking-wider h-11 px-4 py-3 rounded-xl transition-all"
             >
-              <Store className="w-4 h-4" />
+              <Store className="w-4 h-4 mr-2" />
               <span>Merchant Portal</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
+              variant={currentRole === "service" ? "default" : "ghost"}
               onClick={() => { setCurrentRole("service"); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                currentRole === "service" 
-                  ? "bg-cyan-650 text-white shadow" 
-                  : "text-slate-400 hover:bg-slate-900/40 hover:text-slate-200"
-              }`}
+              className="w-full justify-start text-xs font-bold uppercase tracking-wider h-11 px-4 py-3 rounded-xl transition-all"
             >
-              <Wrench className="w-4 h-4" />
+              <Wrench className="w-4 h-4 mr-2" />
               <span>Service Portal</span>
-            </button>
+            </Button>
           </div>
 
           <div className="border-t border-slate-900/80 my-2"></div>
@@ -516,65 +524,59 @@ export default function ProxiHubDashboard() {
             <div className="flex flex-col gap-1.5">
               <p className="text-[9px] text-slate-550 font-black uppercase tracking-wider pl-2 mb-1">Customer Tabs</p>
               
-              <button
+              <Button
+                variant={activeTab === "map" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("map")}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                  activeTab === "map" ? "bg-slate-800 text-white" : "text-slate-450 hover:text-slate-200"
-                }`}
+                className="w-full justify-start text-xs font-semibold h-10"
               >
-                <MapIcon className="w-3.5 h-3.5" />
+                <MapIcon className="w-3.5 h-3.5 mr-2" />
                 <span>5km Map Discovery</span>
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant={activeTab === "pools" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("pools")}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                  activeTab === "pools" ? "bg-slate-800 text-white" : "text-slate-450 hover:text-slate-200"
-                }`}
+                className="w-full justify-start text-xs font-semibold h-10"
               >
-                <Users className="w-3.5 h-3.5" />
+                <Users className="w-3.5 h-3.5 mr-2" />
                 <span>Collective Pools</span>
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant={activeTab === "hub" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("hub")}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                  activeTab === "hub" ? "bg-slate-800 text-white" : "text-slate-450 hover:text-slate-200"
-                }`}
+                className="w-full justify-start text-xs font-semibold h-10"
               >
-                <MessageSquare className="w-3.5 h-3.5" />
+                <MessageSquare className="w-3.5 h-3.5 mr-2" />
                 <span>Neighborhood Hub</span>
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant={activeTab === "goldrush" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("goldrush")}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                  activeTab === "goldrush" ? "bg-slate-800 text-white" : "text-slate-455 hover:text-slate-200"
-                }`}
+                className="w-full justify-start text-xs font-semibold h-10"
               >
-                <Zap className="w-3.5 h-3.5" />
+                <Zap className="w-3.5 h-3.5 mr-2" />
                 <span>Local Gold Rush</span>
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant={activeTab === "rewards" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("rewards")}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                  activeTab === "rewards" ? "bg-slate-800 text-white" : "text-slate-450 hover:text-slate-200"
-                }`}
+                className="w-full justify-start text-xs font-semibold h-10"
               >
-                <DollarSign className="w-3.5 h-3.5" />
+                <DollarSign className="w-3.5 h-3.5 mr-2" />
                 <span>ProxiRewards Ads</span>
-              </button>
+              </Button>
 
-              <button
+              <Button
+                variant={activeTab === "wallet" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("wallet")}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                  activeTab === "wallet" ? "bg-slate-800 text-white" : "text-slate-450 hover:text-slate-200"
-                }`}
+                className="w-full justify-start text-xs font-semibold h-10"
               >
-                <CreditCard className="w-3.5 h-3.5" />
+                <CreditCard className="w-3.5 h-3.5 mr-2" />
                 <span>My Wallet</span>
-              </button>
+              </Button>
             </div>
           )}
 
@@ -583,7 +585,7 @@ export default function ProxiHubDashboard() {
         {/* Small Wallet Indicator */}
         <div className="mt-8 p-5 rounded-2xl bg-slate-950 border border-slate-900/80 flex items-center justify-between shadow-2xl">
           <div>
-            <p className="text-[10px] text-slate-600 uppercase tracking-widest font-black">My Balance</p>
+            <p className="text-[10px] text-slate-650 uppercase tracking-widest font-black">My Balance</p>
             <p className="text-2xl font-bold text-emerald-455 mt-1">₹{walletBalance.toFixed(2)}</p>
           </div>
           <div className="text-right">
@@ -611,7 +613,7 @@ export default function ProxiHubDashboard() {
             </div>
             <div>
               <div className="flex items-center gap-2.5">
-                <span className="text-[9px] bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-purple-500/20">VoiceFirst UI</span>
+                <span className="text-[9px] bg-purple-500/10 text-purple-300 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-purple-500/20">VoiceFirst UI</span>
                 <p className="text-xs text-slate-500 font-semibold font-sans">Supported: Tamil, Hindi, Telugu, English</p>
               </div>
               <p className="text-sm font-semibold text-slate-200 mt-2 leading-relaxed">
@@ -643,12 +645,12 @@ export default function ProxiHubDashboard() {
                     <div className="flex items-center gap-4 flex-grow max-w-xl">
                       <div className="relative flex-grow">
                         <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
-                        <input 
+                        <Input 
                           type="text" 
                           placeholder="Search groceries, electrical services, flowers..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-900 rounded-2xl pl-11 pr-5 py-3 text-sm text-slate-101 placeholder-slate-500 focus:outline-none focus:border-blue-500 font-semibold"
+                          className="w-full bg-slate-950 border border-slate-900 rounded-2xl pl-11 pr-5 py-3 text-sm text-slate-101 placeholder-slate-500 focus:outline-none focus:border-blue-500 font-semibold h-11"
                         />
                       </div>
                     </div>
@@ -696,7 +698,7 @@ export default function ProxiHubDashboard() {
                           </span>
                         </div>
 
-                        {/* Animated simulated Cart route coordinate line trace overlay */}
+                        {/* Animated simulated Cart route trace overlay */}
                         {isCartRouteActive && routeCoordinates.length > 1 && (
                           <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-60">
                             <polyline
@@ -765,45 +767,40 @@ export default function ProxiHubDashboard() {
                       
                       <div className="flex-grow overflow-y-auto flex flex-col gap-4.5 pr-1">
                         {filteredVendors.map((vendor) => (
-                          <div 
-                            key={vendor.id}
-                            className="p-5 rounded-2xl bg-slate-950/40 border border-slate-900 hover:border-slate-800 hover:bg-slate-900/60 transition-all cursor-pointer flex flex-col gap-3"
-                          >
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4 className="text-sm font-bold text-slate-200 leading-snug">{vendor.name}</h4>
-                                <p className="text-xs text-slate-500 mt-1 font-semibold">{vendor.category} • {vendor.distance} km</p>
+                          <Card key={vendor.id} className="border border-slate-900 hover:border-slate-800 transition-all cursor-pointer">
+                            <CardHeader className="p-4">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <CardTitle className="text-sm font-bold text-slate-200 leading-snug">{vendor.name}</CardTitle>
+                                  <p className="text-xs text-slate-550 mt-1 font-semibold">{vendor.category} • {vendor.distance} km</p>
+                                </div>
+                                <Badge variant="secondary" className="text-[9px] uppercase tracking-wider">
+                                  {vendor.status}
+                                </Badge>
                               </div>
-                              <span className={`text-[9px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider ${
-                                vendor.status === "Open" || vendor.status === "Available" 
-                                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/15" 
-                                  : "bg-purple-500/10 text-purple-400 border border-purple-500/15"
-                              }`}>
-                                {vendor.status}
-                              </span>
-                            </div>
-
-                            {/* Show Top Demand items and Price range */}
-                            <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-900 flex justify-between items-center text-xs">
-                              <div>
-                                <p className="text-[9px] text-slate-550 uppercase tracking-widest font-black">Typical Price Range</p>
-                                <p className="font-bold text-slate-200 mt-1">{vendor.priceRange}</p>
+                            </CardHeader>
+                            <CardContent className="p-4 pt-0 flex flex-col gap-3">
+                              <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-900 flex justify-between items-center text-xs">
+                                <div>
+                                  <p className="text-[9px] text-slate-600 uppercase tracking-widest font-black">Typical Price Range</p>
+                                  <p className="font-bold text-slate-250 mt-1">{vendor.priceRange}</p>
+                                </div>
                               </div>
-                            </div>
-                            
-                            <div className="flex flex-wrap gap-1.5 mt-0.5">
-                              {vendor.items.slice(0, 3).map((item, idx) => (
-                                <span key={idx} className="text-[9px] bg-slate-950 text-slate-455 px-2.5 py-1 rounded-lg border border-slate-900/60 font-bold uppercase tracking-wider">
-                                  {item}
-                                </span>
-                              ))}
-                            </div>
-                            
-                            <div className="mt-1 pt-3 border-t border-slate-900/60 flex items-center justify-between text-[11px] font-semibold">
+                              <div className="flex flex-wrap gap-1.5 mt-0.5">
+                                {vendor.items.slice(0, 3).map((item, idx) => (
+                                  <Badge key={idx} variant="outline" className="text-[9px] font-bold uppercase tracking-wider">
+                                    {item}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </CardContent>
+                            <CardFooter className="p-4 pt-0 flex items-center justify-between text-[11px] font-semibold border-t-0 bg-transparent">
                               <span className="text-slate-500">⭐ {vendor.rating} Ratings</span>
-                              <button className="text-blue-450 font-bold hover:underline uppercase tracking-wider text-[10px]">Call or Chat &rarr;</button>
-                            </div>
-                          </div>
+                              <Button variant="link" className="text-blue-450 font-bold uppercase tracking-wider text-[10px] p-0 h-auto">
+                                Call or Chat &rarr;
+                              </Button>
+                            </CardFooter>
+                          </Card>
                         ))}
                       </div>
                     </div>
@@ -819,7 +816,7 @@ export default function ProxiHubDashboard() {
                       <Users className="w-5.5 h-5.5" />
                       <span>Neighborhood Collective Pools</span>
                     </h2>
-                    <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
+                    <p className="text-xs text-slate-405 max-w-2xl leading-relaxed">
                       Join active bulk pricing pools started by local shops. No delivery pipeline - coordinate directly with the store upon fulfillment threshold clearance!
                     </p>
                   </div>
@@ -828,53 +825,55 @@ export default function ProxiHubDashboard() {
                     {collectives.map((c) => {
                       const percent = Math.floor((c.joined / c.target) * 100);
                       return (
-                        <div key={c.id} className="premium-card flex flex-col shadow-xl bg-[#0d121f]">
-                          <div className="flex justify-between items-start mb-5">
-                            <span className="text-[9px] bg-cyan-500/10 text-cyan-455 border border-cyan-500/20 px-3 py-1 rounded-lg font-black uppercase tracking-widest">
-                              {c.discount}
-                            </span>
-                            <span className="text-xs text-slate-500 flex items-center gap-1 font-bold">
-                              <Clock className="w-3.5 h-3.5 text-slate-600" /> {c.deadline} left
-                            </span>
-                          </div>
-
-                          <h3 className="font-bold text-slate-105 text-base">{c.title}</h3>
-                          <p className="text-xs text-slate-400 mt-1">Merchant: {c.storeName}</p>
-                          <p className="text-xs text-slate-300 font-bold mt-1">Item: {c.item}</p>
-                          
-                          <div className="my-5 bg-slate-950 p-4 rounded-xl border border-slate-900 flex justify-between items-center">
-                            <div>
-                              <p className="text-[9px] text-slate-500 uppercase font-black">Group Price</p>
-                              <p className="text-xl font-black text-cyan-400 mt-1">₹{c.price}</p>
+                        <Card key={c.id} className="shadow-xl bg-[#0d121f] border border-slate-900 flex flex-col">
+                          <CardHeader className="p-6">
+                            <div className="flex justify-between items-start mb-3">
+                              <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-widest bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                {c.discount}
+                              </Badge>
+                              <span className="text-xs text-slate-500 flex items-center gap-1 font-bold">
+                                <Clock className="w-3.5 h-3.5 text-slate-655" /> {c.deadline} left
+                              </span>
                             </div>
-                            <div className="text-right">
-                              <p className="text-[9px] text-slate-500 uppercase font-black">Retail price</p>
-                              <p className="text-xs text-slate-450 line-through mt-1.5">₹{c.originalPrice}</p>
+                            <CardTitle className="font-bold text-slate-105 text-base">{c.title}</CardTitle>
+                            <CardDescription className="text-xs text-slate-450 mt-1 font-medium">Merchant: {c.storeName}</CardDescription>
+                          </CardHeader>
+                          <CardContent className="p-6 pt-0 flex-grow">
+                            <p className="text-xs text-slate-300 font-bold mb-4">Item: {c.item}</p>
+                            <div className="my-5 bg-slate-950 p-4 rounded-xl border border-slate-900 flex justify-between items-center">
+                              <div>
+                                <p className="text-[9px] text-slate-500 uppercase font-black">Group Price</p>
+                                <p className="text-xl font-black text-cyan-400 mt-1">₹{c.price}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-[9px] text-slate-550 uppercase font-black">Retail price</p>
+                                <p className="text-xs text-slate-500 line-through mt-1.5">₹{c.originalPrice}</p>
+                              </div>
                             </div>
-                          </div>
-
-                          <div className="mb-6">
-                            <div className="flex justify-between text-xs font-bold text-slate-350 mb-2">
-                              <span>Progress threshold</span>
-                              <span>{c.joined} / {c.target} neighbors</span>
+                            <div className="mb-2">
+                              <div className="flex justify-between text-xs font-bold text-slate-350 mb-2">
+                                <span>Progress threshold</span>
+                                <span>{c.joined} / {c.target} neighbors</span>
+                              </div>
+                              <div className="w-full h-2 bg-slate-955 rounded-full overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${percent}%` }}></div>
+                              </div>
                             </div>
-                            <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${percent}%` }}></div>
-                            </div>
-                          </div>
-
-                          <button 
-                            onClick={() => {
-                              setCollectives(prev => 
-                                prev.map(item => item.id === c.id ? { ...item, joined: Math.min(item.target, item.joined + 1) } : item)
-                              );
-                              alert("Successfully joined pool! Coordinate on chat for updates.");
-                            }}
-                            className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm py-3.5 rounded-2xl transition-all mt-auto"
-                          >
-                            Join Collective Pool
-                          </button>
-                        </div>
+                          </CardContent>
+                          <CardFooter className="p-6 pt-0 border-t-0 bg-transparent">
+                            <Button 
+                              onClick={() => {
+                                setCollectives(prev => 
+                                  prev.map(item => item.id === c.id ? { ...item, joined: Math.min(item.target, item.joined + 1) } : item)
+                                );
+                                alert("Successfully joined pool! Coordinate on chat for updates.");
+                              }}
+                              className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm py-3.5 rounded-2xl shadow-lg shadow-cyan-600/10"
+                            >
+                              Join Collective Pool
+                            </Button>
+                          </CardFooter>
+                        </Card>
                       );
                     })}
                   </div>
@@ -884,53 +883,61 @@ export default function ProxiHubDashboard() {
               {/* Announcements Sub-tab */}
               {activeTab === "hub" && (
                 <div className="flex-grow flex flex-col gap-10 max-w-3xl mx-auto w-full">
-                  <div className="premium-card shadow-xl bg-[#0d121f]">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4">Post Community Announcement</h3>
-                    <form onSubmit={(e) => {
-                      e.preventDefault();
-                      const fd = new FormData(e.currentTarget);
-                      const txt = fd.get("text") as string;
-                      if (!txt) return;
-                      const newPost = {
-                        id: Date.now(),
-                        author: "My Resident Account",
-                        role: "Resident (Verified)",
-                        text: txt,
-                        likes: 0,
-                        replies: 0,
-                        time: "Just now",
-                        category: "Resident post"
-                      };
-                      setHubPosts(prev => [newPost, ...prev]);
-                      e.currentTarget.reset();
-                    }}>
-                      <textarea 
-                        name="text"
-                        rows={3}
-                        placeholder="Alert neighbors of transformer servicing, water logs, or vendor promos..."
-                        className="w-full bg-slate-955 border border-slate-900 rounded-2xl p-5 text-sm text-slate-105 placeholder-slate-600 focus:outline-none focus:border-pink-500 leading-relaxed font-semibold shadow-inner"
-                      />
-                      <div className="flex justify-between items-center mt-5">
-                        <span className="text-[9px] text-slate-500 uppercase tracking-widest font-black">Anna Nagar, Chennai</span>
-                        <button type="submit" className="bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg">
-                          <Send className="w-3.5 h-3.5" /> Post Announcement
-                        </button>
-                      </div>
-                    </form>
-                  </div>
+                  <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
+                    <CardHeader className="p-6">
+                      <CardTitle className="text-sm font-bold uppercase tracking-wider text-slate-300">Post Community Announcement</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 pt-0">
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        const fd = new FormData(e.currentTarget);
+                        const txt = fd.get("text") as string;
+                        if (!txt) return;
+                        const newPost = {
+                          id: Date.now(),
+                          author: "My Resident Account",
+                          role: "Resident (Verified)",
+                          text: txt,
+                          likes: 0,
+                          replies: 0,
+                          time: "Just now",
+                          category: "Resident post"
+                        };
+                        setHubPosts(prev => [newPost, ...prev]);
+                        e.currentTarget.reset();
+                      }}>
+                        <textarea 
+                          name="text"
+                          rows={3}
+                          placeholder="Alert neighbors of transformer servicing, water logs, or vendor promos..."
+                          className="w-full bg-slate-955 border border-slate-900 rounded-2xl p-5 text-sm text-slate-105 placeholder-slate-650 focus:outline-none focus:border-pink-500 leading-relaxed font-semibold shadow-inner"
+                        />
+                        <div className="flex justify-between items-center mt-5">
+                          <span className="text-[9px] text-slate-500 uppercase tracking-widest font-black">Anna Nagar, Chennai</span>
+                          <Button type="submit" className="bg-pink-650 hover:bg-pink-550 text-white text-xs font-bold px-6 py-3 rounded-xl flex items-center gap-2 shadow-lg">
+                            <Send className="w-3.5 h-3.5" /> Post Announcement
+                          </Button>
+                        </div>
+                      </form>
+                    </CardContent>
+                  </Card>
 
                   <div className="flex flex-col gap-8">
                     {hubPosts.map((post) => (
-                      <div key={post.id} className="premium-card flex flex-col gap-4 shadow-xl bg-[#0d121f]">
-                        <div className="flex items-center justify-between pb-3 border-b border-slate-900">
-                          <div>
-                            <h4 className="text-sm font-bold text-slate-200">{post.author}</h4>
-                            <p className="text-[9px] text-pink-400 font-black uppercase tracking-widest mt-1">{post.role}</p>
+                      <Card key={post.id} className="shadow-xl bg-[#0d121f] border border-slate-900">
+                        <CardHeader className="p-6 pb-3">
+                          <div className="flex items-center justify-between pb-3 border-b border-slate-900">
+                            <div>
+                              <CardTitle className="text-sm font-bold text-slate-205">{post.author}</CardTitle>
+                              <Badge variant="outline" className="text-[9px] text-pink-400 border-pink-400 mt-1 uppercase tracking-widest font-black px-2 py-0.5">{post.role}</Badge>
+                            </div>
+                            <span className="text-xs text-slate-500 font-bold">{post.time}</span>
                           </div>
-                          <span className="text-xs text-slate-500 font-bold">{post.time}</span>
-                        </div>
-                        <p className="text-sm text-slate-300 leading-relaxed font-medium">{post.text}</p>
-                      </div>
+                        </CardHeader>
+                        <CardContent className="p-6 pt-0">
+                          <p className="text-sm text-slate-300 leading-relaxed font-medium">{post.text}</p>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 </div>
@@ -953,48 +960,50 @@ export default function ProxiHubDashboard() {
                     {goldRushes.map((rush) => {
                       const percent = Math.floor((rush.claimed / rush.totalClaims) * 100);
                       return (
-                        <div key={rush.id} className="premium-card border-t-4 border-t-amber-500 flex flex-col justify-between shadow-xl bg-[#0d121f]">
-                          <div className="flex flex-col gap-4">
+                        <Card key={rush.id} className="border-t-4 border-t-amber-500 flex flex-col justify-between shadow-xl bg-[#0d121f] border-slate-900">
+                          <CardHeader className="p-6 pb-3">
                             <div className="flex justify-between items-center">
-                              <span className="text-[9px] bg-amber-500/10 text-amber-455 border border-amber-500/20 px-3 py-1 rounded-lg font-black uppercase tracking-widest">
+                              <Badge variant="secondary" className="text-[9px] bg-amber-500/10 text-amber-455 border border-amber-500/20">
                                 Live Flash Deal
-                              </span>
+                              </Badge>
                               <span className="text-sm text-amber-400 font-mono font-bold flex items-center gap-1.5">
                                 <Clock className="w-4 h-4 text-amber-500 animate-pulse" /> {formatTime(rush.remaining)}
                               </span>
                             </div>
-                            <h3 className="font-bold text-slate-105 text-lg leading-snug">{rush.vendorName}</h3>
-                            <p className="text-sm font-semibold text-amber-300 leading-relaxed bg-amber-500/[0.02] p-4 rounded-xl border border-amber-500/10 shadow-inner">
+                            <CardTitle className="font-bold text-slate-105 text-lg leading-snug mt-3">{rush.vendorName}</CardTitle>
+                          </CardHeader>
+                          <CardContent className="p-6 pt-0">
+                            <p className="text-sm font-semibold text-amber-350 leading-relaxed bg-amber-500/[0.02] p-4 rounded-xl border border-amber-500/10 shadow-inner">
                               {rush.deal}
                             </p>
-                          </div>
-
-                          <div className="mt-8 mb-6">
-                            <div className="flex justify-between text-xs text-slate-400 mb-2 font-bold uppercase tracking-wider">
-                              <span>Claim progress</span>
-                              <span>{rush.claimed} / {rush.totalClaims} claimed</span>
+                            <div className="mt-8 mb-6">
+                              <div className="flex justify-between text-xs text-slate-400 mb-2 font-bold uppercase tracking-wider">
+                                <span>Claim progress</span>
+                                <span>{rush.claimed} / {rush.totalClaims} claimed</span>
+                              </div>
+                              <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-amber-600 to-yellow-400 rounded-full" style={{ width: `${percent}%` }}></div>
+                              </div>
                             </div>
-                            <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-amber-600 to-yellow-400 rounded-full" style={{ width: `${percent}%` }}></div>
-                            </div>
-                          </div>
-
-                          <button 
-                            onClick={() => {
-                              if (rush.remaining <= 0 || rush.claimed >= rush.totalClaims) {
-                                alert("This deal has ended.");
-                                return;
-                              }
-                              setGoldRushes(prev => 
-                                prev.map(item => item.id === rush.id ? { ...item, claimed: item.claimed + 1 } : item)
-                              );
-                              alert("Coupon Claimed! Show QR to vendor within 30 mins.");
-                            }}
-                            className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm py-3.5 rounded-2xl transition-all shadow-lg"
-                          >
-                            Claim Coupon Code
-                          </button>
-                        </div>
+                          </CardContent>
+                          <CardFooter className="p-6 pt-0 bg-transparent border-t-0">
+                            <Button 
+                              onClick={() => {
+                                if (rush.remaining <= 0 || rush.claimed >= rush.totalClaims) {
+                                  alert("This deal has ended.");
+                                  return;
+                                }
+                                setGoldRushes(prev => 
+                                  prev.map(item => item.id === rush.id ? { ...item, claimed: item.claimed + 1 } : item)
+                                );
+                                alert("Coupon Claimed! Show QR to vendor within 30 mins.");
+                              }}
+                              className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm py-3.5 rounded-2xl transition-all shadow-lg"
+                            >
+                              Claim Coupon Code
+                            </Button>
+                          </CardFooter>
+                        </Card>
                       );
                     })}
                   </div>
@@ -1018,111 +1027,110 @@ export default function ProxiHubDashboard() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {ads.map((ad) => (
-                          <div key={ad.id} className="premium-card flex flex-col justify-between shadow-xl bg-[#0d121f]">
-                            <div>
+                          <Card key={ad.id} className="flex flex-col justify-between shadow-xl bg-[#0d121f] border-slate-900">
+                            <CardHeader className="p-5">
                               <div className="flex justify-between items-start mb-4">
-                                <span className="text-[9px] bg-emerald-500/10 text-emerald-455 border border-emerald-500/20 px-3 py-1 rounded-lg font-black uppercase tracking-widest">
+                                <Badge variant="secondary" className="text-[9px] bg-emerald-500/10 text-emerald-450 border border-emerald-500/20">
                                   {ad.type}
-                                </span>
+                                </Badge>
                                 <span className="text-sm font-black text-emerald-400">Earn ₹{ad.rewardAmount}</span>
                               </div>
-                              <h4 className="text-sm font-bold text-slate-100 leading-snug">{ad.title}</h4>
-                              <p className="text-xs text-slate-550 mt-1.5 font-semibold">By {ad.advertiser}</p>
-                            </div>
-                            <button 
-                              onClick={() => {
-                                setPlayingAd(ad);
-                                setAdWatchSeconds(0);
-                                setAdTimerActive(true);
-                                setCanClaimReward(false);
-                                setAdFeedback("Watch foreground stream carefully to claim wallet rewards.");
-                              }}
-                              className="mt-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-2xl"
-                            >
-                              Watch Ad & Earn
-                            </button>
-                          </div>
+                              <CardTitle className="text-sm font-bold text-slate-100 leading-snug">{ad.title}</CardTitle>
+                              <CardDescription className="text-xs text-slate-550 mt-1.5 font-semibold">By {ad.advertiser}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-5 pt-0">
+                              <Button 
+                                onClick={() => {
+                                  setPlayingAd(ad);
+                                  setAdWatchSeconds(0);
+                                  setAdTimerActive(true);
+                                  setCanClaimReward(false);
+                                  setAdFeedback("Watch foreground stream carefully to claim wallet rewards.");
+                                }}
+                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-2xl h-11"
+                              >
+                                Watch Ad & Earn
+                              </Button>
+                            </CardContent>
+                          </Card>
                         ))}
                       </div>
 
                       {playingAd && (
-                        <div className="premium-card border-emerald-500/20 shadow-2xl mt-4 flex flex-col gap-6 bg-[#0c101b]">
-                          <div className="flex justify-between items-center pb-4 border-b border-slate-900">
+                        <Card className="border-emerald-500/20 shadow-2xl mt-4 flex flex-col gap-6 bg-[#0c101b]">
+                          <CardHeader className="p-6 pb-3 flex flex-row justify-between items-center border-b border-slate-900">
                             <div>
-                              <h3 className="text-sm font-bold text-slate-200">{playingAd.title}</h3>
-                              <p className="text-[9px] text-emerald-400 font-black tracking-widest uppercase">Visibility heartbeats tracking</p>
+                              <CardTitle className="text-sm font-bold text-slate-202">{playingAd.title}</CardTitle>
+                              <p className="text-[9px] text-emerald-405 font-black tracking-widest uppercase mt-1">Visibility heartbeats tracking</p>
                             </div>
-                            <button onClick={() => { setPlayingAd(null); setAdTimerActive(false); }} className="text-xs text-slate-555 hover:text-slate-300 font-bold uppercase">Cancel</button>
-                          </div>
-
-                          <div className="w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden relative flex items-center justify-center border border-slate-900/60 shadow-inner">
-                            {playingAd.type === "video" ? (
-                              <div className="w-full h-full relative flex flex-col items-center justify-center">
-                                <iframe src={`${playingAd.mediaUrl}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0`} title="Ad player" className="w-full h-full absolute inset-0 pointer-events-none opacity-40" />
-                                <div className="z-10 text-center p-6">
-                                  <Play className="w-12 h-12 text-emerald-400 mx-auto animate-bounce mb-3 shadow-lg" />
-                                  <p className="text-sm font-black text-slate-200 tracking-widest">VIDEO AD PROGRESS ACTIVE</p>
+                            <Button variant="ghost" onClick={() => { setPlayingAd(null); setAdTimerActive(false); }} className="text-xs text-slate-550 hover:text-slate-300 font-bold uppercase">Cancel</Button>
+                          </CardHeader>
+                          <CardContent className="p-6 pt-0 flex flex-col gap-4">
+                            <div className="w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden relative flex items-center justify-center border border-slate-900/60 shadow-inner">
+                              {playingAd.type === "video" ? (
+                                <div className="w-full h-full relative flex flex-col items-center justify-center">
+                                  <iframe src={`${playingAd.mediaUrl}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0`} title="Ad player" className="w-full h-full absolute inset-0 pointer-events-none opacity-40" />
+                                  <div className="z-10 text-center p-6">
+                                    <Play className="w-12 h-12 text-emerald-400 mx-auto animate-bounce mb-3 shadow-lg" />
+                                    <p className="text-sm font-black text-slate-200 tracking-widest">VIDEO AD PROGRESS ACTIVE</p>
+                                  </div>
                                 </div>
-                              </div>
-                            ) : (
-                              <div className="w-full h-full bg-cover bg-center flex items-end p-6" style={{ backgroundImage: `url(${playingAd.mediaUrl})` }}>
-                                <div className="bg-slate-950/90 p-4 rounded-xl border border-slate-900/80 w-full text-center">
-                                  <p className="text-xs font-bold text-slate-300">IMAGE REWARD PROGRESS</p>
+                              ) : (
+                                <div className="w-full h-full bg-cover bg-center flex items-end p-6" style={{ backgroundImage: `url(${playingAd.mediaUrl})` }}>
+                                  <div className="bg-slate-950/90 p-4 rounded-xl border border-slate-900/80 w-full text-center">
+                                    <p className="text-xs font-bold text-slate-300">IMAGE REWARD PROGRESS</p>
+                                  </div>
                                 </div>
+                              )}
+                              <div className="absolute top-4 right-4 bg-slate-950/90 px-4 py-2 rounded-full text-xs font-mono font-bold text-emerald-400 border border-slate-900">
+                                {adWatchSeconds}s / {playingAd.duration}s
                               </div>
-                            )}
-                            <div className="absolute top-4 right-4 bg-slate-950/90 px-4 py-2 rounded-full text-xs font-mono font-bold text-emerald-400 border border-slate-900">
-                              {adWatchSeconds}s / {playingAd.duration}s
                             </div>
-                          </div>
 
-                          {adFeedback && <div className="text-center text-xs font-bold text-amber-300 py-3 bg-amber-500/10 rounded-2xl border border-amber-500/20">{adFeedback}</div>}
+                            {adFeedback && <div className="text-center text-xs font-bold text-amber-300 py-3 bg-amber-500/10 rounded-2xl border border-amber-500/20">{adFeedback}</div>}
 
-                          <div className="flex gap-4 items-center justify-between">
-                            <button onClick={() => setAdTimerActive(!adTimerActive)} className="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 text-xs font-bold px-5 py-3 rounded-2xl">
-                              {adTimerActive ? "Pause View" : "Resume"}
-                            </button>
-                            <button disabled={!canClaimReward} onClick={claimAdReward} className={`text-xs font-bold px-6 py-3.5 rounded-2xl ${canClaimReward ? "bg-emerald-500 hover:bg-emerald-400 text-slate-950" : "bg-slate-900 text-slate-500 cursor-not-allowed border border-slate-900"}`}>
-                              Claim Reward ₹{playingAd.rewardAmount}
-                            </button>
-                          </div>
-                        </div>
+                            <div className="flex gap-4 items-center justify-between">
+                              <Button variant="outline" onClick={() => setAdTimerActive(!adTimerActive)} className="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 text-xs font-bold px-5 py-3 rounded-2xl h-11">
+                                {adTimerActive ? "Pause View" : "Resume"}
+                              </Button>
+                              <Button disabled={!canClaimReward} onClick={claimAdReward} className={`text-xs font-bold px-6 py-3.5 rounded-2xl h-11 ${canClaimReward ? "bg-emerald-500 hover:bg-emerald-400 text-slate-950" : "bg-slate-900 text-slate-500 cursor-not-allowed border border-slate-900"}`}>
+                                Claim Reward ₹{playingAd.rewardAmount}
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
                       )}
                     </div>
 
                     <div className="flex flex-col gap-10">
-                      <div className="premium-card shadow-xl bg-[#0d121f]">
-                        <h3 className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-3">Advertiser Top Up</h3>
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="text-xs text-slate-405">Balance</p>
-                            <p className="text-2xl font-black text-slate-250">₹{advertiserBalance.toFixed(2)}</p>
-                          </div>
-                          <button onClick={() => setAdvertiserBalance(b => b + 1000)} className="bg-blue-600/10 hover:bg-blue-600/20 text-blue-450 text-xs font-bold px-4 py-2.5 rounded-2xl border border-blue-500/20">+ Top Up</button>
-                        </div>
-                      </div>
+                      <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
+                        <CardHeader className="p-5">
+                          <CardDescription className="text-[10px] text-slate-550 uppercase tracking-widest font-black">Advertiser Balance</CardDescription>
+                          <CardTitle className="text-2xl font-black text-slate-250 mt-1">₹{advertiserBalance.toFixed(2)}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-5 pt-0">
+                          <Button variant="outline" onClick={() => setAdvertiserBalance(b => b + 1000)} className="w-full bg-blue-600/10 hover:bg-blue-600/20 text-blue-450 text-xs font-bold border border-blue-500/20 h-10">+ Top Up Budget</Button>
+                        </CardContent>
+                      </Card>
 
-                      <div className="premium-card flex flex-col gap-5 shadow-xl bg-[#0d121f]">
-                        <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2"><Target className="w-4.5 h-4.5 text-emerald-450" /> Launch Local Ad</h3>
-                        <form onSubmit={handleCreateCampaign} className="flex flex-col gap-4">
-                          <input type="text" placeholder="Campaign name" value={newAdTitle} onChange={(e) => setNewAdTitle(e.target.value)} className="w-full bg-slate-950 border border-slate-900 rounded-2xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none" />
-                          <div className="grid grid-cols-2 gap-4">
-                            <select value={newAdType} onChange={(e) => setNewAdType(e.target.value)} className="w-full bg-slate-950 border border-slate-900 rounded-2xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none">
-                              <option value="video">YouTube Video</option>
-                              <option value="image">Static Image</option>
-                            </select>
-                            <input type="number" placeholder="Budget ₹" value={newAdBudget} onChange={(e) => setNewAdBudget(e.target.value)} className="w-full bg-slate-950 border border-slate-900 rounded-2xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none" />
-                          </div>
-                          <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3.5 rounded-2xl shadow-md">Publish Target Radius Campaign</button>
-                        </form>
-                      </div>
-
-                      <div className="premium-card flex flex-col gap-4 shadow-xl h-[240px] bg-[#0d121f]">
-                        <h4 className="text-[10px] text-slate-500 font-bold uppercase">Ad Pipeline logs</h4>
-                        <div className="flex-grow overflow-y-auto font-mono text-[9px] text-slate-400 bg-slate-950 p-4 rounded-xl border border-slate-900/60 shadow-inner">
-                          {fraudLogs.map((log, idx) => <div key={idx} className="border-b border-slate-905 pb-1.5 last:border-0">{log}</div>)}
-                        </div>
-                      </div>
+                      <Card className="flex flex-col gap-5 shadow-xl bg-[#0d121f] border border-slate-900">
+                        <CardHeader className="p-6">
+                          <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-2"><Target className="w-4.5 h-4.5 text-emerald-455" /> Launch Local Ad</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6 pt-0">
+                          <form onSubmit={handleCreateCampaign} className="flex flex-col gap-4">
+                            <Input type="text" placeholder="Campaign name" value={newAdTitle} onChange={(e) => setNewAdTitle(e.target.value)} className="bg-slate-950 border border-slate-900 h-11 focus-visible:ring-emerald-500" />
+                            <div className="grid grid-cols-2 gap-4">
+                              <select value={newAdType} onChange={(e) => setNewAdType(e.target.value)} className="w-full bg-slate-950 border border-slate-900 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none">
+                                <option value="video">YouTube Video</option>
+                                <option value="image">Static Image</option>
+                              </select>
+                              <Input type="number" placeholder="Budget ₹" value={newAdBudget} onChange={(e) => setNewAdBudget(e.target.value)} className="bg-slate-955 border border-slate-900 h-11 focus-visible:ring-emerald-500" />
+                            </div>
+                            <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3.5 rounded-2xl shadow-md h-11">Publish Campaign</Button>
+                          </form>
+                        </CardContent>
+                      </Card>
                     </div>
                   </div>
                 </div>
@@ -1132,24 +1140,32 @@ export default function ProxiHubDashboard() {
               {activeTab === "wallet" && (
                 <div className="flex-grow flex flex-col gap-10 max-w-3xl mx-auto w-full">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div className="premium-card bg-gradient-to-br from-slate-900 to-purple-950/20 shadow-xl bg-[#0d121f]">
-                      <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Available Wallet Balance</p>
-                      <p className="text-3xl font-black text-emerald-405 mt-3">₹{walletBalance.toFixed(2)}</p>
-                    </div>
+                    <Card className="bg-gradient-to-br from-slate-900 to-purple-950/20 shadow-xl bg-[#0d121f] border border-slate-900">
+                      <CardHeader className="p-6">
+                        <CardDescription className="text-xs text-slate-500 uppercase font-bold tracking-wider">Available Wallet Balance</CardDescription>
+                        <CardTitle className="text-3xl font-black text-emerald-405 mt-3">₹{walletBalance.toFixed(2)}</CardTitle>
+                      </CardHeader>
+                    </Card>
 
-                    <div className="premium-card shadow-xl bg-[#0d121f]">
-                      <h3 className="text-sm font-bold text-slate-200 mb-4">UPI Payout Portal</h3>
-                      <form onSubmit={handleWithdrawal} className="flex flex-col gap-4">
-                        <input type="text" placeholder="UPI ID (e.g. shivam@upi)" value={withdrawUpi} onChange={(e) => setWithdrawUpi(e.target.value)} className="w-full bg-slate-950 border border-slate-900 rounded-2xl px-4 py-3 text-xs text-slate-200 focus:outline-none" />
-                        <input type="number" placeholder="Amount (min ₹100)" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} className="w-full bg-slate-950 border border-slate-900 rounded-2xl px-4 py-3 text-xs text-slate-200 focus:outline-none" />
-                        <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-2xl shadow-md">Process Instant Payout</button>
-                      </form>
-                    </div>
+                    <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
+                      <CardHeader className="p-6">
+                        <CardTitle className="text-sm font-bold text-slate-200">UPI Payout Portal</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-6 pt-0">
+                        <form onSubmit={handleWithdrawal} className="flex flex-col gap-4">
+                          <Input type="text" placeholder="UPI ID (e.g. shivam@upi)" value={withdrawUpi} onChange={(e) => setWithdrawUpi(e.target.value)} className="bg-slate-955 border border-slate-900 h-11" />
+                          <Input type="number" placeholder="Amount (min ₹100)" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} className="bg-slate-955 border border-slate-900 h-11" />
+                          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-2xl shadow-md h-11">Process Instant Payout</Button>
+                        </form>
+                      </CardContent>
+                    </Card>
                   </div>
 
-                  <div className="premium-card shadow-xl bg-[#0d121f]">
-                    <h3 className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-4 pb-2 border-b border-slate-900/60">Earning ledger</h3>
-                    <div className="flex flex-col gap-4">
+                  <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
+                    <CardHeader className="p-6">
+                      <CardTitle className="text-xs text-slate-500 font-bold uppercase tracking-wider">Earning Ledger logs</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-6 pt-0 flex flex-col gap-4">
                       {walletLogs.map((log) => (
                         <div key={log.id} className="p-5 rounded-2xl bg-slate-950/40 border border-slate-900 flex items-center justify-between text-xs hover:border-slate-800 transition-all">
                           <div className="flex items-center gap-4">
@@ -1159,11 +1175,11 @@ export default function ProxiHubDashboard() {
                               <p className="text-[10px] text-slate-500 mt-1">{log.time}</p>
                             </div>
                           </div>
-                          <span className={`font-black ${log.type === "ad_reward" ? "text-emerald-450" : "text-amber-455"}`}>{log.type === "ad_reward" ? `+ ₹${log.amount.toFixed(2)}` : `- ₹${log.amount.toFixed(2)}`}</span>
+                          <span className={`font-black ${log.type === "ad_reward" ? "text-emerald-450" : "text-amber-450"}`}>{log.type === "ad_reward" ? `+ ₹${log.amount.toFixed(2)}` : `- ₹${log.amount.toFixed(2)}`}</span>
                         </div>
                       ))}
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 </div>
               )}
 
@@ -1176,7 +1192,6 @@ export default function ProxiHubDashboard() {
           {currentRole === "vendor" && (
             <div className="flex-grow flex flex-col gap-10 max-w-4xl mx-auto w-full">
               
-              {/* Header Selector */}
               <div className="glassmorphism p-6 rounded-3xl border-slate-900 bg-gradient-to-r from-slate-900 to-amber-950/15 shadow-md flex justify-between items-center">
                 <div>
                   <h2 className="text-lg font-bold text-amber-400 flex items-center gap-2">
@@ -1187,50 +1202,43 @@ export default function ProxiHubDashboard() {
                 </div>
                 
                 <div className="flex gap-3">
-                  <button 
+                  <Button 
+                    variant={selectedVendorId === 1 ? "default" : "outline"}
                     onClick={() => { setSelectedVendorId(1); setIsCartRouteActive(false); }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                      selectedVendorId === 1 ? "bg-amber-500 text-slate-950 border-amber-500" : "bg-slate-950 text-slate-400 border-slate-900"
-                    }`}
+                    className="text-xs font-bold px-4 py-2"
                   >
-                    Stationary (Saravana Grocery)
-                  </button>
-                  <button 
+                    Stationary
+                  </Button>
+                  <Button 
+                    variant={selectedVendorId === 2 ? "default" : "outline"}
                     onClick={() => { setSelectedVendorId(2); }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                      selectedVendorId === 2 ? "bg-amber-500 text-slate-950 border-amber-500" : "bg-slate-950 text-slate-400 border-slate-900"
-                    }`}
+                    className="text-xs font-bold px-4 py-2"
                   >
-                    Mobile Cart (Ooty Veggies)
-                  </button>
+                    Mobile Cart
+                  </Button>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 
-                {/* Storefront Configurations & Quick Goods Pricing */}
-                <div className="premium-card flex flex-col gap-6 bg-[#0d121f] shadow-xl">
-                  <h3 className="text-sm font-bold text-slate-200 border-b border-slate-900 pb-3">
-                    🏪 Shop Profile & Demand Price Index
-                  </h3>
-
-                  <div className="flex flex-col gap-4">
+                <Card className="flex flex-col gap-6 bg-[#0d121f] shadow-xl border border-slate-900 p-6">
+                  <CardHeader className="p-0 pb-3 border-b border-slate-900">
+                    <CardTitle className="text-sm font-bold text-slate-205">Storefront Pricing Index</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-0 flex flex-col gap-4">
                     <div>
-                      <p className="text-[10px] text-slate-550 uppercase font-black">Business Info</p>
+                      <p className="text-[10px] text-slate-550 uppercase font-black">Business Name</p>
                       <p className="text-sm font-bold text-slate-200 mt-1">
-                        {selectedVendorId === 1 ? "Saravana Grocery Store (Anna Nagar)" : "Ooty Veggie Cart (Mobile Operator)"}
+                        {selectedVendorId === 1 ? "Saravana Grocery Store" : "Ooty Veggie Cart"}
                       </p>
                     </div>
 
-                    {/* Quick Top Goods List */}
-                    <div className="flex flex-col gap-3">
-                      <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
-                        Top Demand Goods (Price Range Index)
-                      </p>
+                    <div className="flex flex-col gap-3 mt-4">
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Top Demanded Goods & Pricing Estimate</p>
                       
                       <div className="flex flex-col gap-2">
                         {vendorDemandGoods.map((good) => (
-                          <div key={good.id} className="p-3 bg-slate-950 rounded-xl border border-slate-900/60 flex justify-between items-center text-xs">
+                          <div key={good.id} className="p-3 bg-slate-950 rounded-xl border border-slate-900 flex justify-between items-center text-xs">
                             <span className="font-semibold text-slate-200">{good.name}</span>
                             <span className="font-bold text-emerald-450">{good.price}</span>
                           </div>
@@ -1244,172 +1252,108 @@ export default function ProxiHubDashboard() {
                         setNewGoodName("");
                         setNewGoodPrice("");
                       }} className="grid grid-cols-2 gap-3 mt-2">
-                        <input type="text" placeholder="e.g. Milk 1L" value={newGoodName} onChange={(e) => setNewGoodName(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-lg p-2 text-xs text-slate-250 focus:outline-none" />
+                        <Input type="text" placeholder="e.g. Milk 1L" value={newGoodName} onChange={(e) => setNewGoodName(e.target.value)} className="bg-slate-950 border border-slate-900 h-10 text-xs" />
                         <div className="flex gap-2">
-                          <input type="text" placeholder="₹ Price" value={newGoodPrice} onChange={(e) => setNewGoodPrice(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-lg p-2 text-xs text-slate-250 w-20 focus:outline-none" />
-                          <button type="submit" className="bg-amber-500 text-slate-955 text-xs font-black p-2 rounded-lg flex-grow hover:bg-amber-400">+</button>
+                          <Input type="text" placeholder="₹ Price" value={newGoodPrice} onChange={(e) => setNewGoodPrice(e.target.value)} className="bg-slate-950 border border-slate-900 h-10 text-xs w-20" />
+                          <Button type="submit" className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black h-10 flex-grow">+</Button>
                         </div>
                       </form>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
 
-                {/* Stationary Specific: Group-buy Pool & QR verification */}
                 {selectedVendorId === 1 ? (
                   <div className="flex flex-col gap-10">
-                    
-                    {/* Collective Pool Manager (Store initiates Group-buy Pools) */}
-                    <div className="premium-card bg-[#0d121f] shadow-xl flex flex-col gap-4">
-                      <h3 className="text-sm font-bold text-cyan-400 flex items-center gap-2 pb-3 border-b border-slate-900">
-                        <Users className="w-4.5 h-4.5 text-cyan-405" />
-                        <span>Store-Initiated Group-buy Pools</span>
-                      </h3>
+                    <Card className="bg-[#0d121f] shadow-xl border border-slate-900 p-6 flex flex-col gap-4">
+                      <CardHeader className="p-0 pb-3 border-b border-slate-900">
+                        <CardTitle className="text-sm font-bold text-cyan-400 flex items-center gap-2"><Users className="w-4.5 h-4.5" /> Start Group-buy Pool</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0">
+                        <form onSubmit={(e) => {
+                          e.preventDefault();
+                          if (!newPoolTitle || !newPoolItem || !newPoolPrice || !newPoolOriginalPrice) return;
+                          
+                          const newPool = {
+                            id: Date.now(),
+                            storeName: "Saravana Grocery Store",
+                            title: newPoolTitle,
+                            item: newPoolItem,
+                            price: parseFloat(newPoolPrice),
+                            originalPrice: parseFloat(newPoolOriginalPrice),
+                            discount: `${Math.floor((1 - parseFloat(newPoolPrice)/parseFloat(newPoolOriginalPrice)) * 100)}% OFF`,
+                            joined: 0,
+                            target: parseInt(newPoolTarget),
+                            deadline: "24 hours"
+                          };
 
-                      <form onSubmit={(e) => {
-                        e.preventDefault();
-                        if (!newPoolTitle || !newPoolItem || !newPoolPrice || !newPoolOriginalPrice) return;
-                        
-                        const newPool = {
-                          id: Date.now(),
-                          storeName: "Saravana Grocery Store",
-                          title: newPoolTitle,
-                          item: newPoolItem,
-                          price: parseFloat(newPoolPrice),
-                          originalPrice: parseFloat(newPoolOriginalPrice),
-                          discount: `${Math.floor((1 - parseFloat(newPoolPrice)/parseFloat(newPoolOriginalPrice)) * 100)}% OFF`,
-                          joined: 0,
-                          target: parseInt(newPoolTarget),
-                          deadline: "24 hours"
-                        };
+                          setCollectives(prev => [newPool, ...prev]);
+                          alert(`Neighborhood group-buy pool "${newPoolTitle}" started and published!`);
+                          setNewPoolTitle("");
+                          setNewPoolItem("");
+                          setNewPoolPrice("");
+                          setNewPoolOriginalPrice("");
+                        }} className="flex flex-col gap-3">
+                          <Input type="text" placeholder="Pool title (e.g. Block C Sunflower Oil Pool)" value={newPoolTitle} onChange={(e) => setNewPoolTitle(e.target.value)} className="bg-slate-950 border border-slate-900 h-10 text-xs" />
+                          <Input type="text" placeholder="Item name (e.g. Gold Winner 5L Can)" value={newPoolItem} onChange={(e) => setNewPoolItem(e.target.value)} className="bg-slate-950 border border-slate-900 h-10 text-xs" />
+                          <div className="grid grid-cols-2 gap-3">
+                            <Input type="number" placeholder="Discounted Price (₹)" value={newPoolPrice} onChange={(e) => setNewPoolPrice(e.target.value)} className="bg-slate-950 border border-slate-900 h-10 text-xs" />
+                            <Input type="number" placeholder="Retail Price (₹)" value={newPoolOriginalPrice} onChange={(e) => setNewPoolOriginalPrice(e.target.value)} className="bg-slate-950 border border-slate-900 h-10 text-xs" />
+                          </div>
+                          <Button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs h-10">
+                            Launch Neighborhood Pool
+                          </Button>
+                        </form>
+                      </CardContent>
+                    </Card>
 
-                        setCollectives(prev => [newPool, ...prev]);
-                        alert(`Neighborhood group-buy pool "${newPoolTitle}" started and published!`);
-                        setNewPoolTitle("");
-                        setNewPoolItem("");
-                        setNewPoolPrice("");
-                        setNewPoolOriginalPrice("");
-                      }} className="flex flex-col gap-3">
-                        <input type="text" placeholder="Pool title (e.g. Block C Sunflower Oil Pool)" value={newPoolTitle} onChange={(e) => setNewPoolTitle(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none" />
-                        <input type="text" placeholder="Item name (e.g. Gold Winner 5L Can)" value={newPoolItem} onChange={(e) => setNewPoolItem(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none" />
-                        <div className="grid grid-cols-2 gap-3">
-                          <input type="number" placeholder="Discounted Price (₹)" value={newPoolPrice} onChange={(e) => setNewPoolPrice(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none" />
-                          <input type="number" placeholder="Retail Price (₹)" value={newPoolOriginalPrice} onChange={(e) => setNewPoolOriginalPrice(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none" />
+                    <Card className="bg-[#0d121f] shadow-xl border border-slate-900 p-6 flex flex-col gap-4">
+                      <CardHeader className="p-0 pb-3 border-b border-slate-900">
+                        <CardTitle className="text-sm font-bold text-slate-202 flex items-center gap-2"><QrCode className="w-4.5 h-4.5" /> Coupon Scanner console</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0 flex flex-col gap-3">
+                        <div className="flex gap-3">
+                          <Input type="text" placeholder="Coupon verification code" value={qrCouponInput} onChange={(e) => setQrCouponInput(e.target.value)} className="bg-slate-950 border border-slate-900 h-10 text-xs" />
+                          <Button onClick={() => { if(!qrCouponInput) return; setQrScanFeedback("Coupon code matched. Status updated COMPLETED."); setQrCouponInput(""); }} className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black h-10 text-xs px-4">Verify</Button>
                         </div>
-                        <button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs py-2.5 rounded-xl transition-all shadow-md">
-                          Launch Neighborhood Pool
-                        </button>
-                      </form>
-                    </div>
-
-                    {/* QR Scanner / Coupon Verification Console */}
-                    <div className="premium-card bg-[#0d121f] shadow-xl flex flex-col gap-4 border border-slate-800">
-                      <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2 pb-3 border-b border-slate-900">
-                        <QrCode className="w-4.5 h-4.5 text-amber-500" />
-                        <span>Coupon Scanner Console</span>
-                      </h3>
-
-                      <p className="text-[10px] text-slate-500 font-semibold leading-relaxed font-sans">
-                        Verify client claimed Gold Rush coupons by entering the code or scanning QR code fallback.
-                      </p>
-
-                      <div className="flex gap-3">
-                        <input 
-                          type="text" 
-                          placeholder="Enter Claim code (e.g. AMMA-SAMOSA-8)"
-                          value={qrCouponInput}
-                          onChange={(e) => setQrCouponInput(e.target.value)}
-                          className="bg-slate-950 border border-slate-900 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none flex-grow"
-                        />
-                        <button 
-                          onClick={() => {
-                            if (!qrCouponInput) return;
-                            setQrScanFeedback("Scanning code... ");
-                            setTimeout(() => {
-                              setQrScanFeedback("Coupon Verified successfully! Claim marked as COMPLETED.");
-                              setQrCouponInput("");
-                            }, 1200);
-                          }}
-                          className="bg-amber-500 text-slate-950 text-xs font-black px-4 py-2 rounded-xl"
-                        >
-                          Verify Code
-                        </button>
-                      </div>
-                      
-                      {qrScanFeedback && (
-                        <p className="text-xs text-emerald-400 font-bold bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20 mt-1">
-                          {qrScanFeedback}
-                        </p>
-                      )}
-                    </div>
-
+                        {qrScanFeedback && <p className="text-xs text-emerald-450 bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20">{qrScanFeedback}</p>}
+                      </CardContent>
+                    </Card>
                   </div>
                 ) : (
-                  // Mobile Cart Specific Features
                   <div className="flex flex-col gap-10">
-                    
-                    {/* Live GPS Route Tracker */}
-                    <div className="premium-card bg-[#0d121f] shadow-xl border border-purple-500/20 flex flex-col gap-4">
-                      <h3 className="text-sm font-bold text-slate-205 flex items-center gap-2 pb-3 border-b border-slate-900">
-                        <Truck className="w-4.5 h-4.5 text-purple-400" />
-                        <span>Live GPS Route Broadcaster</span>
-                      </h3>
+                    <Card className="bg-[#0d121f] shadow-xl border border-purple-500/20 p-6 flex flex-col gap-4">
+                      <CardHeader className="p-0 pb-3 border-b border-slate-900">
+                        <CardTitle className="text-sm font-bold text-slate-205 flex items-center gap-2"><Truck className="w-4.5 h-4.5" /> Route Broadcaster</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0">
+                        <div className="grid grid-cols-2 gap-3">
+                          <Button onClick={() => { setIsCartRouteActive(true); }} className="bg-purple-650 hover:bg-purple-550 text-white font-bold h-11">Start Route</Button>
+                          <Button onClick={() => { setIsCartRouteActive(false); }} variant="outline" className="h-11">Pause</Button>
+                        </div>
+                      </CardContent>
+                    </Card>
 
-                      <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                        Broadcast live movement path. Your coordinate trace draws on geofence maps automatically.
-                      </p>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
+                    <Card className="bg-[#0d121f] shadow-xl border border-slate-900 p-6 flex flex-col gap-4">
+                      <CardHeader className="p-0 pb-3 border-b border-slate-900">
+                        <CardTitle className="text-sm font-bold text-slate-202 flex items-center gap-2"><Radio className="w-4.5 h-4.5 text-pink-500" /> Voice broadcast announcement</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0">
+                        <Button 
                           onClick={() => {
-                            setIsCartRouteActive(true);
-                            setVendors(prev => prev.map(v => v.id === 2 ? { ...v, status: "ON ROUTE (Active)" } : v));
+                            if (isRecordingAnnouncement) {
+                              setIsRecordingAnnouncement(false);
+                              const textPrompt = prompt("Speech message:") || "Cart arrived near RWA Block C!";
+                              setSpeechTranscript(`[ANNOUNCEMENT]: ${textPrompt}`);
+                            } else {
+                              setIsRecordingAnnouncement(true);
+                            }
                           }}
-                          className="bg-purple-650 hover:bg-purple-550 text-white font-bold text-xs py-3 rounded-xl transition-all shadow-md"
+                          className={`w-full font-bold text-xs h-11 ${isRecordingAnnouncement ? "bg-red-650 text-white animate-pulse" : "bg-pink-650 hover:bg-pink-550 text-white"}`}
                         >
-                          Start Route
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsCartRouteActive(false);
-                            setVendors(prev => prev.map(v => v.id === 2 ? { ...v, status: "Route Paused" } : v));
-                          }}
-                          className="bg-slate-900 border border-slate-800 text-slate-300 font-bold text-xs py-3 rounded-xl hover:bg-slate-800"
-                        >
-                          Pause
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Voice Announcement Broadcaster */}
-                    <div className="premium-card bg-[#0d121f] shadow-xl flex flex-col gap-4">
-                      <h3 className="text-sm font-bold text-slate-205 flex items-center gap-2 pb-3 border-b border-slate-900">
-                        <Radio className="w-4.5 h-4.5 text-pink-500" />
-                        <span>Vernacular Voice announcements</span>
-                      </h3>
-
-                      <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                        Record and broadcast a short voice clip to nearby customers within 500 meters.
-                      </p>
-
-                      <button
-                        onClick={() => {
-                          if (isRecordingAnnouncement) {
-                            setIsRecordingAnnouncement(false);
-                            const textPrompt = prompt("Confirm speech transcript message:") || "Fresh vegetables loaded near Shanti Colony Blocks!";
-                            setVoiceAnnouncementsList(prev => [textPrompt, ...prev]);
-                            setSpeechTranscript(`[MOBILE ANNOUNCEMENT]: ${textPrompt}`);
-                          } else {
-                            setIsRecordingAnnouncement(true);
-                          }
-                        }}
-                        className={`w-full font-bold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
-                          isRecordingAnnouncement ? "bg-red-650 text-white animate-pulse" : "bg-pink-600 hover:bg-pink-500 text-white shadow-lg shadow-pink-500/10"
-                        }`}
-                      >
-                        {isRecordingAnnouncement ? "Recording... Click to Stop" : "Record Voice Announcement"}
-                      </button>
-                    </div>
-
+                          {isRecordingAnnouncement ? "Recording..." : "Record Broadcast Announcement"}
+                        </Button>
+                      </CardContent>
+                    </Card>
                   </div>
                 )}
 
@@ -1430,13 +1374,11 @@ export default function ProxiHubDashboard() {
                     <Wrench className="w-5.5 h-5.5" />
                     <span>Service Contractor Portal</span>
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">Manage diagnostic base rates, skills checklist, and respond to incoming client job requests.</p>
                 </div>
                 
-                {/* Active Availability Switcher */}
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-500 uppercase tracking-widest font-black">Contractor Status:</span>
-                  <button 
+                  <Button 
+                    variant={providerOnline ? "default" : "outline"}
                     onClick={() => {
                       setProviderOnline(!providerOnline);
                       setVendors(prev => prev.map(vendor => {
@@ -1446,115 +1388,69 @@ export default function ProxiHubDashboard() {
                         return vendor;
                       }));
                     }}
-                    className={`px-5 py-2.5 rounded-2xl text-xs font-black transition-all border flex items-center gap-2 uppercase tracking-wide ${
-                      providerOnline 
-                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/25" 
-                        : "bg-red-500/10 text-red-400 border-red-500/25"
+                    className={`px-5 py-2.5 text-xs font-black uppercase tracking-wide h-10 border ${
+                      providerOnline ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-450 hover:bg-emerald-500/20" : ""
                     }`}
                   >
-                    <Power className="w-3.5 h-3.5" />
-                    <span>{providerOnline ? "Online (Available)" : "Offline (Hidden)"}</span>
-                  </button>
+                    <Power className="w-3.5 h-3.5 mr-2" />
+                    <span>{providerOnline ? "Online" : "Offline"}</span>
+                  </Button>
                 </div>
               </div>
 
-              {/* Service Grid columns */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 
-                {/* Skills & Pricing */}
-                <div className="premium-card flex flex-col gap-6 bg-[#0d121f] shadow-xl">
-                  <h3 className="text-sm font-bold text-slate-200 border-b border-slate-900 pb-3 flex justify-between items-center">
-                    <span>🔧 Service Rate Sheet & Credentials</span>
-                    <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-1 font-bold">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> verified
-                    </span>
-                  </h3>
-
-                  <div className="flex flex-col gap-4">
+                <Card className="flex flex-col gap-6 bg-[#0d121f] shadow-xl border border-slate-900 p-6">
+                  <CardHeader className="p-0 pb-3 border-b border-slate-900 flex flex-row justify-between items-center">
+                    <CardTitle className="text-sm font-bold text-slate-202">Service details</CardTitle>
+                    <Badge variant="secondary" className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Verified</Badge>
+                  </CardHeader>
+                  <CardContent className="p-0 flex flex-col gap-4">
                     <div>
-                      <label className="text-[9px] text-slate-550 block font-black uppercase tracking-widest mb-1.5">Diagnostic Call Fee (₹)</label>
-                      <input 
+                      <Label className="text-[9px] text-slate-550 block font-black uppercase tracking-widest mb-1.5">Diagnostic Callout Fee (₹)</Label>
+                      <Input 
                         type="number" 
                         value={providerDiagnosticRate}
                         onChange={(e) => {
                           setProviderDiagnosticRate(e.target.value);
                           setVendors(prev => prev.map(v => v.id === 3 ? { ...v, priceRange: `₹${e.target.value} Base Rate` } : v));
                         }}
-                        className="bg-slate-950 border border-slate-900 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none w-28 font-bold"
+                        className="bg-slate-950 border border-slate-900 h-10 text-xs w-28 font-bold"
                       />
                     </div>
+                  </CardContent>
+                </Card>
 
-                    <div className="mt-4 pt-4 border-t border-slate-900 flex flex-col gap-3">
-                      <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Registered Skills</p>
-                      
-                      <div className="flex flex-col gap-2">
-                        {providerSkills.map((skill, idx) => (
-                          <div key={idx} className="p-3 bg-slate-950 rounded-xl border border-slate-900 flex justify-between items-center text-xs text-slate-300 font-semibold">
-                            <span>{skill}</span>
-                            <span className="text-cyan-405">✓</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Add skill form */}
-                      <form onSubmit={(e) => {
-                        e.preventDefault();
-                        if (!newSkillText) return;
-                        setProviderSkills(prev => [...prev, newSkillText]);
-                        setNewSkillText("");
-                      }} className="flex gap-3 mt-2">
-                        <input 
-                          type="text" 
-                          placeholder="e.g. AC Gas refilling" 
-                          value={newSkillText}
-                          onChange={(e) => setNewSkillText(e.target.value)}
-                          className="bg-slate-950 border border-slate-900 rounded-xl px-4 py-2 text-xs text-slate-250 focus:outline-none flex-grow"
-                        />
-                        <button type="submit" className="bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-black px-4 py-2 rounded-xl">+</button>
-                      </form>
-                    </div>
-
-                  </div>
-                </div>
-
-                {/* Incoming Request Radar */}
-                <div className="premium-card flex flex-col gap-5 bg-[#0d121f] shadow-xl">
-                  <h3 className="text-sm font-bold text-slate-200 border-b border-slate-900 pb-3 flex justify-between items-center">
-                    <span>Incoming request radar</span>
-                    <span className="text-[9px] text-slate-550 font-bold font-mono">5km fence</span>
-                  </h3>
-
-                  <div className="flex-grow flex flex-col gap-4 overflow-y-auto">
+                <Card className="flex flex-col gap-5 bg-[#0d121f] shadow-xl border border-slate-900 p-6">
+                  <CardHeader className="p-0 pb-3 border-b border-slate-900">
+                    <CardTitle className="text-sm font-bold text-slate-202 flex items-center justify-between">
+                      <span>Dispatch Request Radar</span>
+                      <span className="text-[9px] text-slate-500 font-mono">5km radius</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-0 flex flex-col gap-4 max-h-[360px] overflow-y-auto pr-1">
                     {jobs.map((job) => (
                       <div key={job.id} className="p-4 rounded-xl bg-slate-955 border border-slate-900 flex flex-col gap-2.5">
                         <div className="flex justify-between items-start">
                           <div>
                             <h4 className="text-xs font-black text-slate-300">{job.client}</h4>
-                            <p className="text-[10px] text-slate-550 font-semibold">{job.address} • {job.distance}</p>
+                            <p className="text-[10px] text-slate-500 font-semibold">{job.address} • {job.distance}</p>
                           </div>
                           <span className="text-[9px] text-slate-550 font-bold">{job.time}</span>
                         </div>
-
                         <p className="text-xs text-slate-400 leading-relaxed font-semibold bg-slate-950 p-2.5 rounded-lg border border-slate-900">
                           Job: {job.serviceNeeded}
                         </p>
-                        
-                        {job.description && (
-                          <p className="text-[10px] text-slate-500 leading-relaxed font-semibold">
-                            Note: {job.description}
-                          </p>
-                        )}
-
                         {job.quoteStatus === "pending" ? (
                           <div className="flex gap-2 mt-1">
-                            <input 
+                            <Input 
                               type="number" 
                               placeholder="Estimate quote ₹"
                               value={quoteInputAmount}
                               onChange={(e) => setQuoteInputAmount(e.target.value)}
-                              className="bg-slate-950 border border-slate-900 rounded-lg p-2 text-[10px] text-slate-200 w-32 focus:outline-none"
+                              className="bg-slate-950 border border-slate-900 h-10 text-[10px] w-32 focus-visible:ring-cyan-600"
                             />
-                            <button
+                            <Button
                               onClick={() => {
                                 if (!quoteInputAmount) return;
                                 setJobs(prev => 
@@ -1563,10 +1459,10 @@ export default function ProxiHubDashboard() {
                                 alert(`Quote of ₹${quoteInputAmount} sent successfully to ${job.client}!`);
                                 setQuoteInputAmount("");
                               }}
-                              className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-[10px] uppercase tracking-wider p-2 rounded-lg flex-grow"
+                              className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-[10px] h-10 flex-grow"
                             >
                               Send Quote
-                            </button>
+                            </Button>
                           </div>
                         ) : (
                           <span className="text-[10px] text-emerald-450 font-bold uppercase tracking-wider flex items-center gap-1">
@@ -1575,8 +1471,8 @@ export default function ProxiHubDashboard() {
                         )}
                       </div>
                     ))}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
 
               </div>
 
