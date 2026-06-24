@@ -6,6 +6,7 @@ import {
   Mic,
   MicOff,
   Volume2,
+  Users,
   MessageSquare,
   Zap,
   DollarSign,
@@ -30,7 +31,13 @@ import {
   Check,
   Power,
   Wrench,
-  Sparkles
+  Sparkles,
+  QrCode,
+  Radio,
+  BarChart,
+  Percent,
+  CheckSquare,
+  ShieldCheck
 } from "lucide-react";
 
 // Mock Database initial states
@@ -41,6 +48,11 @@ const INITIAL_VENDORS = [
   { id: 4, name: "Amma's Tiffin Center", type: "stationary", category: "Food", lat: 13.044, lng: 80.248, distance: 1.1, status: "Open", rating: 4.7, items: ["Idly", "Dosa", "Vada", "Sambar"], priceRange: "₹10 - ₹60" },
   { id: 5, name: "Velan Flower Stall", type: "mobile", category: "Flowers", lat: 13.053, lng: 80.258, distance: 3.2, status: "On Route", rating: 4.2, items: ["Jasmine", "Rose garlands"], priceRange: "₹20 - ₹150" },
   { id: 6, name: "Express Plumbers", type: "service", category: "Plumbing", lat: 13.061, lng: 80.265, distance: 5.4, status: "Available", rating: 4.4, items: ["Leak Fix", "Pipe Install"], priceRange: "₹150 Base Rate" }
+];
+
+const INITIAL_COLLECTIVES = [
+  { id: 101, storeName: "Saravana Grocery Store", title: "Block B Ponni Rice Pool", item: "Royal Ponni Rice 10kg", price: 340, originalPrice: 425, discount: "20% OFF", joined: 8, target: 10, deadline: "2h 45m" },
+  { id: 102, storeName: "Amma's Tiffin Center", title: "Sunday Catering Combo Club", item: "Tiffin Combo for 5 People", price: 220, originalPrice: 280, discount: "21% OFF", joined: 3, target: 5, deadline: "5h 12m" }
 ];
 
 const INITIAL_HUB_POSTS = [
@@ -61,9 +73,15 @@ const INITIAL_ADS = [
 ];
 
 const INITIAL_JOBS = [
-  { id: "job-1", client: "Vikram R.", address: "Anna Nagar, Block H", serviceNeeded: "Kitchen Faucet Leakage Fix", time: "10 mins ago", distance: "1.2 km", quoteStatus: "pending" },
-  { id: "job-2", client: "Srinivasan K.", address: "Shanti Colony, Flat 4B", serviceNeeded: "Living Room Fan Regulator Replacement", time: "30 mins ago", distance: "2.4 km", quoteStatus: "pending" }
+  { id: "job-1", client: "Vikram R.", address: "Anna Nagar, Block H", serviceNeeded: "Kitchen Faucet Leakage Fix", time: "10 mins ago", distance: "1.2 km", audioNote: true, description: "Water leaking heavily from the handle. Photo attached.", quoteStatus: "pending" },
+  { id: "job-2", client: "Srinivasan K.", address: "Shanti Colony, Flat 4B", serviceNeeded: "Living Room Fan Regulator Replacement", time: "30 mins ago", distance: "2.4 km", audioNote: false, description: "Fan stays on full speed. Need regular service.", quoteStatus: "pending" }
 ];
+
+const formatTime = (seconds: number) => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}m ${secs < 10 ? "0" : ""}${secs}s`;
+};
 
 export default function ProxiHubDashboard() {
   // Navigation / Role Switcher States
@@ -83,6 +101,7 @@ export default function ProxiHubDashboard() {
 
   // Live Database States (Synced across roles!)
   const [vendors, setVendors] = useState(INITIAL_VENDORS);
+  const [collectives, setCollectives] = useState(INITIAL_COLLECTIVES);
   const [hubPosts, setHubPosts] = useState(INITIAL_HUB_POSTS);
   const [goldRushes, setGoldRushes] = useState(INITIAL_GOLD_RUSHES);
   const [ads, setAds] = useState(INITIAL_ADS);
@@ -91,6 +110,7 @@ export default function ProxiHubDashboard() {
   // Vendor Portal State
   const [selectedVendorId, setSelectedVendorId] = useState(1); // Default Saravana Grocery
   const [isCartRouteActive, setIsCartRouteActive] = useState(false);
+  const [routeCoordinates, setRouteCoordinates] = useState<{lat: number, lng: number}[]>([]);
   const [vendorDemandGoods, setVendorDemandGoods] = useState([
     { id: 1, name: "Fresh Cow Milk 1L", price: "₹65" },
     { id: 2, name: "Ponni Rice 5kg", price: "₹340" },
@@ -101,6 +121,23 @@ export default function ProxiHubDashboard() {
   const [newRushDealName, setNewRushDealName] = useState("");
   const [newRushDuration, setNewRushDuration] = useState("30");
   const [newRushClaims, setNewRushClaims] = useState("15");
+
+  // Collective Pool Creator State (Store Initiates Pool)
+  const [newPoolTitle, setNewPoolTitle] = useState("");
+  const [newPoolItem, setNewPoolItem] = useState("");
+  const [newPoolPrice, setNewPoolPrice] = useState("");
+  const [newPoolOriginalPrice, setNewPoolOriginalPrice] = useState("");
+  const [newPoolTarget, setNewPoolTarget] = useState("10");
+
+  // QR scanner coupon validator
+  const [qrCouponInput, setQrCouponInput] = useState("");
+  const [qrScanFeedback, setQrScanFeedback] = useState("");
+
+  // Voice Note Broadcast State (Mobile Cart)
+  const [isRecordingAnnouncement, setIsRecordingAnnouncement] = useState(false);
+  const [voiceAnnouncementsList, setVoiceAnnouncementsList] = useState<string[]>([
+    "Fresh organic vegetables loaded near Shanti Junction!",
+  ]);
 
   // Service Provider State
   const [providerOnline, setProviderOnline] = useState(true);
@@ -190,6 +227,9 @@ export default function ProxiHubDashboard() {
             if (vendor.id === 2) {
               const newLat = 13.048 + Math.sin(angle) * 0.004;
               const newLng = 80.252 + Math.cos(angle) * 0.004;
+              
+              // Record route coordinate trail
+              setRouteCoordinates(trail => [...trail.slice(-10), {lat: newLat, lng: newLng}]);
               return { ...vendor, lat: newLat, lng: newLng };
             }
             return vendor;
@@ -412,12 +452,6 @@ export default function ProxiHubDashboard() {
     setNewAdBudget("");
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}m ${secs < 10 ? "0" : ""}${secs}s`;
-  };
-
   return (
     <div className="app-container min-h-screen text-slate-100 flex flex-col lg:flex-row bg-[#05070c]">
       
@@ -478,7 +512,7 @@ export default function ProxiHubDashboard() {
           <div className="border-t border-slate-900/80 my-2"></div>
 
           {/* Customer Sub-tabs (Only show when customer role is active) */}
-          {currentRole === "customer" ? (
+          {currentRole === "customer" && (
             <div className="flex flex-col gap-1.5">
               <p className="text-[9px] text-slate-550 font-black uppercase tracking-wider pl-2 mb-1">Customer Tabs</p>
               
@@ -490,6 +524,16 @@ export default function ProxiHubDashboard() {
               >
                 <MapIcon className="w-3.5 h-3.5" />
                 <span>5km Map Discovery</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("pools")}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  activeTab === "pools" ? "bg-slate-800 text-white" : "text-slate-450 hover:text-slate-200"
+                }`}
+              >
+                <Users className="w-3.5 h-3.5" />
+                <span>Collective Pools</span>
               </button>
 
               <button
@@ -532,11 +576,6 @@ export default function ProxiHubDashboard() {
                 <span>My Wallet</span>
               </button>
             </div>
-          ) : (
-            <div className="p-4 rounded-xl bg-slate-900/20 border border-slate-900 text-center text-xs text-slate-500">
-              <Sparkles className="w-5 h-5 mx-auto mb-2 text-slate-650" />
-              <span>You are viewing the business dashboard page.</span>
-            </div>
           )}
 
         </div>
@@ -545,7 +584,7 @@ export default function ProxiHubDashboard() {
         <div className="mt-8 p-5 rounded-2xl bg-slate-950 border border-slate-900/80 flex items-center justify-between shadow-2xl">
           <div>
             <p className="text-[10px] text-slate-600 uppercase tracking-widest font-black">My Balance</p>
-            <p className="text-xl font-bold text-emerald-455 mt-1">₹{walletBalance.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-emerald-455 mt-1">₹{walletBalance.toFixed(2)}</p>
           </div>
           <div className="text-right">
             <p className="text-[10px] text-slate-600 uppercase tracking-widest font-black">Limits</p>
@@ -657,6 +696,23 @@ export default function ProxiHubDashboard() {
                           </span>
                         </div>
 
+                        {/* Animated simulated Cart route coordinate line trace overlay */}
+                        {isCartRouteActive && routeCoordinates.length > 1 && (
+                          <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-60">
+                            <polyline
+                              fill="none"
+                              stroke="#8b5cf6"
+                              strokeWidth="3"
+                              strokeDasharray="5,5"
+                              points={routeCoordinates.map(coord => {
+                                const x = (coord.lng - userLng) * 3500 + 400; // rough canvas mapping offsets
+                                const y = 250 - (coord.lat - userLat) * 3500;
+                                return `${x},${y}`;
+                              }).join(" ")}
+                            />
+                          </svg>
+                        )}
+
                         {/* Dynamic Vendor Map Pins */}
                         {filteredVendors.map((v) => {
                           const xOffset = (v.lng - userLng) * 3500;
@@ -687,7 +743,7 @@ export default function ProxiHubDashboard() {
                                 <p className="font-bold text-slate-200">{v.name}</p>
                                 <p className="text-slate-400 capitalize">{v.category} • {v.distance}km</p>
                                 <p className="text-slate-300 font-medium">Est. Price: {v.priceRange}</p>
-                                <p className="text-emerald-450 font-bold mt-1 uppercase tracking-wider text-[8px]">{v.status}</p>
+                                <p className="text-emerald-455 font-bold mt-1 uppercase tracking-wider text-[8px]">{v.status}</p>
                               </div>
                             </div>
                           );
@@ -737,7 +793,7 @@ export default function ProxiHubDashboard() {
                             
                             <div className="flex flex-wrap gap-1.5 mt-0.5">
                               {vendor.items.slice(0, 3).map((item, idx) => (
-                                <span key={idx} className="text-[9px] bg-slate-950 text-slate-450 px-2.5 py-1 rounded-lg border border-slate-900/60 font-bold uppercase tracking-wider">
+                                <span key={idx} className="text-[9px] bg-slate-950 text-slate-455 px-2.5 py-1 rounded-lg border border-slate-900/60 font-bold uppercase tracking-wider">
                                   {item}
                                 </span>
                               ))}
@@ -751,6 +807,76 @@ export default function ProxiHubDashboard() {
                         ))}
                       </div>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Collective Pools Sub-tab */}
+              {activeTab === "pools" && (
+                <div className="flex-grow flex flex-col gap-10">
+                  <div className="glassmorphism p-8 rounded-3xl border-slate-900 bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/20 shadow-md">
+                    <h2 className="text-lg font-bold text-cyan-405 flex items-center gap-2">
+                      <Users className="w-5.5 h-5.5" />
+                      <span>Neighborhood Collective Pools</span>
+                    </h2>
+                    <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
+                      Join active bulk pricing pools started by local shops. No delivery pipeline - coordinate directly with the store upon fulfillment threshold clearance!
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    {collectives.map((c) => {
+                      const percent = Math.floor((c.joined / c.target) * 100);
+                      return (
+                        <div key={c.id} className="premium-card flex flex-col shadow-xl bg-[#0d121f]">
+                          <div className="flex justify-between items-start mb-5">
+                            <span className="text-[9px] bg-cyan-500/10 text-cyan-455 border border-cyan-500/20 px-3 py-1 rounded-lg font-black uppercase tracking-widest">
+                              {c.discount}
+                            </span>
+                            <span className="text-xs text-slate-500 flex items-center gap-1 font-bold">
+                              <Clock className="w-3.5 h-3.5 text-slate-600" /> {c.deadline} left
+                            </span>
+                          </div>
+
+                          <h3 className="font-bold text-slate-105 text-base">{c.title}</h3>
+                          <p className="text-xs text-slate-400 mt-1">Merchant: {c.storeName}</p>
+                          <p className="text-xs text-slate-300 font-bold mt-1">Item: {c.item}</p>
+                          
+                          <div className="my-5 bg-slate-950 p-4 rounded-xl border border-slate-900 flex justify-between items-center">
+                            <div>
+                              <p className="text-[9px] text-slate-500 uppercase font-black">Group Price</p>
+                              <p className="text-xl font-black text-cyan-400 mt-1">₹{c.price}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-[9px] text-slate-500 uppercase font-black">Retail price</p>
+                              <p className="text-xs text-slate-450 line-through mt-1.5">₹{c.originalPrice}</p>
+                            </div>
+                          </div>
+
+                          <div className="mb-6">
+                            <div className="flex justify-between text-xs font-bold text-slate-350 mb-2">
+                              <span>Progress threshold</span>
+                              <span>{c.joined} / {c.target} neighbors</span>
+                            </div>
+                            <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" style={{ width: `${percent}%` }}></div>
+                            </div>
+                          </div>
+
+                          <button 
+                            onClick={() => {
+                              setCollectives(prev => 
+                                prev.map(item => item.id === c.id ? { ...item, joined: Math.min(item.target, item.joined + 1) } : item)
+                              );
+                              alert("Successfully joined pool! Coordinate on chat for updates.");
+                            }}
+                            className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm py-3.5 rounded-2xl transition-all mt-auto"
+                          >
+                            Join Collective Pool
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -782,7 +908,7 @@ export default function ProxiHubDashboard() {
                         name="text"
                         rows={3}
                         placeholder="Alert neighbors of transformer servicing, water logs, or vendor promos..."
-                        className="w-full bg-slate-950 border border-slate-900 rounded-2xl p-5 text-sm text-slate-105 placeholder-slate-600 focus:outline-none focus:border-pink-500 leading-relaxed font-semibold shadow-inner"
+                        className="w-full bg-slate-955 border border-slate-900 rounded-2xl p-5 text-sm text-slate-105 placeholder-slate-600 focus:outline-none focus:border-pink-500 leading-relaxed font-semibold shadow-inner"
                       />
                       <div className="flex justify-between items-center mt-5">
                         <span className="text-[9px] text-slate-500 uppercase tracking-widest font-black">Anna Nagar, Chennai</span>
@@ -837,7 +963,7 @@ export default function ProxiHubDashboard() {
                                 <Clock className="w-4 h-4 text-amber-500 animate-pulse" /> {formatTime(rush.remaining)}
                               </span>
                             </div>
-                            <h3 className="font-bold text-slate-100 text-lg leading-snug">{rush.vendorName}</h3>
+                            <h3 className="font-bold text-slate-105 text-lg leading-snug">{rush.vendorName}</h3>
                             <p className="text-sm font-semibold text-amber-300 leading-relaxed bg-amber-500/[0.02] p-4 rounded-xl border border-amber-500/10 shadow-inner">
                               {rush.deal}
                             </p>
@@ -895,7 +1021,7 @@ export default function ProxiHubDashboard() {
                           <div key={ad.id} className="premium-card flex flex-col justify-between shadow-xl bg-[#0d121f]">
                             <div>
                               <div className="flex justify-between items-start mb-4">
-                                <span className="text-[9px] bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 px-3 py-1 rounded-lg font-black uppercase tracking-widest">
+                                <span className="text-[9px] bg-emerald-500/10 text-emerald-455 border border-emerald-500/20 px-3 py-1 rounded-lg font-black uppercase tracking-widest">
                                   {ad.type}
                                 </span>
                                 <span className="text-sm font-black text-emerald-400">Earn ₹{ad.rewardAmount}</span>
@@ -926,7 +1052,7 @@ export default function ProxiHubDashboard() {
                               <h3 className="text-sm font-bold text-slate-200">{playingAd.title}</h3>
                               <p className="text-[9px] text-emerald-400 font-black tracking-widest uppercase">Visibility heartbeats tracking</p>
                             </div>
-                            <button onClick={() => { setPlayingAd(null); setAdTimerActive(false); }} className="text-xs text-slate-550 hover:text-slate-300 font-bold uppercase">Cancel</button>
+                            <button onClick={() => { setPlayingAd(null); setAdTimerActive(false); }} className="text-xs text-slate-555 hover:text-slate-300 font-bold uppercase">Cancel</button>
                           </div>
 
                           <div className="w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden relative flex items-center justify-center border border-slate-900/60 shadow-inner">
@@ -956,7 +1082,7 @@ export default function ProxiHubDashboard() {
                             <button onClick={() => setAdTimerActive(!adTimerActive)} className="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 text-xs font-bold px-5 py-3 rounded-2xl">
                               {adTimerActive ? "Pause View" : "Resume"}
                             </button>
-                            <button disabled={!canClaimReward} onClick={claimAdReward} className={`text-xs font-bold px-6 py-3.5 rounded-2xl ${canClaimReward ? "bg-emerald-500 hover:bg-emerald-400 text-slate-950" : "bg-slate-900 text-slate-500 cursor-not-allowed"}`}>
+                            <button disabled={!canClaimReward} onClick={claimAdReward} className={`text-xs font-bold px-6 py-3.5 rounded-2xl ${canClaimReward ? "bg-emerald-500 hover:bg-emerald-400 text-slate-950" : "bg-slate-900 text-slate-500 cursor-not-allowed border border-slate-900"}`}>
                               Claim Reward ₹{playingAd.rewardAmount}
                             </button>
                           </div>
@@ -1033,36 +1159,10 @@ export default function ProxiHubDashboard() {
                               <p className="text-[10px] text-slate-500 mt-1">{log.time}</p>
                             </div>
                           </div>
-                          <span className={`font-black ${log.type === "ad_reward" ? "text-emerald-450" : "text-amber-450"}`}>{log.type === "ad_reward" ? `+ ₹${log.amount.toFixed(2)}` : `- ₹${log.amount.toFixed(2)}`}</span>
+                          <span className={`font-black ${log.type === "ad_reward" ? "text-emerald-450" : "text-amber-455"}`}>{log.type === "ad_reward" ? `+ ₹${log.amount.toFixed(2)}` : `- ₹${log.amount.toFixed(2)}`}</span>
                         </div>
                       ))}
                     </div>
-                  </div>
-                </div>
-              )}
-
-              {/* info/appendix tab */}
-              {activeTab === "info" && (
-                <div className="flex-grow flex flex-col gap-10 max-w-3xl mx-auto w-full">
-                  <div className="premium-card shadow-xl bg-[#0d121f]">
-                    <h2 className="text-lg font-bold text-slate-100 border-b border-slate-900 pb-4 mb-6">ProxiHub v4.0 System Features</h2>
-                    <p className="text-sm text-slate-350 leading-relaxed font-sans">
-                      This Next.js app provides an interactive model showcasing hyperlocal geofencing Discovery within 5km, VoiceFirst inputs, and the ProxiRewards ad dashboard.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* compliance tab */}
-              {activeTab === "privacy" && (
-                <div className="flex-grow flex flex-col gap-10 max-w-3xl mx-auto w-full">
-                  <div className="premium-card shadow-xl bg-[#0d121f]">
-                    <h2 className="text-lg font-bold text-slate-100 border-b border-slate-900 pb-4 mb-6">DPDP Act 2023 Compliance Summary</h2>
-                    <ul className="list-disc pl-6 space-y-4 text-sm text-slate-300 font-medium">
-                      <li><strong>Consent Logging</strong>: Direct user authorization recorded on microphone and GPS tracking triggers.</li>
-                      <li><strong>Anonymization</strong>: Customer identifiers are decoupled from geo-tagged ad verification logs.</li>
-                      <li><strong>Indian Residency</strong>: Data residency constraints enforced inside local memorystores.</li>
-                    </ul>
                   </div>
                 </div>
               )}
@@ -1083,10 +1183,9 @@ export default function ProxiHubDashboard() {
                     <Store className="w-5.5 h-5.5" />
                     <span>Merchant Dashboard Panel</span>
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">Configure your storefront, Top Demanded Goods list, and push flash Gold Rushes.</p>
+                  <p className="text-xs text-slate-400 mt-1">Configure storefront pricing, start route simulations, or launch group-buy pools.</p>
                 </div>
                 
-                {/* Switcher vendor type */}
                 <div className="flex gap-3">
                   <button 
                     onClick={() => { setSelectedVendorId(1); setIsCartRouteActive(false); }}
@@ -1109,29 +1208,22 @@ export default function ProxiHubDashboard() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 
-                {/* Storefront Configurations */}
+                {/* Storefront Configurations & Quick Goods Pricing */}
                 <div className="premium-card flex flex-col gap-6 bg-[#0d121f] shadow-xl">
                   <h3 className="text-sm font-bold text-slate-200 border-b border-slate-900 pb-3">
-                    🏪 Shop Profile & Price Index
+                    🏪 Shop Profile & Demand Price Index
                   </h3>
 
                   <div className="flex flex-col gap-4">
                     <div>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Business Name</p>
-                      <p className="text-base font-bold text-slate-200 mt-1">
-                        {selectedVendorId === 1 ? "Saravana Grocery Store" : "Ooty Veggie Cart"}
+                      <p className="text-[10px] text-slate-550 uppercase font-black">Business Info</p>
+                      <p className="text-sm font-bold text-slate-200 mt-1">
+                        {selectedVendorId === 1 ? "Saravana Grocery Store (Anna Nagar)" : "Ooty Veggie Cart (Mobile Operator)"}
                       </p>
                     </div>
 
-                    <div>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Store Status</p>
-                      <span className="inline-block bg-emerald-500/10 text-emerald-400 text-xs px-3 py-1 rounded-full font-bold border border-emerald-500/15 mt-1.5 uppercase tracking-wide">
-                        {selectedVendorId === 1 ? "Open (Anna Nagar)" : "Active (Mobile)"}
-                      </span>
-                    </div>
-
                     {/* Quick Top Goods List */}
-                    <div className="mt-4 pt-4 border-t border-slate-900 flex flex-col gap-3">
+                    <div className="flex flex-col gap-3">
                       <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
                         Top Demand Goods (Price Range Index)
                       </p>
@@ -1140,166 +1232,186 @@ export default function ProxiHubDashboard() {
                         {vendorDemandGoods.map((good) => (
                           <div key={good.id} className="p-3 bg-slate-950 rounded-xl border border-slate-900/60 flex justify-between items-center text-xs">
                             <span className="font-semibold text-slate-200">{good.name}</span>
-                            <span className="font-bold text-emerald-400">{good.price}</span>
+                            <span className="font-bold text-emerald-450">{good.price}</span>
                           </div>
                         ))}
                       </div>
 
-                      {/* Add Top Good form */}
                       <form onSubmit={(e) => {
                         e.preventDefault();
                         if (!newGoodName || !newGoodPrice) return;
                         setVendorDemandGoods(prev => [...prev, { id: Date.now(), name: newGoodName, price: newGoodPrice }]);
-                        
-                        // Sync to global initial list
-                        setVendors(prev => prev.map(vendor => {
-                          if (vendor.id === selectedVendorId) {
-                            return {
-                              ...vendor,
-                              items: [...vendor.items, newGoodName],
-                              priceRange: `₹20 - ₹${newGoodPrice.replace('₹', '')}`
-                            };
-                          }
-                          return vendor;
-                        }));
-
                         setNewGoodName("");
                         setNewGoodPrice("");
                       }} className="grid grid-cols-2 gap-3 mt-2">
-                        <input 
-                          type="text" 
-                          placeholder="e.g. Milk 1L" 
-                          value={newGoodName}
-                          onChange={(e) => setNewGoodName(e.target.value)}
-                          className="bg-slate-950 border border-slate-900 rounded-lg p-2 text-xs text-slate-250 focus:outline-none"
-                        />
+                        <input type="text" placeholder="e.g. Milk 1L" value={newGoodName} onChange={(e) => setNewGoodName(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-lg p-2 text-xs text-slate-250 focus:outline-none" />
                         <div className="flex gap-2">
-                          <input 
-                            type="text" 
-                            placeholder="₹ Price" 
-                            value={newGoodPrice}
-                            onChange={(e) => setNewGoodPrice(e.target.value)}
-                            className="bg-slate-950 border border-slate-900 rounded-lg p-2 text-xs text-slate-250 focus:outline-none w-20"
-                          />
-                          <button type="submit" className="bg-amber-500 text-slate-950 text-xs font-black p-2 rounded-lg flex-grow hover:bg-amber-400">+</button>
+                          <input type="text" placeholder="₹ Price" value={newGoodPrice} onChange={(e) => setNewGoodPrice(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-lg p-2 text-xs text-slate-250 w-20 focus:outline-none" />
+                          <button type="submit" className="bg-amber-500 text-slate-955 text-xs font-black p-2 rounded-lg flex-grow hover:bg-amber-400">+</button>
                         </div>
                       </form>
                     </div>
-
                   </div>
                 </div>
 
-                {/* Controls & Gold Rushes */}
-                <div className="flex flex-col gap-10">
-                  
-                  {/* Geolocation Controls for Mobile Vendor */}
-                  {selectedVendorId === 2 && (
+                {/* Stationary Specific: Group-buy Pool & QR verification */}
+                {selectedVendorId === 1 ? (
+                  <div className="flex flex-col gap-10">
+                    
+                    {/* Collective Pool Manager (Store initiates Group-buy Pools) */}
+                    <div className="premium-card bg-[#0d121f] shadow-xl flex flex-col gap-4">
+                      <h3 className="text-sm font-bold text-cyan-400 flex items-center gap-2 pb-3 border-b border-slate-900">
+                        <Users className="w-4.5 h-4.5 text-cyan-405" />
+                        <span>Store-Initiated Group-buy Pools</span>
+                      </h3>
+
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!newPoolTitle || !newPoolItem || !newPoolPrice || !newPoolOriginalPrice) return;
+                        
+                        const newPool = {
+                          id: Date.now(),
+                          storeName: "Saravana Grocery Store",
+                          title: newPoolTitle,
+                          item: newPoolItem,
+                          price: parseFloat(newPoolPrice),
+                          originalPrice: parseFloat(newPoolOriginalPrice),
+                          discount: `${Math.floor((1 - parseFloat(newPoolPrice)/parseFloat(newPoolOriginalPrice)) * 100)}% OFF`,
+                          joined: 0,
+                          target: parseInt(newPoolTarget),
+                          deadline: "24 hours"
+                        };
+
+                        setCollectives(prev => [newPool, ...prev]);
+                        alert(`Neighborhood group-buy pool "${newPoolTitle}" started and published!`);
+                        setNewPoolTitle("");
+                        setNewPoolItem("");
+                        setNewPoolPrice("");
+                        setNewPoolOriginalPrice("");
+                      }} className="flex flex-col gap-3">
+                        <input type="text" placeholder="Pool title (e.g. Block C Sunflower Oil Pool)" value={newPoolTitle} onChange={(e) => setNewPoolTitle(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none" />
+                        <input type="text" placeholder="Item name (e.g. Gold Winner 5L Can)" value={newPoolItem} onChange={(e) => setNewPoolItem(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none" />
+                        <div className="grid grid-cols-2 gap-3">
+                          <input type="number" placeholder="Discounted Price (₹)" value={newPoolPrice} onChange={(e) => setNewPoolPrice(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none" />
+                          <input type="number" placeholder="Retail Price (₹)" value={newPoolOriginalPrice} onChange={(e) => setNewPoolOriginalPrice(e.target.value)} className="bg-slate-950 border border-slate-900 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none" />
+                        </div>
+                        <button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs py-2.5 rounded-xl transition-all shadow-md">
+                          Launch Neighborhood Pool
+                        </button>
+                      </form>
+                    </div>
+
+                    {/* QR Scanner / Coupon Verification Console */}
+                    <div className="premium-card bg-[#0d121f] shadow-xl flex flex-col gap-4 border border-slate-800">
+                      <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2 pb-3 border-b border-slate-900">
+                        <QrCode className="w-4.5 h-4.5 text-amber-500" />
+                        <span>Coupon Scanner Console</span>
+                      </h3>
+
+                      <p className="text-[10px] text-slate-500 font-semibold leading-relaxed font-sans">
+                        Verify client claimed Gold Rush coupons by entering the code or scanning QR code fallback.
+                      </p>
+
+                      <div className="flex gap-3">
+                        <input 
+                          type="text" 
+                          placeholder="Enter Claim code (e.g. AMMA-SAMOSA-8)"
+                          value={qrCouponInput}
+                          onChange={(e) => setQrCouponInput(e.target.value)}
+                          className="bg-slate-950 border border-slate-900 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none flex-grow"
+                        />
+                        <button 
+                          onClick={() => {
+                            if (!qrCouponInput) return;
+                            setQrScanFeedback("Scanning code... ");
+                            setTimeout(() => {
+                              setQrScanFeedback("Coupon Verified successfully! Claim marked as COMPLETED.");
+                              setQrCouponInput("");
+                            }, 1200);
+                          }}
+                          className="bg-amber-500 text-slate-950 text-xs font-black px-4 py-2 rounded-xl"
+                        >
+                          Verify Code
+                        </button>
+                      </div>
+                      
+                      {qrScanFeedback && (
+                        <p className="text-xs text-emerald-400 font-bold bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20 mt-1">
+                          {qrScanFeedback}
+                        </p>
+                      )}
+                    </div>
+
+                  </div>
+                ) : (
+                  // Mobile Cart Specific Features
+                  <div className="flex flex-col gap-10">
+                    
+                    {/* Live GPS Route Tracker */}
                     <div className="premium-card bg-[#0d121f] shadow-xl border border-purple-500/20 flex flex-col gap-4">
                       <h3 className="text-sm font-bold text-slate-205 flex items-center gap-2 pb-3 border-b border-slate-900">
                         <Truck className="w-4.5 h-4.5 text-purple-400" />
-                        <span>Live GPS Route Tracker</span>
+                        <span>Live GPS Route Broadcaster</span>
                       </h3>
 
                       <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                        Activate cart simulation. Your location marker crawling coordinates will animate in real-time on Customer maps.
+                        Broadcast live movement path. Your coordinate trace draws on geofence maps automatically.
+                      </p>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          onClick={() => {
+                            setIsCartRouteActive(true);
+                            setVendors(prev => prev.map(v => v.id === 2 ? { ...v, status: "ON ROUTE (Active)" } : v));
+                          }}
+                          className="bg-purple-650 hover:bg-purple-550 text-white font-bold text-xs py-3 rounded-xl transition-all shadow-md"
+                        >
+                          Start Route
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsCartRouteActive(false);
+                            setVendors(prev => prev.map(v => v.id === 2 ? { ...v, status: "Route Paused" } : v));
+                          }}
+                          className="bg-slate-900 border border-slate-800 text-slate-300 font-bold text-xs py-3 rounded-xl hover:bg-slate-800"
+                        >
+                          Pause
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Voice Announcement Broadcaster */}
+                    <div className="premium-card bg-[#0d121f] shadow-xl flex flex-col gap-4">
+                      <h3 className="text-sm font-bold text-slate-205 flex items-center gap-2 pb-3 border-b border-slate-900">
+                        <Radio className="w-4.5 h-4.5 text-pink-500" />
+                        <span>Vernacular Voice announcements</span>
+                      </h3>
+
+                      <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                        Record and broadcast a short voice clip to nearby customers within 500 meters.
                       </p>
 
                       <button
                         onClick={() => {
-                          setIsCartRouteActive(!isCartRouteActive);
-                          setVendors(prev => prev.map(vendor => {
-                            if (vendor.id === 2) {
-                              return { ...vendor, status: !isCartRouteActive ? "ON ROUTE (Active)" : "Paused" };
-                            }
-                            return vendor;
-                          }));
+                          if (isRecordingAnnouncement) {
+                            setIsRecordingAnnouncement(false);
+                            const textPrompt = prompt("Confirm speech transcript message:") || "Fresh vegetables loaded near Shanti Colony Blocks!";
+                            setVoiceAnnouncementsList(prev => [textPrompt, ...prev]);
+                            setSpeechTranscript(`[MOBILE ANNOUNCEMENT]: ${textPrompt}`);
+                          } else {
+                            setIsRecordingAnnouncement(true);
+                          }
                         }}
-                        className={`w-full font-bold text-xs py-3.5 rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 uppercase tracking-wider ${
-                          isCartRouteActive 
-                            ? "bg-red-650 hover:bg-red-550 text-white" 
-                            : "bg-purple-600 hover:bg-purple-500 text-white"
+                        className={`w-full font-bold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
+                          isRecordingAnnouncement ? "bg-red-650 text-white animate-pulse" : "bg-pink-600 hover:bg-pink-500 text-white shadow-lg shadow-pink-500/10"
                         }`}
                       >
-                        <Power className="w-4 h-4" />
-                        <span>{isCartRouteActive ? "Pause Route Stream" : "Start Live Cart Route"}</span>
+                        {isRecordingAnnouncement ? "Recording... Click to Stop" : "Record Voice Announcement"}
                       </button>
                     </div>
-                  )}
 
-                  {/* Gold Rush Deal Activator */}
-                  <div className="premium-card bg-[#0d121f] shadow-xl flex flex-col gap-4">
-                    <h3 className="text-sm font-bold text-slate-205 flex items-center gap-2 pb-3 border-b border-slate-900">
-                      <Zap className="w-4.5 h-4.5 text-amber-500" />
-                      <span>Launch Gold Rush Deal</span>
-                    </h3>
-
-                    <form onSubmit={(e) => {
-                      e.preventDefault();
-                      if (!newRushDealName) return;
-
-                      const duration = parseInt(newRushDuration);
-                      const claims = parseInt(newRushClaims);
-                      const name = selectedVendorId === 1 ? "Saravana Grocery Store" : "Ooty Veggie Cart";
-
-                      const newRush = {
-                        id: Date.now(),
-                        vendorName: name,
-                        deal: newRushDealName,
-                        activeFor: duration * 60,
-                        remaining: duration * 60,
-                        totalClaims: claims,
-                        claimed: 0,
-                        radius: 5.0
-                      };
-
-                      setGoldRushes(prev => [newRush, ...prev]);
-                      alert("Gold Rush Launched! Pulsing gold heatmap marker added to nearby customer geofences.");
-                      setNewRushDealName("");
-                    }} className="flex flex-col gap-4">
-                      <div>
-                        <label className="text-[9px] text-slate-550 font-black block mb-2 uppercase tracking-widest">Promotion Deal Details</label>
-                        <input 
-                          type="text" 
-                          placeholder="e.g. Fresh Mangoes at 50% discount!"
-                          value={newRushDealName}
-                          onChange={(e) => setNewRushDealName(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-900 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-[9px] text-slate-550 font-black block mb-2 uppercase tracking-widest">Duration (Minutes)</label>
-                          <select 
-                            value={newRushDuration} 
-                            onChange={(e) => setNewRushDuration(e.target.value)}
-                            className="w-full bg-slate-950 border border-slate-900 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none"
-                          >
-                            <option value="15">15 mins</option>
-                            <option value="30">30 mins</option>
-                            <option value="60">60 mins</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="text-[9px] text-slate-550 font-black block mb-2 uppercase tracking-widest">Max Claims</label>
-                          <input 
-                            type="number" 
-                            min="5" 
-                            max="100"
-                            value={newRushClaims}
-                            onChange={(e) => setNewRushClaims(e.target.value)}
-                            className="w-full bg-slate-950 border border-slate-900 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none"
-                          />
-                        </div>
-                      </div>
-
-                      <button type="submit" className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs py-3 rounded-xl transition-all shadow-md uppercase tracking-wider">
-                        Publish Urgency Deal
-                      </button>
-                    </form>
                   </div>
-
-                </div>
+                )}
 
               </div>
 
@@ -1346,29 +1458,30 @@ export default function ProxiHubDashboard() {
                 </div>
               </div>
 
+              {/* Service Grid columns */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 
                 {/* Skills & Pricing */}
                 <div className="premium-card flex flex-col gap-6 bg-[#0d121f] shadow-xl">
-                  <h3 className="text-sm font-bold text-slate-200 border-b border-slate-900 pb-3">
-                    🔧 Skills Checklist & Base Diagnostic Rates
+                  <h3 className="text-sm font-bold text-slate-200 border-b border-slate-900 pb-3 flex justify-between items-center">
+                    <span>🔧 Service Rate Sheet & Credentials</span>
+                    <span className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-1 font-bold">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> verified
+                    </span>
                   </h3>
 
                   <div className="flex flex-col gap-4">
                     <div>
                       <label className="text-[9px] text-slate-550 block font-black uppercase tracking-widest mb-1.5">Diagnostic Call Fee (₹)</label>
-                      <div className="flex gap-3">
-                        <input 
-                          type="number" 
-                          value={providerDiagnosticRate}
-                          onChange={(e) => {
-                            setProviderDiagnosticRate(e.target.value);
-                            setVendors(prev => prev.map(v => v.id === 3 ? { ...v, priceRange: `₹${e.target.value} Base Rate` } : v));
-                          }}
-                          className="bg-slate-950 border border-slate-900 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none w-28 font-bold"
-                        />
-                        <span className="text-xs text-slate-500 self-center">Est. callout fee shown to customers on discovery</span>
-                      </div>
+                      <input 
+                        type="number" 
+                        value={providerDiagnosticRate}
+                        onChange={(e) => {
+                          setProviderDiagnosticRate(e.target.value);
+                          setVendors(prev => prev.map(v => v.id === 3 ? { ...v, priceRange: `₹${e.target.value} Base Rate` } : v));
+                        }}
+                        className="bg-slate-950 border border-slate-900 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none w-28 font-bold"
+                      />
                     </div>
 
                     <div className="mt-4 pt-4 border-t border-slate-900 flex flex-col gap-3">
@@ -1388,14 +1501,6 @@ export default function ProxiHubDashboard() {
                         e.preventDefault();
                         if (!newSkillText) return;
                         setProviderSkills(prev => [...prev, newSkillText]);
-                        
-                        setVendors(prev => prev.map(vendor => {
-                          if (vendor.id === 3) {
-                            return { ...vendor, items: [...vendor.items, newSkillText] };
-                          }
-                          return vendor;
-                        }));
-
                         setNewSkillText("");
                       }} className="flex gap-3 mt-2">
                         <input 
@@ -1412,11 +1517,11 @@ export default function ProxiHubDashboard() {
                   </div>
                 </div>
 
-                {/* Job request alert list */}
+                {/* Incoming Request Radar */}
                 <div className="premium-card flex flex-col gap-5 bg-[#0d121f] shadow-xl">
                   <h3 className="text-sm font-bold text-slate-200 border-b border-slate-900 pb-3 flex justify-between items-center">
-                    <span>📡 Incoming Dispatch Radar</span>
-                    <span className="text-[9px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-black">5km Geofenced</span>
+                    <span>Incoming request radar</span>
+                    <span className="text-[9px] text-slate-550 font-bold font-mono">5km fence</span>
                   </h3>
 
                   <div className="flex-grow flex flex-col gap-4 overflow-y-auto">
@@ -1425,7 +1530,7 @@ export default function ProxiHubDashboard() {
                         <div className="flex justify-between items-start">
                           <div>
                             <h4 className="text-xs font-black text-slate-300">{job.client}</h4>
-                            <p className="text-[10px] text-slate-500 font-semibold">{job.address} • {job.distance}</p>
+                            <p className="text-[10px] text-slate-550 font-semibold">{job.address} • {job.distance}</p>
                           </div>
                           <span className="text-[9px] text-slate-550 font-bold">{job.time}</span>
                         </div>
@@ -1433,6 +1538,12 @@ export default function ProxiHubDashboard() {
                         <p className="text-xs text-slate-400 leading-relaxed font-semibold bg-slate-950 p-2.5 rounded-lg border border-slate-900">
                           Job: {job.serviceNeeded}
                         </p>
+                        
+                        {job.description && (
+                          <p className="text-[10px] text-slate-500 leading-relaxed font-semibold">
+                            Note: {job.description}
+                          </p>
+                        )}
 
                         {job.quoteStatus === "pending" ? (
                           <div className="flex gap-2 mt-1">
@@ -1458,14 +1569,13 @@ export default function ProxiHubDashboard() {
                             </button>
                           </div>
                         ) : (
-                          <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                          <span className="text-[10px] text-emerald-450 font-bold uppercase tracking-wider flex items-center gap-1">
                             <Check className="w-3.5 h-3.5" /> Quote Sent & Accepted!
                           </span>
                         )}
                       </div>
                     ))}
                   </div>
-
                 </div>
 
               </div>
