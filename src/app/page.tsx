@@ -37,7 +37,10 @@ import {
   BarChart,
   Percent,
   CheckSquare,
-  ShieldCheck
+  ShieldCheck,
+  Trash2,
+  Edit2,
+  X
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -106,8 +109,11 @@ const formatTime = (seconds: number) => {
 
 export default function ProxiHubDashboard() {
   // Navigation / Role Switcher States
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentRole, setCurrentRole] = useState<"customer" | "vendor" | "service">("customer");
   const [activeTab, setActiveTab] = useState("map"); // customer sub-tabs
+  const [customerMapSubTab, setCustomerMapSubTab] = useState<"map" | "list">("map");
+  const [vendorActiveTab, setVendorActiveTab] = useState<"dashboard" | "ads">("dashboard");
 
   // Proximity Map Center & Query States
   const [userLat, setUserLat] = useState(13.040);
@@ -129,19 +135,43 @@ export default function ProxiHubDashboard() {
   const [jobs, setJobs] = useState(INITIAL_JOBS);
 
   // Vendor Portal State
-  const [selectedVendorId, setSelectedVendorId] = useState(1); // Default Saravana Grocery
+  const [selectedVendorId, setSelectedVendorId] = useState(1); // Default Saravana Grocery (1) or Ooty Veggie Cart (2)
   const [isCartRouteActive, setIsCartRouteActive] = useState(false);
   const [routeCoordinates, setRouteCoordinates] = useState<{lat: number, lng: number}[]>([]);
-  const [vendorDemandGoods, setVendorDemandGoods] = useState([
-    { id: 1, name: "Fresh Cow Milk 1L", price: "₹65" },
-    { id: 2, name: "Ponni Rice 5kg", price: "₹340" },
-    { id: 3, name: "Country Tomatoes 1kg", price: "₹45" }
-  ]);
+  
+  // Custom Profile Config Inputs on Login
+  const [loginShopName, setLoginShopName] = useState("");
+  const [loginCategory, setLoginCategory] = useState("Grocery");
+  const [loginServiceRate, setLoginServiceRate] = useState("199");
+
+  // Goods index - separate list per vendor
+  const [vendorGoodsMap, setVendorGoodsMap] = useState<Record<number, { id: number; name: string; price: string }[]>>({
+    1: [
+      { id: 1, name: "Fresh Cow Milk 1L", price: "₹65" },
+      { id: 2, name: "Ponni Rice 5kg", price: "₹340" },
+      { id: 3, name: "Country Tomatoes 1kg", price: "₹45" }
+    ],
+    2: [
+      { id: 1, name: "Ooty Potatoes 1kg", price: "₹38" },
+      { id: 2, name: "Bangalore Tomatoes 1kg", price: "₹42" }
+    ]
+  });
+
   const [newGoodName, setNewGoodName] = useState("");
   const [newGoodPrice, setNewGoodPrice] = useState("");
+  const [editingGoodId, setEditingGoodId] = useState<number | null>(null);
+  const [editingGoodName, setEditingGoodName] = useState("");
+  const [editingGoodPrice, setEditingGoodPrice] = useState("");
+  
   const [newRushDealName, setNewRushDealName] = useState("");
   const [newRushDuration, setNewRushDuration] = useState("30");
   const [newRushClaims, setNewRushClaims] = useState("15");
+
+  // Route Broadcaster and Voice Broadcast States
+  const [cartRouteProgress, setCartRouteProgress] = useState(0);
+  const [voiceBroadcastOption, setVoiceBroadcastOption] = useState<"record" | "upload">("record");
+  const [uploadedMp3Name, setUploadedMp3Name] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Collective Pool Creator State (Store Initiates Pool)
   const [newPoolTitle, setNewPoolTitle] = useState("");
@@ -239,21 +269,27 @@ export default function ProxiHubDashboard() {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isCartRouteActive) {
-      let angle = 0;
       interval = setInterval(() => {
-        angle += 0.15;
-        setVendors(prev => 
-          prev.map(vendor => {
-            if (vendor.id === 2) {
-              const newLat = 13.048 + Math.sin(angle) * 0.004;
-              const newLng = 80.252 + Math.cos(angle) * 0.004;
-              setRouteCoordinates(trail => [...trail.slice(-10), {lat: newLat, lng: newLng}]);
-              return { ...vendor, lat: newLat, lng: newLng };
-            }
-            return vendor;
-          })
-        );
-      }, 2000);
+        setCartRouteProgress(prevProgress => {
+          const nextProgress = (prevProgress + 2) % 100;
+          const angle = (nextProgress / 100) * (2 * Math.PI);
+          const newLat = 13.048 + Math.sin(angle) * 0.004;
+          const newLng = 80.252 + Math.cos(angle) * 0.004;
+          setVendors(prev => 
+            prev.map(vendor => {
+              if (vendor.id === 2) {
+                return { ...vendor, lat: newLat, lng: newLng };
+              }
+              return vendor;
+            })
+          );
+          setRouteCoordinates(trail => {
+            const updated = [...trail, {lat: newLat, lng: newLng}];
+            return updated.slice(-10);
+          });
+          return nextProgress;
+        });
+      }, 1000);
     }
     return () => clearInterval(interval);
   }, [isCartRouteActive]);
@@ -439,6 +475,120 @@ export default function ProxiHubDashboard() {
     setWithdrawAmount("");
   };
 
+  const handleDeleteGood = (goodId: number) => {
+    setVendorGoodsMap(prev => {
+      const list = prev[selectedVendorId] || [];
+      const updated = list.filter(item => item.id !== goodId);
+      
+      setVendors(allVendors => allVendors.map(vendor => {
+        if (vendor.id === selectedVendorId) {
+          const updatedItems = updated.map(item => item.name);
+          const numericPrices = updated.map(item => parseInt(item.price.replace(/[^\d]/g, ""))).filter(p => !isNaN(p));
+          let calculatedRange = "N/A";
+          if (numericPrices.length > 0) {
+            const minPrice = Math.min(...numericPrices);
+            const maxPrice = Math.max(...numericPrices);
+            calculatedRange = minPrice === maxPrice ? `₹${minPrice}` : `₹${minPrice} - ₹${maxPrice}`;
+          }
+          return {
+            ...vendor,
+            items: updatedItems,
+            priceRange: calculatedRange
+          };
+        }
+        return vendor;
+      }));
+
+      return {
+        ...prev,
+        [selectedVendorId]: updated
+      };
+    });
+  };
+
+  const handleSaveGood = (goodId: number) => {
+    if (!editingGoodName || !editingGoodPrice) return;
+    const cleanPrice = editingGoodPrice.replace("₹", "").trim();
+
+    setVendorGoodsMap(prev => {
+      const list = prev[selectedVendorId] || [];
+      const updated = list.map(item => {
+        if (item.id === goodId) {
+          return { ...item, name: editingGoodName, price: `₹${cleanPrice}` };
+        }
+        return item;
+      });
+
+      setVendors(allVendors => allVendors.map(vendor => {
+        if (vendor.id === selectedVendorId) {
+          const updatedItems = updated.map(item => item.name);
+          const numericPrices = updated.map(item => parseInt(item.price.replace(/[^\d]/g, ""))).filter(p => !isNaN(p));
+          let calculatedRange = vendor.priceRange;
+          if (numericPrices.length > 0) {
+            const minPrice = Math.min(...numericPrices);
+            const maxPrice = Math.max(...numericPrices);
+            calculatedRange = minPrice === maxPrice ? `₹${minPrice}` : `₹${minPrice} - ₹${maxPrice}`;
+          }
+          return {
+            ...vendor,
+            items: updatedItems,
+            priceRange: calculatedRange
+          };
+        }
+        return vendor;
+      }));
+
+      return {
+        ...prev,
+        [selectedVendorId]: updated
+      };
+    });
+
+    setEditingGoodId(null);
+    setEditingGoodName("");
+    setEditingGoodPrice("");
+  };
+
+  const handleCartProgressChange = (progress: number) => {
+    setCartRouteProgress(progress);
+    const angle = (progress / 100) * (2 * Math.PI);
+    const newLat = 13.048 + Math.sin(angle) * 0.004;
+    const newLng = 80.252 + Math.cos(angle) * 0.004;
+    setVendors(prev => 
+      prev.map(vendor => {
+        if (vendor.id === 2) {
+          return { ...vendor, lat: newLat, lng: newLng };
+        }
+        return vendor;
+      })
+    );
+    setRouteCoordinates(trail => {
+      const updated = [...trail, {lat: newLat, lng: newLng}];
+      return updated.slice(-10);
+    });
+  };
+
+  const handleMp3Upload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadedMp3Name(file.name);
+    setUploadProgress(0);
+    
+    let prog = 0;
+    const interval = setInterval(() => {
+      prog += 20;
+      setUploadProgress(prog);
+      if (prog >= 100) {
+        clearInterval(interval);
+        setVoiceAnnouncementsList(prev => [
+          `[MP3 Announcement]: ${file.name} successfully broadcasted!`,
+          ...prev
+        ]);
+        alert(`MP3 Audio "${file.name}" uploaded and broadcasted to 5km area!`);
+      }
+    }, 200);
+  };
+
   const handleCreateCampaign = (e: React.FormEvent) => {
     e.preventDefault();
     const budgetNum = parseFloat(newAdBudget);
@@ -469,8 +619,157 @@ export default function ProxiHubDashboard() {
     setNewAdBudget("");
   };
 
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen text-slate-100 flex flex-col items-center justify-center bg-[#030407] p-6 font-sans">
+        <div className="w-full max-w-4xl glassmorphism rounded-3xl border border-slate-900/60 p-8 md:p-12 shadow-2xl flex flex-col gap-8 relative overflow-hidden">
+          
+          <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#d4af37]/5 rounded-full blur-[100px] pointer-events-none"></div>
+          <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#cbd5e1]/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+          <div className="text-center relative z-10">
+            <span className="text-4xl">🚀</span>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight mt-3 bg-gradient-to-r from-amber-400 via-[#d4af37] to-slate-300 bg-clip-text text-transparent">
+              Welcome to ProxiHub <span className="font-light text-slate-400 text-xs">v4.0</span>
+            </h1>
+            <p className="text-xs text-slate-400 uppercase tracking-widest font-semibold mt-2">Unified Hyperlocal Ecosystem</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
+            
+            <Card 
+              onClick={() => { setCurrentRole("customer"); }}
+              className={`cursor-pointer transition-all hover:-translate-y-1 shadow-md bg-[#090d16] hover:bg-[#101726] ${currentRole === "customer" ? "border-[#d4af37] ring-1 ring-[#d4af37]" : "border-slate-900"}`}
+            >
+              <CardHeader className="p-5 text-center">
+                <span className="text-2xl mx-auto block mb-2">🏪</span>
+                <CardTitle className="text-sm font-bold text-slate-100">Customer</CardTitle>
+                <CardDescription className="text-[10px] text-slate-500 mt-1">Discover shops & earn ad rewards</CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card 
+              onClick={() => { setCurrentRole("vendor"); setSelectedVendorId(1); }}
+              className={`cursor-pointer transition-all hover:-translate-y-1 shadow-md bg-[#090d16] hover:bg-[#101726] ${currentRole === "vendor" && selectedVendorId === 1 ? "border-[#d4af37] ring-1 ring-[#d4af37]" : "border-slate-900"}`}
+            >
+              <CardHeader className="p-5 text-center">
+                <span className="text-2xl mx-auto block mb-2">🏬</span>
+                <CardTitle className="text-sm font-bold text-slate-100">Stationary Store</CardTitle>
+                <CardDescription className="text-[10px] text-slate-500 mt-1">Manage bulk pool & custom pricing</CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card 
+              onClick={() => { setCurrentRole("vendor"); setSelectedVendorId(2); }}
+              className={`cursor-pointer transition-all hover:-translate-y-1 shadow-md bg-[#090d16] hover:bg-[#101726] ${currentRole === "vendor" && selectedVendorId === 2 ? "border-[#d4af37] ring-1 ring-[#d4af37]" : "border-slate-900"}`}
+            >
+              <CardHeader className="p-5 text-center">
+                <span className="text-2xl mx-auto block mb-2">🚚</span>
+                <CardTitle className="text-sm font-bold text-slate-100">Mobile Vendor</CardTitle>
+                <CardDescription className="text-[10px] text-slate-500 mt-1">Simulate live route & announcements</CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card 
+              onClick={() => { setCurrentRole("service"); }}
+              className={`cursor-pointer transition-all hover:-translate-y-1 shadow-md bg-[#090d16] hover:bg-[#101726] ${currentRole === "service" ? "border-[#d4af37] ring-1 ring-[#d4af37]" : "border-slate-900"}`}
+            >
+              <CardHeader className="p-5 text-center">
+                <span className="text-2xl mx-auto block mb-2">🔧</span>
+                <CardTitle className="text-sm font-bold text-slate-100">Service Pro</CardTitle>
+                <CardDescription className="text-[10px] text-slate-500 mt-1">Service Dispatch & job requests</CardDescription>
+              </CardHeader>
+            </Card>
+
+          </div>
+
+          <div className="bg-[#090d16]/50 p-6 rounded-2xl border border-slate-900/60 relative z-10 flex flex-col gap-4">
+            <h3 className="text-xs font-bold text-slate-300 uppercase tracking-widest">Portal Setup Parameters</h3>
+            
+            {currentRole === "customer" && (
+              <div className="text-xs text-slate-400 leading-relaxed font-sans p-3 bg-slate-950/40 rounded-xl border border-slate-900">
+                You will enter the customer portal linked with active wallet balance of <strong>₹45.00</strong>. Ready to browse the 5km neighborhood, watch rewards campaigns, and join community bulk purchases.
+              </div>
+            )}
+
+            {currentRole === "vendor" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase font-black">Customize Shop / Cart Name</Label>
+                  <Input 
+                    type="text" 
+                    placeholder={selectedVendorId === 1 ? "e.g. Saravana Grocery Store" : "e.g. Ooty Veggie Cart"}
+                    value={loginShopName}
+                    onChange={(e) => setLoginShopName(e.target.value)}
+                    className="bg-slate-955 border border-slate-900 h-10 text-xs focus-visible:ring-[#d4af37] placeholder:text-slate-700 text-slate-200"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase font-black">Business Category</Label>
+                  <select 
+                    value={loginCategory}
+                    onChange={(e) => setLoginCategory(e.target.value)}
+                    className="bg-slate-955 border border-slate-900 rounded-xl px-3 py-2 text-xs text-slate-200 h-10 focus:outline-none"
+                  >
+                    <option value="Grocery">Grocery / Provisions</option>
+                    <option value="Vegetables">Vegetables & Fruits</option>
+                    <option value="Flowers">Flowers & Garland</option>
+                    <option value="Food">Food / Tiffin Center</option>
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {currentRole === "service" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase font-black">Customize Service Name</Label>
+                  <Input 
+                    type="text" 
+                    placeholder="e.g. Priya Electrical Services"
+                    value={loginShopName}
+                    onChange={(e) => setLoginShopName(e.target.value)}
+                    className="bg-slate-955 border border-slate-900 h-10 text-xs focus-visible:ring-[#d4af37] placeholder:text-slate-700 text-slate-200"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-[10px] text-slate-400 uppercase font-black">Base Diagnostics Call Rate (₹)</Label>
+                  <Input 
+                    type="number" 
+                    placeholder="199"
+                    value={loginServiceRate}
+                    onChange={(e) => setLoginServiceRate(e.target.value)}
+                    className="bg-slate-955 border border-slate-900 h-10 text-xs focus-visible:ring-[#d4af37] placeholder:text-slate-700 text-slate-200"
+                  />
+                </div>
+              </div>
+            )}
+
+            <Button 
+              onClick={() => {
+                if (currentRole === "vendor") {
+                  const finalName = loginShopName || (selectedVendorId === 1 ? "Saravana Grocery Store" : "Ooty Veggie Cart");
+                  setVendors(prev => prev.map(v => v.id === selectedVendorId ? { ...v, name: finalName, category: loginCategory } : v));
+                } else if (currentRole === "service") {
+                  const finalName = loginShopName || "Priya Electrical Services";
+                  setVendors(prev => prev.map(v => v.id === 3 ? { ...v, name: finalName, priceRange: `₹${loginServiceRate} Base Rate` } : v));
+                  setProviderDiagnosticRate(loginServiceRate);
+                }
+                setIsLoggedIn(true);
+              }}
+              className="bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 font-bold uppercase tracking-wider py-3 rounded-2xl transition-all w-full mt-2"
+            >
+              Enter {currentRole === "customer" ? "Customer" : currentRole === "vendor" ? (selectedVendorId === 1 ? "Stationary Store" : "Mobile Cart") : "Service Pro"} Portal
+            </Button>
+
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="app-container min-h-screen text-slate-100 flex flex-col lg:flex-row bg-[#05070c]">
+    <div className="app-container min-h-screen text-slate-100 flex flex-col lg:flex-row bg-[#030407]">
       
       {/* Sidebar Navigation */}
       <nav className="sidebar-panel glassmorphism flex flex-col p-8 justify-between border-slate-900/60 shadow-xl">
@@ -484,40 +783,6 @@ export default function ProxiHubDashboard() {
             </div>
             <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black leading-none">Unified Dashboard</p>
           </div>
-
-          {/* Interactive Role Selector */}
-          <div className="bg-slate-950 p-2.5 rounded-2xl border border-slate-900 flex flex-col gap-2.5 shadow-inner">
-            <p className="text-[9px] text-slate-550 font-black uppercase tracking-wider pl-2">SELECT PORTAL VIEW</p>
-            
-            <Button
-              variant={currentRole === "customer" ? "default" : "ghost"}
-              onClick={() => { setCurrentRole("customer"); setActiveTab("map"); }}
-              className="w-full justify-start text-xs font-bold uppercase tracking-wider h-11 px-4 py-3 rounded-xl transition-all"
-            >
-              <User className="w-4 h-4 mr-2" />
-              <span>Customer Discovery</span>
-            </Button>
-
-            <Button
-              variant={currentRole === "vendor" ? "default" : "ghost"}
-              onClick={() => { setCurrentRole("vendor"); }}
-              className="w-full justify-start text-xs font-bold uppercase tracking-wider h-11 px-4 py-3 rounded-xl transition-all"
-            >
-              <Store className="w-4 h-4 mr-2" />
-              <span>Merchant Portal</span>
-            </Button>
-
-            <Button
-              variant={currentRole === "service" ? "default" : "ghost"}
-              onClick={() => { setCurrentRole("service"); }}
-              className="w-full justify-start text-xs font-bold uppercase tracking-wider h-11 px-4 py-3 rounded-xl transition-all"
-            >
-              <Wrench className="w-4 h-4 mr-2" />
-              <span>Service Portal</span>
-            </Button>
-          </div>
-
-          <div className="border-t border-slate-900/80 my-2"></div>
 
           {/* Customer Sub-tabs (Only show when customer role is active) */}
           {currentRole === "customer" && (
@@ -580,18 +845,80 @@ export default function ProxiHubDashboard() {
             </div>
           )}
 
+          {currentRole === "vendor" && (
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[9px] text-slate-550 font-black uppercase tracking-wider pl-2 mb-1">Merchant Tabs</p>
+              
+              <Button
+                variant={vendorActiveTab === "dashboard" ? "secondary" : "ghost"}
+                onClick={() => setVendorActiveTab("dashboard")}
+                className="w-full justify-start text-xs font-semibold h-10"
+              >
+                <BarChart className="w-3.5 h-3.5 mr-2" />
+                <span>My Dashboard</span>
+              </Button>
+
+              <Button
+                variant={vendorActiveTab === "ads" ? "secondary" : "ghost"}
+                onClick={() => setVendorActiveTab("ads")}
+                className="w-full justify-start text-xs font-semibold h-10"
+              >
+                <Target className="w-3.5 h-3.5 mr-2" />
+                <span>Hyperlocal Ads</span>
+              </Button>
+            </div>
+          )}
+
+          {currentRole === "service" && (
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[9px] text-slate-550 font-black uppercase tracking-wider pl-2 mb-1">Service Tabs</p>
+              
+              <Button
+                variant={vendorActiveTab === "dashboard" ? "secondary" : "ghost"}
+                onClick={() => setVendorActiveTab("dashboard")}
+                className="w-full justify-start text-xs font-semibold h-10"
+              >
+                <Wrench className="w-3.5 h-3.5 mr-2" />
+                <span>Dispatch Console</span>
+              </Button>
+
+              <Button
+                variant={vendorActiveTab === "ads" ? "secondary" : "ghost"}
+                onClick={() => setVendorActiveTab("ads")}
+                className="w-full justify-start text-xs font-semibold h-10"
+              >
+                <Target className="w-3.5 h-3.5 mr-2" />
+                <span>Hyperlocal Ads</span>
+              </Button>
+            </div>
+          )}
+
         </div>
 
-        {/* Small Wallet Indicator */}
-        <div className="mt-8 p-5 rounded-2xl bg-slate-950 border border-slate-900/80 flex items-center justify-between shadow-2xl">
-          <div>
-            <p className="text-[10px] text-slate-650 uppercase tracking-widest font-black">My Balance</p>
-            <p className="text-2xl font-bold text-emerald-455 mt-1">₹{walletBalance.toFixed(2)}</p>
+        <div className="mt-8 flex flex-col gap-4">
+          {/* Small Wallet Indicator */}
+          <div className="p-5 rounded-2xl bg-slate-950 border border-slate-900/80 flex items-center justify-between shadow-2xl">
+            <div>
+              <p className="text-[10px] text-slate-650 uppercase tracking-widest font-black">My Balance</p>
+              <p className="text-2xl font-bold text-emerald-455 mt-1">₹{walletBalance.toFixed(2)}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-slate-600 uppercase tracking-widest font-black">Limits</p>
+              <p className="text-xs font-semibold text-slate-350 mt-1">₹{earningToday.toFixed(0)}/₹100</p>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="text-[10px] text-slate-600 uppercase tracking-widest font-black">Limits</p>
-            <p className="text-xs font-semibold text-slate-350 mt-1">₹{earningToday.toFixed(0)}/₹100</p>
-          </div>
+
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              setIsLoggedIn(false);
+              setLoginShopName("");
+            }}
+            className="w-full bg-slate-950 border border-slate-900 text-[#d4af37] font-bold hover:bg-[#d4af37]/10 h-11 rounded-xl transition-all"
+          >
+            <Power className="w-4 h-4 mr-2" />
+            <span>Logout / Switch Role</span>
+          </Button>
         </div>
       </nav>
 
@@ -1194,28 +1521,11 @@ export default function ProxiHubDashboard() {
               
               <div className="glassmorphism p-6 rounded-3xl border-slate-900 bg-gradient-to-r from-slate-900 to-amber-950/15 shadow-md flex justify-between items-center">
                 <div>
-                  <h2 className="text-lg font-bold text-amber-400 flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-[#d4af37] flex items-center gap-2">
                     <Store className="w-5.5 h-5.5" />
-                    <span>Merchant Dashboard Panel</span>
+                    <span>{selectedVendorId === 1 ? "Stationary Store" : "Mobile Cart"} Dashboard</span>
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">Configure storefront pricing, start route simulations, or launch group-buy pools.</p>
-                </div>
-                
-                <div className="flex gap-3">
-                  <Button 
-                    variant={selectedVendorId === 1 ? "default" : "outline"}
-                    onClick={() => { setSelectedVendorId(1); setIsCartRouteActive(false); }}
-                    className="text-xs font-bold px-4 py-2"
-                  >
-                    Stationary
-                  </Button>
-                  <Button 
-                    variant={selectedVendorId === 2 ? "default" : "outline"}
-                    onClick={() => { setSelectedVendorId(2); }}
-                    className="text-xs font-bold px-4 py-2"
-                  >
-                    Mobile Cart
-                  </Button>
+                  <p className="text-xs text-slate-400 mt-1">Configure storefront pricing, view metrics, and manage active listings.</p>
                 </div>
               </div>
 
@@ -1237,10 +1547,25 @@ export default function ProxiHubDashboard() {
                       <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Top Demanded Goods & Pricing Estimate</p>
                       
                       <div className="flex flex-col gap-2">
-                        {vendorDemandGoods.map((good) => (
+                        {(vendorGoodsMap[selectedVendorId] || []).map((good) => (
                           <div key={good.id} className="p-3 bg-slate-950 rounded-xl border border-slate-900 flex justify-between items-center text-xs">
                             <span className="font-semibold text-slate-200">{good.name}</span>
-                            <span className="font-bold text-emerald-450">{good.price}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-emerald-455">{good.price}</span>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-6 w-6 text-rose-500 hover:text-rose-455 hover:bg-rose-950/30"
+                                onClick={() => {
+                                  setVendorGoodsMap(prev => ({
+                                    ...prev,
+                                    [selectedVendorId]: (prev[selectedVendorId] || []).filter(g => g.id !== good.id)
+                                  }));
+                                }}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -1248,14 +1573,17 @@ export default function ProxiHubDashboard() {
                       <form onSubmit={(e) => {
                         e.preventDefault();
                         if (!newGoodName || !newGoodPrice) return;
-                        setVendorDemandGoods(prev => [...prev, { id: Date.now(), name: newGoodName, price: newGoodPrice }]);
+                        setVendorGoodsMap(prev => ({
+                          ...prev,
+                          [selectedVendorId]: [...(prev[selectedVendorId] || []), { id: Date.now(), name: newGoodName, price: newGoodPrice.startsWith('₹') ? newGoodPrice : '₹' + newGoodPrice }]
+                        }));
                         setNewGoodName("");
                         setNewGoodPrice("");
                       }} className="grid grid-cols-2 gap-3 mt-2">
                         <Input type="text" placeholder="e.g. Milk 1L" value={newGoodName} onChange={(e) => setNewGoodName(e.target.value)} className="bg-slate-950 border border-slate-900 h-10 text-xs" />
                         <div className="flex gap-2">
                           <Input type="text" placeholder="₹ Price" value={newGoodPrice} onChange={(e) => setNewGoodPrice(e.target.value)} className="bg-slate-950 border border-slate-900 h-10 text-xs w-20" />
-                          <Button type="submit" className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black h-10 flex-grow">+</Button>
+                          <Button type="submit" className="bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 text-xs font-black h-10 flex-grow">+</Button>
                         </div>
                       </form>
                     </div>
@@ -1325,33 +1653,130 @@ export default function ProxiHubDashboard() {
                       <CardHeader className="p-0 pb-3 border-b border-slate-900">
                         <CardTitle className="text-sm font-bold text-slate-205 flex items-center gap-2"><Truck className="w-4.5 h-4.5" /> Route Broadcaster</CardTitle>
                       </CardHeader>
-                      <CardContent className="p-0">
+                      <CardContent className="p-0 flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-3">
-                          <Button onClick={() => { setIsCartRouteActive(true); }} className="bg-purple-650 hover:bg-purple-550 text-white font-bold h-11">Start Route</Button>
-                          <Button onClick={() => { setIsCartRouteActive(false); }} variant="outline" className="h-11">Pause</Button>
+                          <Button 
+                            onClick={() => { setIsCartRouteActive(true); }} 
+                            className={`font-bold h-11 transition-all ${isCartRouteActive ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37]" : "bg-slate-950 border border-slate-900 text-slate-300 hover:bg-slate-900"}`}
+                          >
+                            Start Route
+                          </Button>
+                          <Button 
+                            onClick={() => { setIsCartRouteActive(false); }} 
+                            className={`font-bold h-11 transition-all ${!isCartRouteActive ? "bg-rose-600 text-white hover:bg-rose-500" : "bg-slate-950 border border-slate-900 text-slate-300 hover:bg-slate-900"}`}
+                          >
+                            Pause
+                          </Button>
+                        </div>
+                        
+                        <div className="flex flex-col gap-1.5 mt-2">
+                          <div className="flex justify-between text-xs text-slate-400">
+                            <span>Manually Move Route Position</span>
+                            <span className="font-bold text-[#d4af37]">{cartRouteProgress}%</span>
+                          </div>
+                          <input 
+                            type="range" 
+                            min="0" 
+                            max="100" 
+                            value={cartRouteProgress} 
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value);
+                              setCartRouteProgress(val);
+                              // Update cart coordinates manually based on slider angle
+                              const angle = (val / 100) * (2 * Math.PI);
+                              const newLat = 13.048 + Math.sin(angle) * 0.004;
+                              const newLng = 80.252 + Math.cos(angle) * 0.004;
+                              setVendors(prev => 
+                                prev.map(vendor => vendor.id === 2 ? { ...vendor, lat: newLat, lng: newLng } : vendor)
+                              );
+                            }} 
+                            className="w-full accent-[#d4af37] cursor-pointer h-1.5 bg-slate-950 rounded-lg appearance-none"
+                          />
                         </div>
                       </CardContent>
                     </Card>
 
                     <Card className="bg-[#0d121f] shadow-xl border border-slate-900 p-6 flex flex-col gap-4">
-                      <CardHeader className="p-0 pb-3 border-b border-slate-900">
-                        <CardTitle className="text-sm font-bold text-slate-202 flex items-center gap-2"><Radio className="w-4.5 h-4.5 text-pink-500" /> Voice broadcast announcement</CardTitle>
+                      <CardHeader className="p-0 pb-3 border-b border-slate-900 flex justify-between items-center">
+                        <CardTitle className="text-sm font-bold text-slate-202 flex items-center gap-2">
+                          <Radio className="w-4.5 h-4.5 text-pink-500" /> Voice announcement
+                        </CardTitle>
+                        <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-900 gap-1">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => setVoiceBroadcastOption("record")}
+                            className={`h-7 px-3 text-[10px] uppercase font-black transition-all ${voiceBroadcastOption === "record" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37] hover:text-slate-950" : "text-slate-200 hover:bg-slate-900"}`}
+                          >
+                            Record
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => setVoiceBroadcastOption("upload")}
+                            className={`h-7 px-3 text-[10px] uppercase font-black transition-all ${voiceBroadcastOption === "upload" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37] hover:text-slate-950" : "text-slate-200 hover:bg-slate-900"}`}
+                          >
+                            Upload MP3 file
+                          </Button>
+                        </div>
                       </CardHeader>
                       <CardContent className="p-0">
-                        <Button 
-                          onClick={() => {
-                            if (isRecordingAnnouncement) {
-                              setIsRecordingAnnouncement(false);
-                              const textPrompt = prompt("Speech message:") || "Cart arrived near RWA Block C!";
-                              setSpeechTranscript(`[ANNOUNCEMENT]: ${textPrompt}`);
-                            } else {
-                              setIsRecordingAnnouncement(true);
-                            }
-                          }}
-                          className={`w-full font-bold text-xs h-11 ${isRecordingAnnouncement ? "bg-red-650 text-white animate-pulse" : "bg-pink-650 hover:bg-pink-550 text-white"}`}
-                        >
-                          {isRecordingAnnouncement ? "Recording..." : "Record Broadcast Announcement"}
-                        </Button>
+                        {voiceBroadcastOption === "record" ? (
+                          <div className="flex flex-col gap-3">
+                            <Button 
+                              onClick={() => {
+                                if (isRecordingAnnouncement) {
+                                  setIsRecordingAnnouncement(false);
+                                  const textPrompt = prompt("Speech message:") || "Cart arrived near RWA Block C!";
+                                  setSpeechTranscript(`[ANNOUNCEMENT]: ${textPrompt}`);
+                                } else {
+                                  setIsRecordingAnnouncement(true);
+                                }
+                              }}
+                              className={`w-full font-bold text-xs h-11 ${isRecordingAnnouncement ? "bg-red-650 text-white animate-pulse" : "bg-pink-650 hover:bg-pink-550 text-white"}`}
+                            >
+                              {isRecordingAnnouncement ? "Recording..." : "Record Broadcast Announcement"}
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-3 p-3 bg-slate-950 rounded-xl border border-slate-900">
+                            <p className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Select Voice Note MP3</p>
+                            <div className="flex items-center gap-3">
+                              <Input 
+                                type="file" 
+                                accept="audio/mp3,audio/*" 
+                                onChange={(e) => {
+                                  if (e.target.files?.[0]) {
+                                    const file = e.target.files[0];
+                                    setUploadedMp3Name(file.name);
+                                    setUploadProgress(0);
+                                    let progress = 0;
+                                    const int = setInterval(() => {
+                                      progress += 20;
+                                      setUploadProgress(progress);
+                                      if (progress >= 100) {
+                                        clearInterval(int);
+                                        setSpeechTranscript(`[MP3 Broadcast]: Running announcement from file ${file.name}`);
+                                      }
+                                    }, 200);
+                                  }
+                                }} 
+                                className="bg-slate-900 border border-slate-800 text-xs text-slate-300 h-9"
+                              />
+                            </div>
+                            {uploadedMp3Name && (
+                              <div className="flex flex-col gap-1 mt-1">
+                                <div className="flex justify-between text-[10px] text-slate-400">
+                                  <span>{uploadedMp3Name}</span>
+                                  <span>{uploadProgress}%</span>
+                                </div>
+                                <div className="w-full bg-slate-900 h-1 rounded-full overflow-hidden">
+                                  <div className="bg-[#d4af37] h-full transition-all duration-200" style={{ width: `${uploadProgress}%` }}></div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   </div>
