@@ -790,12 +790,21 @@ export default function ProxiHubDashboard() {
               <p className="text-[9px] text-slate-550 font-black uppercase tracking-wider pl-2 mb-1">Customer Tabs</p>
               
               <Button
-                variant={activeTab === "map" ? "secondary" : "ghost"}
-                onClick={() => setActiveTab("map")}
+                variant={activeTab === "map" && customerMapSubTab === "map" ? "secondary" : "ghost"}
+                onClick={() => { setActiveTab("map"); setCustomerMapSubTab("map"); }}
                 className="w-full justify-start text-xs font-semibold h-10"
               >
                 <MapIcon className="w-3.5 h-3.5 mr-2" />
                 <span>5km Map Discovery</span>
+              </Button>
+
+              <Button
+                variant={activeTab === "map" && customerMapSubTab === "list" ? "secondary" : "ghost"}
+                onClick={() => { setActiveTab("map"); setCustomerMapSubTab("list"); }}
+                className="w-full justify-start text-xs font-semibold h-10"
+              >
+                <Store className="w-3.5 h-3.5 mr-2" />
+                <span>Nearby Vendors</span>
               </Button>
 
               <Button
@@ -1015,7 +1024,7 @@ export default function ProxiHubDashboard() {
                       className={`flex-1 text-xs font-bold uppercase tracking-wider h-10 px-4 rounded-xl transition-all ${customerMapSubTab === "list" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37] hover:text-slate-950" : "text-slate-200"}`}
                     >
                       <Search className="w-3.5 h-3.5 mr-2" />
-                      <span>Directory List</span>
+                      <span>List View</span>
                     </Button>
                   </div>
 
