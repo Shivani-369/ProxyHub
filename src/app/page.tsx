@@ -370,47 +370,47 @@ export default function ProxiHubDashboard() {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-[#030407] flex items-center justify-center p-6 text-slate-100">
-        <div className="w-full max-w-md bg-[#0d121f] rounded-3xl border border-slate-900 p-8 shadow-2xl flex flex-col gap-6">
-          <div className="text-center">
-            <span className="text-4xl">🚀</span>
+      <div className="min-h-screen bg-[#030407] flex items-center justify-center p-4 sm:p-6 text-slate-100 font-sans">
+        <div className="w-full max-w-md bg-[#0d121f] rounded-3xl border border-slate-900 p-6 shadow-2xl flex flex-col gap-6 transition-all duration-200 hover:scale-[1.02] hover:border-slate-800">
+          <div className="text-center flex flex-col items-center">
+            <span className="text-4xl animate-bounce duration-1000">🚀</span>
             <h1 className="text-2xl font-black text-[#d4af37] tracking-tight mt-3">ProxiHub Portal Access</h1>
             <p className="text-xs text-slate-400 mt-1">Select your role and customize config settings to enter portal.</p>
           </div>
 
-          <div className="flex bg-slate-950 p-1.5 rounded-2xl border border-slate-900 gap-1.5">
+          <div className="grid grid-cols-3 bg-slate-950 p-1 rounded-2xl border border-slate-900 gap-1">
             <Button 
               variant="ghost" 
               onClick={() => { setCurrentRole("customer"); }}
-              className={`flex-1 text-xs font-bold uppercase tracking-wider h-11 px-3 rounded-xl transition-all ${currentRole === "customer" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37]" : "text-slate-200"}`}
+              className={`text-xs font-bold uppercase tracking-wider h-11 px-1 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${currentRole === "customer" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37] hover:text-slate-950" : "text-slate-200 hover:bg-slate-900"}`}
             >
               Customer
             </Button>
             <Button 
               variant="ghost" 
               onClick={() => { setCurrentRole("vendor"); }}
-              className={`flex-1 text-xs font-bold uppercase tracking-wider h-11 px-3 rounded-xl transition-all ${currentRole === "vendor" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37]" : "text-slate-200"}`}
+              className={`text-xs font-bold uppercase tracking-wider h-11 px-1 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${currentRole === "vendor" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37] hover:text-slate-950" : "text-slate-200 hover:bg-slate-900"}`}
             >
               Merchant
             </Button>
             <Button 
               variant="ghost" 
               onClick={() => { setCurrentRole("service"); }}
-              className={`flex-1 text-xs font-bold uppercase tracking-wider h-11 px-3 rounded-xl transition-all ${currentRole === "service" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37]" : "text-slate-200"}`}
+              className={`text-xs font-bold uppercase tracking-wider h-11 px-1 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${currentRole === "service" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37] hover:text-slate-950" : "text-slate-200 hover:bg-slate-900"}`}
             >
               Service
             </Button>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 items-center w-full">
             {currentRole === "vendor" && (
-              <>
-                <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-900 gap-1">
+              <div className="flex flex-col gap-4 w-full items-center">
+                <div className="grid grid-cols-2 bg-slate-950 p-1 rounded-xl border border-slate-900 gap-1 w-full">
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     onClick={() => { setSelectedVendorId(1); }}
-                    className={`flex-1 h-9 text-[10px] uppercase font-bold ${selectedVendorId === 1 ? "bg-slate-800 text-white" : "text-slate-400"}`}
+                    className={`h-9 text-[10px] uppercase font-bold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${selectedVendorId === 1 ? "bg-slate-800 text-white" : "text-slate-400 hover:bg-slate-900"}`}
                   >
                     Stationary Shop
                   </Button>
@@ -418,28 +418,28 @@ export default function ProxiHubDashboard() {
                     variant="ghost" 
                     size="sm" 
                     onClick={() => { setSelectedVendorId(2); }}
-                    className={`flex-1 h-9 text-[10px] uppercase font-bold ${selectedVendorId === 2 ? "bg-slate-800 text-white" : "text-slate-400"}`}
+                    className={`h-9 text-[10px] uppercase font-bold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${selectedVendorId === 2 ? "bg-slate-800 text-white" : "text-slate-400 hover:bg-slate-900"}`}
                   >
                     Mobile Cart
                   </Button>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
-                  <Label className="text-xs font-bold text-slate-350 pl-1">Store / Business Name</Label>
+                <div className="flex flex-col gap-2 w-full items-center text-center">
+                  <Label className="text-xs font-bold text-slate-350">Store / Business Name</Label>
                   <Input 
                     type="text" 
                     placeholder={selectedVendorId === 1 ? "Saravana Grocery Store" : "Ooty Veggie Cart"} 
                     value={loginShopName} 
                     onChange={(e) => setLoginShopName(e.target.value)} 
-                    className="bg-slate-955 border border-slate-900 focus-visible:ring-[#d4af37]" 
+                    className="bg-slate-950 border border-slate-900 focus-visible:ring-[#d4af37] text-sm h-11 w-full text-slate-100 placeholder-slate-600 rounded-xl text-center" 
                   />
                 </div>
-                <div className="flex flex-col gap-2.5">
-                  <Label className="text-xs font-bold text-slate-350 pl-1">Category type</Label>
+                <div className="flex flex-col gap-2 w-full items-center text-center">
+                  <Label className="text-xs font-bold text-slate-350">Category type</Label>
                   <select 
                     value={loginCategory} 
                     onChange={(e) => setLoginCategory(e.target.value)} 
-                    className="w-full bg-slate-950 border border-slate-900 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-[#d4af37]"
+                    className="w-full bg-slate-950 border border-slate-900 rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-[#d4af37] focus:border-[#d4af37] h-11 text-center"
                   >
                     <option value="Grocery">Grocery</option>
                     <option value="Vegetables">Vegetables</option>
@@ -447,36 +447,36 @@ export default function ProxiHubDashboard() {
                     <option value="Flowers">Flowers & Greens</option>
                   </select>
                 </div>
-              </>
+              </div>
             )}
 
             {currentRole === "service" && (
-              <>
-                <div className="flex flex-col gap-2.5">
-                  <Label className="text-xs font-bold text-slate-350 pl-1">Contractor / Business Name</Label>
+              <div className="flex flex-col gap-4 w-full items-center">
+                <div className="flex flex-col gap-2 w-full items-center text-center">
+                  <Label className="text-xs font-bold text-slate-350">Contractor / Business Name</Label>
                   <Input 
                     type="text" 
                     placeholder="Priya Electrical Services" 
                     value={loginShopName} 
                     onChange={(e) => setLoginShopName(e.target.value)} 
-                    className="bg-slate-955 border border-slate-900 focus-visible:ring-[#d4af37]" 
+                    className="bg-slate-950 border border-slate-900 focus-visible:ring-[#d4af37] text-sm h-11 w-full text-slate-100 placeholder-slate-600 rounded-xl text-center" 
                   />
                 </div>
-                <div className="flex flex-col gap-2.5">
-                  <Label className="text-xs font-bold text-slate-350 pl-1">Diagnostic Base Callout Rate (₹)</Label>
+                <div className="flex flex-col gap-2 w-full items-center text-center">
+                  <Label className="text-xs font-bold text-slate-350">Diagnostic Base Callout Rate (₹)</Label>
                   <Input 
                     type="number" 
                     placeholder="199" 
                     value={loginServiceRate} 
                     onChange={(e) => setLoginServiceRate(e.target.value)} 
-                    className="bg-slate-955 border border-slate-900 focus-visible:ring-[#d4af37]" 
+                    className="bg-slate-950 border border-slate-900 focus-visible:ring-[#d4af37] text-sm h-11 w-full text-slate-100 placeholder-slate-600 rounded-xl text-center" 
                   />
                 </div>
-              </>
+              </div>
             )}
 
             {currentRole === "customer" && (
-              <p className="text-xs text-slate-400 leading-relaxed text-center py-4">
+              <p className="text-xs text-slate-400 leading-relaxed text-center py-4 w-full">
                 Explore local geofenced maps, neighborhood buy pools, and play rewards campaigns locally.
               </p>
             )}
@@ -493,7 +493,7 @@ export default function ProxiHubDashboard() {
                 }
                 setIsLoggedIn(true);
               }}
-              className="bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 font-bold uppercase tracking-wider py-3 rounded-2xl transition-all w-full mt-2"
+              className="bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 font-bold uppercase tracking-wider py-3 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full mt-2 animate-pulse"
             >
               Enter {currentRole === "customer" ? "Customer" : currentRole === "vendor" ? (selectedVendorId === 1 ? "Stationary Store" : "Mobile Cart") : "Service Pro"} Portal
             </Button>
@@ -528,7 +528,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={activeTab === "map" && customerMapSubTab === "map" ? "secondary" : "ghost"}
                 onClick={() => { setActiveTab("map"); setCustomerMapSubTab("map"); }}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <MapIcon className="w-3.5 h-3.5 mr-2" />
                 <span>5km Map Discovery</span>
@@ -537,7 +537,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={activeTab === "map" && customerMapSubTab === "list" ? "secondary" : "ghost"}
                 onClick={() => { setActiveTab("map"); setCustomerMapSubTab("list"); }}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Store className="w-3.5 h-3.5 mr-2" />
                 <span>Nearby Vendors</span>
@@ -546,7 +546,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={activeTab === "pools" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("pools")}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Users className="w-3.5 h-3.5 mr-2" />
                 <span>Collective Pools</span>
@@ -555,7 +555,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={activeTab === "hub" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("hub")}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <MessageSquare className="w-3.5 h-3.5 mr-2" />
                 <span>Neighborhood Hub</span>
@@ -564,7 +564,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={activeTab === "goldrush" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("goldrush")}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Zap className="w-3.5 h-3.5 mr-2" />
                 <span>Local Gold Rush</span>
@@ -573,7 +573,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={activeTab === "rewards" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("rewards")}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <DollarSign className="w-3.5 h-3.5 mr-2" />
                 <span>ProxiRewards Ads</span>
@@ -582,7 +582,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={activeTab === "wallet" ? "secondary" : "ghost"}
                 onClick={() => setActiveTab("wallet")}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <CreditCard className="w-3.5 h-3.5 mr-2" />
                 <span>My Wallet</span>
@@ -597,7 +597,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={vendorActiveTab === "dashboard" ? "secondary" : "ghost"}
                 onClick={() => setVendorActiveTab("dashboard")}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <BarChart className="w-3.5 h-3.5 mr-2" />
                 <span>My Dashboard</span>
@@ -606,7 +606,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={vendorActiveTab === "ads" ? "secondary" : "ghost"}
                 onClick={() => setVendorActiveTab("ads")}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Target className="w-3.5 h-3.5 mr-2" />
                 <span>Hyperlocal Ads</span>
@@ -621,7 +621,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={vendorActiveTab === "dashboard" ? "secondary" : "ghost"}
                 onClick={() => setVendorActiveTab("dashboard")}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Wrench className="w-3.5 h-3.5 mr-2" />
                 <span>Dispatch Console</span>
@@ -630,7 +630,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={vendorActiveTab === "ads" ? "secondary" : "ghost"}
                 onClick={() => setVendorActiveTab("ads")}
-                className="w-full justify-start text-xs font-semibold h-10"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Target className="w-3.5 h-3.5 mr-2" />
                 <span>Hyperlocal Ads</span>
@@ -859,7 +859,7 @@ export default function ProxiHubDashboard() {
                       
                       <div className="flex-grow overflow-y-auto flex flex-col gap-4.5 pr-1">
                         {filteredVendors.map((vendor) => (
-                          <Card key={vendor.id} className="border border-slate-900 hover:border-slate-800 transition-all cursor-pointer">
+                          <Card key={vendor.id} className="border border-slate-900 hover:border-slate-800 transition-all duration-200 hover:scale-[1.02] active:scale-[0.99] cursor-pointer shadow-lg">
                             <CardHeader className="p-4">
                               <div className="flex justify-between items-start">
                                 <div>
@@ -888,7 +888,7 @@ export default function ProxiHubDashboard() {
                             </CardContent>
                             <CardFooter className="p-4 pt-0 flex items-center justify-between text-[11px] font-semibold border-t-0 bg-transparent">
                               <span className="text-slate-500">⭐ {vendor.rating} Ratings</span>
-                              <Button variant="link" className="text-blue-450 font-bold uppercase tracking-wider text-[10px] p-0 h-auto">
+                              <Button variant="link" className="text-blue-450 font-bold uppercase tracking-wider text-[10px] p-0 h-auto transition-all duration-200 hover:scale-[1.05]">
                                 Call or Chat &rarr;
                               </Button>
                             </CardFooter>
@@ -917,7 +917,7 @@ export default function ProxiHubDashboard() {
                     {collectives.map((c) => {
                       const percent = Math.floor((c.joined / c.target) * 100);
                       return (
-                        <Card key={c.id} className="shadow-xl bg-[#0d121f] border border-slate-900 flex flex-col">
+                        <Card key={c.id} className="shadow-xl bg-[#0d121f] border border-slate-900 flex flex-col transition-all duration-200 hover:scale-[1.02] hover:border-slate-800">
                           <CardHeader className="p-6">
                             <div className="flex justify-between items-start mb-3">
                               <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-widest bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
@@ -934,7 +934,7 @@ export default function ProxiHubDashboard() {
                             <p className="text-xs text-slate-300 font-bold mb-4">Item: {c.item}</p>
                             <div className="my-5 bg-slate-950 p-4 rounded-xl border border-slate-900 flex justify-between items-center">
                               <div>
-                                <p className="text-[9px] text-slate-550 uppercase font-black">Group Price</p>
+                                <p className="text-[9px] text-slate-555 uppercase font-black">Group Price</p>
                                 <p className="text-xl font-black text-cyan-400 mt-1">₹{c.price}</p>
                               </div>
                               <div className="text-right">
@@ -959,7 +959,7 @@ export default function ProxiHubDashboard() {
                                 setCollectives(prev => prev.map(p => p.id === c.id ? { ...p, joined: p.joined + 1 } : p));
                                 alert(`Joined pool for ${c.item}!`);
                               }}
-                              className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold uppercase tracking-wider text-xs py-3.5 rounded-2xl shadow-lg transition-all h-11"
+                              className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold uppercase tracking-wider text-xs py-3.5 rounded-2xl shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] h-11"
                             >
                               Join Collective Pool
                             </Button>
