@@ -999,8 +999,29 @@ export default function ProxiHubDashboard() {
                     </div>
                   </div>
 
+                  {/* Sub-tab Toggle buttons for small screens (hidden on lg screens) */}
+                  <div className="flex lg:hidden bg-slate-950 p-1.5 rounded-2xl border border-slate-900 gap-2.5 max-w-xs mx-auto w-full">
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => setCustomerMapSubTab("map")}
+                      className={`flex-1 text-xs font-bold uppercase tracking-wider h-10 px-4 rounded-xl transition-all ${customerMapSubTab === "map" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37] hover:text-slate-950" : "text-slate-200"}`}
+                    >
+                      <MapIcon className="w-3.5 h-3.5 mr-2" />
+                      <span>Map View</span>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => setCustomerMapSubTab("list")}
+                      className={`flex-1 text-xs font-bold uppercase tracking-wider h-10 px-4 rounded-xl transition-all ${customerMapSubTab === "list" ? "bg-[#d4af37] text-slate-950 hover:bg-[#d4af37] hover:text-slate-950" : "text-slate-200"}`}
+                    >
+                      <Search className="w-3.5 h-3.5 mr-2" />
+                      <span>Directory List</span>
+                    </Button>
+                  </div>
+
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 flex-grow">
-                    <div className="lg:col-span-2 glassmorphism rounded-3xl border-slate-900 p-6 min-h-[500px] flex flex-col relative overflow-hidden shadow-2xl">
+                    {/* Live geofenced map block (visible on lg, or when active sub-tab is 'map' on mobile) */}
+                    <div className={`lg:col-span-2 glassmorphism rounded-3xl border-slate-900 p-6 min-h-[500px] flex flex-col relative overflow-hidden shadow-2xl ${customerMapSubTab === "map" ? "flex" : "hidden lg:flex"}`}>
                       <h3 className="text-sm font-bold uppercase tracking-wider text-slate-350 mb-4 flex items-center gap-2">
                         <MapIcon className="w-4 h-4 text-blue-400" />
                         <span>Live geofenced discovery map</span>
@@ -1086,8 +1107,8 @@ export default function ProxiHubDashboard() {
                       </div>
                     </div>
 
-                    {/* Listings Sidebar */}
-                    <div className="glassmorphism rounded-3xl border-slate-900 p-6 flex flex-col h-[560px] shadow-2xl">
+                    {/* Listings Sidebar (visible on lg, or when active sub-tab is 'list' on mobile) */}
+                    <div className={`glassmorphism rounded-3xl border-slate-900 p-6 flex flex-col h-[560px] shadow-2xl ${customerMapSubTab === "list" ? "flex" : "hidden lg:flex"}`}>
                       <h3 className="text-sm font-bold uppercase tracking-wider text-slate-350 mb-4 pb-3 border-b border-slate-900/60 flex items-center justify-between">
                         <span>Nearby Vendors ({filteredVendors.length})</span>
                       </h3>
