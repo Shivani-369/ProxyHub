@@ -1229,7 +1229,7 @@ export default function ProxiHubDashboard() {
                       </CardHeader>
                       <CardContent className="p-6 pt-0">
                         <form onSubmit={handleWithdrawal} className="flex flex-col gap-4">
-                          <Input type="text" placeholder="UPI ID (e.g. shivam@upi)" value={withdrawUpi} onChange={(e) => setWithdrawUpi(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                          <Input type="text" placeholder="UPI ID (shivam@upi)" value={withdrawUpi} onChange={(e) => setWithdrawUpi(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
                           <Input type="number" placeholder="Amount (min ₹100)" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
                           <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold px-4 py-2 rounded-xl shadow-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">Process Instant Payout</Button>
                         </form>
@@ -1335,7 +1335,7 @@ export default function ProxiHubDashboard() {
                             setNewGoodName("");
                             setNewGoodPrice("");
                           }} className="grid grid-cols-2 gap-3 mt-2 items-center">
-                            <Input type="text" placeholder="e.g. Milk 1L" value={newGoodName} onChange={(e) => setNewGoodName(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                            <Input type="text" placeholder="Milk 1L" value={newGoodName} onChange={(e) => setNewGoodName(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
                             <div className="flex gap-2 items-center">
                               <Input type="text" placeholder="₹ Price" value={newGoodPrice} onChange={(e) => setNewGoodPrice(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm w-20 rounded-xl" />
                               <Button type="submit" className="bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 text-sm font-black px-4 py-2 flex-grow rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">+</Button>
@@ -1376,8 +1376,8 @@ export default function ProxiHubDashboard() {
                               setNewPoolPrice("");
                               setNewPoolOriginalPrice("");
                             }} className="flex flex-col gap-3">
-                              <Input type="text" placeholder="Pool title (e.g. Block C Sunflower Oil Pool)" value={newPoolTitle} onChange={(e) => setNewPoolTitle(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
-                              <Input type="text" placeholder="Item name (e.g. Gold Winner 5L Can)" value={newPoolItem} onChange={(e) => setNewPoolItem(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                              <Input type="text" placeholder="Pool title (Block C Sunflower Oil Pool)" value={newPoolTitle} onChange={(e) => setNewPoolTitle(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                              <Input type="text" placeholder="Item name (Gold Winner 5L Can)" value={newPoolItem} onChange={(e) => setNewPoolItem(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
                               <div className="grid grid-cols-2 gap-3 items-center">
                                 <Input type="number" placeholder="Discounted Price (₹)" value={newPoolPrice} onChange={(e) => setNewPoolPrice(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
                                 <Input type="number" placeholder="Retail Price (₹)" value={newPoolOriginalPrice} onChange={(e) => setNewPoolOriginalPrice(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
@@ -1642,7 +1642,7 @@ export default function ProxiHubDashboard() {
                           ))}
                         </div>
                         <form onSubmit={(e) => { e.preventDefault(); if(!newSkillText) return; setProviderSkills(prev => [...prev, newSkillText]); setNewSkillText(""); }} className="flex gap-3 mt-1.5">
-                          <Input type="text" placeholder="Add skill tag (e.g. AC Installation)" value={newSkillText} onChange={(e) => setNewSkillText(e.target.value)} className="bg-slate-955 border border-slate-900 h-10 text-xs flex-grow" />
+                          <Input type="text" placeholder="Add skill tag (AC Installation)" value={newSkillText} onChange={(e) => setNewSkillText(e.target.value)} className="bg-slate-955 border border-slate-900 h-10 text-xs flex-grow" />
                           <Button type="submit" className="bg-[#d4af37] text-slate-950 font-bold h-10 text-xs px-4">Add</Button>
                         </form>
                       </div>

@@ -203,7 +203,7 @@ export default function MerchantOnboarding() {
                     <Mail className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
                     <Input 
                       type="email" 
-                      placeholder="e.g. store@gmail.com" 
+                      placeholder="store@gmail.com" 
                       value={formData.email} 
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
                       className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
@@ -326,7 +326,7 @@ export default function MerchantOnboarding() {
                     <Store className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
                     <Input 
                       type="text" 
-                      placeholder="e.g. Saravana Grocery Store" 
+                      placeholder="Saravana Grocery Store" 
                       value={formData.storeName} 
                       onChange={(e) => setFormData({ ...formData, storeName: e.target.value })} 
                       className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
@@ -356,7 +356,7 @@ export default function MerchantOnboarding() {
                     <FileText className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-550" />
                     <Input 
                       type="text" 
-                      placeholder="GSTIN Code (e.g. 33AAAAA1111A1Z1)" 
+                      placeholder="GSTIN Code (33AAAAA1111A1Z1)" 
                       value={formData.taxId} 
                       onChange={(e) => setFormData({ ...formData, taxId: e.target.value.toUpperCase() })} 
                       className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
