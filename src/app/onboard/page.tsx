@@ -199,30 +199,24 @@ export default function MerchantOnboarding() {
               <div className="flex flex-col gap-4 w-full">
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="text-xs font-bold text-slate-350">Business Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
-                    <Input 
-                      type="email" 
-                      placeholder="store@gmail.com" 
-                      value={formData.email} 
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
-                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
-                    />
-                  </div>
+                  <Input 
+                    type="email" 
+                    placeholder="store@gmail.com" 
+                    value={formData.email} 
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                    className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
+                  />
                 </div>
 
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="text-xs font-bold text-slate-350">Account Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
-                    <Input 
-                      type="password" 
-                      placeholder="Enter strong password" 
-                      value={formData.password} 
-                      onChange={handlePasswordChange}
-                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
-                    />
-                  </div>
+                  <Input 
+                    type="password" 
+                    placeholder="Enter strong password" 
+                    value={formData.password} 
+                    onChange={handlePasswordChange}
+                    className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
+                  />
                   
                   {/* Password Checklist UI */}
                   <div className="flex flex-wrap gap-2.5 mt-1.5 pl-1">
@@ -241,17 +235,14 @@ export default function MerchantOnboarding() {
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="text-xs font-bold text-slate-350">Phone Contact (for geofenced dispatch)</Label>
                   <div className="flex gap-2">
-                    <div className="relative flex-grow">
-                      <Phone className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
-                      <Input 
-                        type="tel" 
-                        placeholder="Mobile Phone Number" 
-                        value={formData.phone} 
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "") })} 
-                        className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
-                        maxLength={10}
-                      />
-                    </div>
+                    <Input 
+                      type="tel" 
+                      placeholder="Mobile Phone Number" 
+                      value={formData.phone} 
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "") })} 
+                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
+                      maxLength={10}
+                    />
                     <Button 
                       type="button" 
                       onClick={handleSendOtp}
@@ -322,16 +313,13 @@ export default function MerchantOnboarding() {
 
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="text-xs font-bold text-slate-350">Store storefront name</Label>
-                  <div className="relative">
-                    <Store className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
-                    <Input 
-                      type="text" 
-                      placeholder="Saravana Grocery Store" 
-                      value={formData.storeName} 
-                      onChange={(e) => setFormData({ ...formData, storeName: e.target.value })} 
-                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
-                    />
-                  </div>
+                  <Input 
+                    type="text" 
+                    placeholder="Saravana Grocery Store" 
+                    value={formData.storeName} 
+                    onChange={(e) => setFormData({ ...formData, storeName: e.target.value })} 
+                    className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
+                  />
                 </div>
 
                 <div className="flex flex-col gap-2 w-full">
@@ -352,30 +340,24 @@ export default function MerchantOnboarding() {
               <div className="flex flex-col gap-4 w-full">
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="text-xs font-bold text-slate-350">GSTIN / Tax Identification ID</Label>
-                  <div className="relative">
-                    <FileText className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-550" />
-                    <Input 
-                      type="text" 
-                      placeholder="GSTIN Code (33AAAAA1111A1Z1)" 
-                      value={formData.taxId} 
-                      onChange={(e) => setFormData({ ...formData, taxId: e.target.value.toUpperCase() })} 
-                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
-                    />
-                  </div>
+                  <Input 
+                    type="text" 
+                    placeholder="GSTIN Code (33AAAAA1111A1Z1)" 
+                    value={formData.taxId} 
+                    onChange={(e) => setFormData({ ...formData, taxId: e.target.value.toUpperCase() })} 
+                    className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
+                  />
                 </div>
 
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="text-xs font-bold text-slate-350">Official Business Address</Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
-                    <Input 
-                      type="text" 
-                      placeholder="Shop building, street name, block..." 
-                      value={formData.address} 
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })} 
-                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
-                    />
-                  </div>
+                  <Input 
+                    type="text" 
+                    placeholder="Shop building, street name, block..." 
+                    value={formData.address} 
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })} 
+                    className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
+                  />
                   <Button 
                     type="button"
                     onClick={() => setFormData({ ...formData, address: "Saravana Building, 42 Anna Nagar Central, Chennai 600040" })}
