@@ -1271,11 +1271,11 @@ export default function ProxiHubDashboard() {
               
               <div className="glassmorphism p-6 rounded-3xl border-slate-900 bg-gradient-to-r from-slate-900 to-amber-950/15 shadow-md flex justify-between items-center">
                 <div>
-                  <h2 className="text-lg font-bold text-[#d4af37] flex items-center gap-2">
-                    <Store className="w-5.5 h-5.5" />
+                  <h2 className="text-xl font-bold text-[#d4af37] flex items-center gap-3">
+                    <Store className="w-6 h-6" />
                     <span>{selectedVendorId === 1 ? "Stationary Store" : "Mobile Cart"} {vendorActiveTab === "ads" ? "Ad Campaign Panel" : "Dashboard"}</span>
                   </h2>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-sm text-slate-400 mt-1.5">
                     {vendorActiveTab === "ads" 
                       ? "Launch targeted ad campaigns and manage marketing campaign budgets." 
                       : "Configure storefront pricing, view metrics, and manage active listings."}
@@ -1289,12 +1289,12 @@ export default function ProxiHubDashboard() {
                     
                     <Card className="flex flex-col gap-6 bg-[#0d121f] shadow-xl border border-slate-900 p-6">
                       <CardHeader className="p-0 pb-3 border-b border-slate-900">
-                        <CardTitle className="text-sm font-bold text-slate-205">Storefront Pricing Index</CardTitle>
+                        <CardTitle className="text-base font-bold text-slate-100">Storefront Pricing Index</CardTitle>
                       </CardHeader>
                       <CardContent className="p-0 flex flex-col gap-4">
                         <div>
-                          <p className="text-[10px] text-slate-550 uppercase font-black">Business Name</p>
-                          <p className="text-sm font-bold text-slate-200 mt-1">
+                          <p className="text-[10px] text-slate-550 uppercase font-black tracking-widest">Business Name</p>
+                          <p className="text-base font-bold text-slate-100 mt-1.5">
                             {selectedVendorId === 1 ? "Saravana Grocery Store" : "Ooty Veggie Cart"}
                           </p>
                         </div>
@@ -1304,7 +1304,7 @@ export default function ProxiHubDashboard() {
                           
                           <div className="flex flex-col gap-2">
                             {(vendorGoodsMap[selectedVendorId] || []).map((good) => (
-                              <div key={good.id} className="p-3 bg-slate-955 rounded-xl border border-slate-900 flex justify-between items-center text-xs">
+                              <div key={good.id} className="p-3 bg-slate-955 rounded-xl border border-slate-900 flex justify-between items-center text-sm">
                                 <span className="font-semibold text-slate-200">{good.name}</span>
                                 <div className="flex items-center gap-2">
                                   <span className="font-bold text-emerald-455">{good.price}</span>
@@ -1350,7 +1350,7 @@ export default function ProxiHubDashboard() {
                       <div className="flex flex-col gap-10">
                         <Card className="bg-[#0d121f] shadow-xl border border-slate-900 p-6 flex flex-col gap-4">
                           <CardHeader className="p-0 pb-3 border-b border-slate-900">
-                            <CardTitle className="text-sm font-bold text-cyan-400 flex items-center gap-2"><Users className="w-4.5 h-4.5" /> Start Group-buy Pool</CardTitle>
+                            <CardTitle className="text-base font-bold text-cyan-400 flex items-center gap-2.5"><Users className="w-5 h-5" /> Start Group-buy Pool</CardTitle>
                           </CardHeader>
                           <CardContent className="p-0">
                             <form onSubmit={(e) => {
@@ -1392,7 +1392,7 @@ export default function ProxiHubDashboard() {
 
                         <Card className="bg-[#0d121f] shadow-xl border border-slate-900 p-6 flex flex-col gap-4">
                           <CardHeader className="p-0 pb-3 border-b border-slate-900">
-                            <CardTitle className="text-sm font-bold text-slate-202 flex items-center gap-2"><QrCode className="w-4.5 h-4.5" /> Coupon Scanner console</CardTitle>
+                            <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2.5"><QrCode className="w-5 h-5" /> Coupon Scanner console</CardTitle>
                           </CardHeader>
                           <CardContent className="p-0 flex flex-col gap-3">
                             <div className="flex gap-3 items-center">
@@ -1407,7 +1407,7 @@ export default function ProxiHubDashboard() {
                       <div className="flex flex-col gap-10">
                         <Card className="bg-[#0d121f] shadow-xl border border-purple-500/20 p-6 flex flex-col gap-4">
                           <CardHeader className="p-0 pb-3 border-b border-slate-900">
-                            <CardTitle className="text-sm font-bold text-slate-205 flex items-center gap-2"><Truck className="w-4.5 h-4.5" /> Route Broadcaster</CardTitle>
+                            <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2.5"><Truck className="w-5 h-5" /> Route Broadcaster</CardTitle>
                           </CardHeader>
                           <CardContent className="p-0 flex flex-col gap-4">
                             <div className="grid grid-cols-2 gap-3">
@@ -1454,8 +1454,8 @@ export default function ProxiHubDashboard() {
 
                         <Card className="bg-[#0d121f] shadow-xl border border-slate-900 p-6 flex flex-col gap-4">
                           <CardHeader className="p-0 pb-3 border-b border-slate-900 flex justify-between items-center">
-                            <CardTitle className="text-sm font-bold text-slate-202 flex items-center gap-2">
-                              <Radio className="w-4.5 h-4.5 text-pink-500" /> Voice announcement
+                            <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2.5">
+                              <Radio className="w-5 h-5 text-pink-500" /> Voice announcement
                             </CardTitle>
                             <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-900 gap-1">
                               <Button 
@@ -1546,8 +1546,8 @@ export default function ProxiHubDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
                       <CardHeader className="p-5">
-                        <CardDescription className="text-[10px] text-slate-550 uppercase tracking-widest font-black">Advertiser Balance</CardDescription>
-                        <CardTitle className="text-2xl font-black text-[#d4af37] mt-1">₹{advertiserBalance.toFixed(2)}</CardTitle>
+                        <CardDescription className="text-xs text-slate-500 uppercase tracking-widest font-black">Advertiser Balance</CardDescription>
+                        <CardTitle className="text-4xl font-black text-[#d4af37] mt-3">₹{advertiserBalance.toFixed(2)}</CardTitle>
                       </CardHeader>
                       <CardContent className="p-5 pt-0">
                         <Button variant="outline" onClick={() => setAdvertiserBalance(b => b + 1000)} className="w-full bg-[#d4af37]/10 hover:bg-[#d4af37]/20 text-[#d4af37] text-xs font-bold border border-[#d4af37]/20 h-10">+ Top Up Budget</Button>
@@ -1556,7 +1556,7 @@ export default function ProxiHubDashboard() {
 
                     <Card className="flex flex-col gap-5 shadow-xl bg-[#0d121f] border border-slate-900">
                       <CardHeader className="p-6">
-                        <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-2"><Target className="w-4.5 h-4.5 text-[#d4af37]" /> Launch Local Ad Campaign</CardTitle>
+                        <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2.5"><Target className="w-5 h-5 text-[#d4af37]" /> Launch Local Ad Campaign</CardTitle>
                       </CardHeader>
                       <CardContent className="p-6 pt-0">
                         <form onSubmit={handleCreateCampaign} className="flex flex-col gap-4">
@@ -1587,8 +1587,8 @@ export default function ProxiHubDashboard() {
               
               <div className="glassmorphism p-6 rounded-3xl border-slate-900 bg-gradient-to-r from-slate-900 to-cyan-950/15 shadow-md flex justify-between items-center">
                 <div>
-                  <h2 className="text-lg font-bold text-cyan-405 flex items-center gap-2">
-                    <Wrench className="w-5.5 h-5.5" />
+                  <h2 className="text-xl font-bold text-cyan-400 flex items-center gap-3">
+                    <Wrench className="w-6 h-6" />
                     <span>Service Contractor Portal</span>
                   </h2>
                 </div>
@@ -1620,7 +1620,7 @@ export default function ProxiHubDashboard() {
                   
                   <Card className="flex flex-col gap-6 bg-[#0d121f] shadow-xl border border-slate-900 p-6">
                     <CardHeader className="p-0 pb-3 border-b border-slate-900 flex flex-row justify-between items-center">
-                      <CardTitle className="text-sm font-bold text-slate-202">Service details</CardTitle>
+                      <CardTitle className="text-base font-bold text-slate-100">Service details</CardTitle>
                       <Badge variant="secondary" className="text-[9px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Verified</Badge>
                     </CardHeader>
                     <CardContent className="p-0 flex flex-col gap-4">
@@ -1653,17 +1653,17 @@ export default function ProxiHubDashboard() {
                   <div className="flex flex-col gap-10">
                     <Card className="flex flex-col gap-5 shadow-xl bg-[#0d121f] border border-slate-900">
                       <CardHeader className="p-6 pb-4 border-b border-slate-900">
-                        <CardTitle className="text-sm font-bold text-slate-202 flex items-center gap-2"><MapPin className="w-4.5 h-4.5 text-cyan-400" /> Active Job Request Dispatch Pipeline</CardTitle>
+                        <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2.5"><MapPin className="w-5 h-5 text-cyan-400" /> Active Job Request Dispatch Pipeline</CardTitle>
                       </CardHeader>
                       <CardContent className="p-6 pt-4 flex flex-col gap-5 max-h-[400px] overflow-y-auto">
                         {jobs.map((job) => (
                           <div key={job.id} className="p-5 rounded-2xl bg-slate-950/40 border border-slate-900 flex flex-col gap-3 hover:border-slate-800 transition-all text-xs">
                             <div className="flex justify-between items-center">
-                              <span className="font-bold text-slate-200">{job.client}</span>
-                              <span className="text-[10px] text-slate-500 font-medium">{job.time} • {job.distance}</span>
+                              <span className="text-sm font-bold text-slate-100">{job.client}</span>
+                              <span className="text-xs text-slate-500 font-medium">{job.time} • {job.distance}</span>
                             </div>
-                            <p className="text-[10px] text-slate-400 font-bold">Requested: <span className="text-slate-200">{job.serviceNeeded}</span></p>
-                            <p className="text-[10px] text-slate-500 leading-relaxed font-semibold">{job.description}</p>
+                            <p className="text-xs text-slate-400 font-bold">Requested: <span className="text-slate-200">{job.serviceNeeded}</span></p>
+                            <p className="text-xs text-slate-500 leading-relaxed font-semibold">{job.description}</p>
                             
                             {job.quoteStatus === "pending" ? (
                               <div className="flex gap-3 mt-2">
@@ -1698,8 +1698,8 @@ export default function ProxiHubDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
                       <CardHeader className="p-5">
-                        <CardDescription className="text-[10px] text-slate-550 uppercase tracking-widest font-black">Advertiser Balance</CardDescription>
-                        <CardTitle className="text-2xl font-black text-[#d4af37] mt-1">₹{advertiserBalance.toFixed(2)}</CardTitle>
+                        <CardDescription className="text-xs text-slate-500 uppercase tracking-widest font-black">Advertiser Balance</CardDescription>
+                        <CardTitle className="text-4xl font-black text-[#d4af37] mt-3">₹{advertiserBalance.toFixed(2)}</CardTitle>
                       </CardHeader>
                       <CardContent className="p-5 pt-0">
                         <Button variant="outline" onClick={() => setAdvertiserBalance(b => b + 1000)} className="w-full bg-[#d4af37]/10 hover:bg-[#d4af37]/20 text-[#d4af37] text-xs font-bold border border-[#d4af37]/20 h-10">+ Top Up Budget</Button>
@@ -1708,7 +1708,7 @@ export default function ProxiHubDashboard() {
 
                     <Card className="flex flex-col gap-5 shadow-xl bg-[#0d121f] border border-slate-900">
                       <CardHeader className="p-6">
-                        <CardTitle className="text-sm font-bold text-slate-200 flex items-center gap-2"><Target className="w-4.5 h-4.5 text-[#d4af37]" /> Launch Local Ad Campaign</CardTitle>
+                        <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2.5"><Target className="w-5 h-5 text-[#d4af37]" /> Launch Local Ad Campaign</CardTitle>
                       </CardHeader>
                       <CardContent className="p-6 pt-0">
                         <form onSubmit={handleCreateCampaign} className="flex flex-col gap-4">
