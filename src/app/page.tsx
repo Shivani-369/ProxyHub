@@ -373,7 +373,7 @@ export default function ProxiHubDashboard() {
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-[#030407] flex items-center justify-center p-4 sm:p-6 text-slate-100 font-sans">
-        <div className="w-full max-w-md bg-[#0d121f] rounded-3xl border border-slate-900 p-6 shadow-2xl flex flex-col gap-6 transition-all duration-200 hover:scale-[1.02] hover:border-slate-800">
+        <div className="w-full max-w-md bg-[#0d121f] rounded-3xl border border-slate-900 p-8 shadow-2xl flex flex-col gap-7 transition-all duration-200 hover:scale-[1.02] hover:border-slate-800">
           <div className="text-center flex flex-col items-center">
             <span className="text-4xl animate-bounce duration-1000">🚀</span>
             <h1 className="text-2xl font-black text-[#d4af37] tracking-tight mt-3">ProxiHub Portal Access</h1>
@@ -522,7 +522,7 @@ export default function ProxiHubDashboard() {
     <div className="app-container min-h-screen text-slate-100 flex flex-col lg:flex-row bg-[#030407]">
       
       {/* Sidebar Navigation */}
-      <nav className="sidebar-panel glassmorphism flex flex-col p-8 justify-between border-slate-900/60 shadow-xl">
+      <nav className="sidebar-panel glassmorphism flex flex-col px-6 py-8 justify-between border-slate-900/60 shadow-xl">
         <div className="flex flex-col gap-10">
           <div>
             <div className="flex items-center gap-3 mb-3">
@@ -682,10 +682,10 @@ export default function ProxiHubDashboard() {
       </nav>
 
       {/* Main Viewport */}
-      <main className="main-viewport flex flex-col gap-12">
+      <main className="main-viewport">
         
         {/* Vernacular Voice Bar (Always visible) */}
-        <div className="w-full glassmorphism p-6 rounded-3xl border-slate-900/60 flex flex-col md:flex-row gap-6 items-center justify-between shadow-2xl">
+        <div className="w-full glassmorphism p-5 md:p-6 rounded-3xl border-slate-900/60 flex flex-col md:flex-row gap-5 items-center justify-between shadow-2xl">
           <div className="flex items-center gap-5">
             <div 
               onClick={runVoiceCommand}
@@ -726,7 +726,7 @@ export default function ProxiHubDashboard() {
               
               {/* Map View Sub-tab */}
               {activeTab === "map" && (
-                <div className="flex-grow flex flex-col gap-10">
+                <div className="flex-grow flex flex-col gap-8">
                   <div className="glassmorphism p-6 rounded-3xl border-slate-900 flex flex-wrap gap-6 items-center justify-between shadow-xl">
                     <div className="flex items-center gap-4 flex-grow max-w-xl">
                       <div className="relative flex-grow">

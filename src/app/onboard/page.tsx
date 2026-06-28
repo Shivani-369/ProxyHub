@@ -169,7 +169,7 @@ export default function MerchantOnboarding() {
       </div>
 
       {/* Right Column: Dynamic Form Container */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-12 md:p-20 relative bg-[#090a16]">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-6 py-10 sm:px-12 sm:py-16 md:px-20 md:py-20 relative bg-[#090a16] overflow-y-auto">
         {/* Mobile Header */}
         <div className="w-full flex lg:hidden items-center justify-between mb-8">
           <div className="flex items-center gap-2">
@@ -181,7 +181,7 @@ export default function MerchantOnboarding() {
           </Button>
         </div>
 
-        <div className="w-full max-w-md flex flex-col gap-8">
+        <div className="w-full max-w-md flex flex-col gap-9">
           {/* Progress Timeline Stepper */}
           {step < 4 && (
             <div className="flex flex-col gap-3">
