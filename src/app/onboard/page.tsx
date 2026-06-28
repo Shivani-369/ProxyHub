@@ -1,0 +1,430 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { 
+  ArrowLeft, ArrowRight, ShieldCheck, Store, MapPin, Mail, Lock, Phone, 
+  FileText, Building2, CheckCircle2, AlertCircle
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+export default function MerchantOnboarding() {
+  const router = useRouter();
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    phone: "",
+    otp: "",
+    storeName: "",
+    storeType: "stationary", // stationary | mobile
+    description: "",
+    taxId: "",
+    address: ""
+  });
+
+  // Validation / OTP state
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [passwordCriteria, setPasswordCriteria] = useState({
+    length: false,
+    number: false,
+    special: false
+  });
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setFormData({ ...formData, password: val });
+    setPasswordCriteria({
+      length: val.length >= 8,
+      number: /[0-9]/.test(val),
+      special: /[^A-Za-z0-9]/.test(val)
+    });
+  };
+
+  const handleSendOtp = () => {
+    if (formData.phone.length < 10) return;
+    setOtpSent(true);
+    setOtpError("");
+    alert("Mock OTP Sent! Enter '1234' to verify.");
+  };
+
+  const handleVerifyOtp = () => {
+    if (formData.otp === "1234") {
+      setOtpVerified(true);
+      setOtpError("");
+    } else {
+      setOtpError("Invalid code. Use '1234' for verification.");
+    }
+  };
+
+  const handleNext = () => {
+    if (step < 3) {
+      setStep(step + 1);
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    } else {
+      router.push("/");
+    }
+  };
+
+  const handleSubmit = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      alert("Merchant Onboarding Complete! Welcome to ProxiHub.");
+      // Redirect back to landing
+      router.push("/");
+    }, 1500);
+  };
+
+  const isStepValid = () => {
+    if (step === 1) {
+      return (
+        formData.email.includes("@") &&
+        passwordCriteria.length &&
+        passwordCriteria.number &&
+        passwordCriteria.special &&
+        otpVerified
+      );
+    }
+    if (step === 2) {
+      return formData.storeName.trim().length > 2 && formData.description.trim().length > 5;
+    }
+    if (step === 3) {
+      return formData.taxId.trim().length > 4 && formData.address.trim().length > 8;
+    }
+    return false;
+  };
+
+  return (
+    <div className="min-h-screen bg-[#090a16] text-slate-100 font-sans flex text-sm">
+      {/* Left Column: Branding / Value Prop (Desktop only) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-[#141834] to-[#090a16] p-12 flex-col justify-between relative overflow-hidden border-r border-indigo-500/10">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        
+        <div className="flex items-center gap-3 relative z-10">
+          <span className="text-3xl">🚀</span>
+          <span className="text-2xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            ProxiHub Partner
+          </span>
+        </div>
+
+        <div className="my-auto max-w-lg relative z-10 flex flex-col gap-6">
+          <h1 className="text-4xl font-black tracking-tight leading-tight">
+            Connect directly with customers in your neighborhood.
+          </h1>
+          <p className="text-slate-400 leading-relaxed text-sm">
+            Onboard in under 5 minutes to launch collective pools, broadcast your live cart routes, and publish geofenced ads to 10,000+ local buyers.
+          </p>
+          
+          <div className="flex flex-col gap-4 mt-6">
+            <div className="flex items-center gap-3 bg-slate-900/40 p-4 rounded-2xl border border-indigo-500/10">
+              <span className="text-2xl">🗺️</span>
+              <div>
+                <h4 className="font-bold text-sm text-slate-200">5km Geofenced Visibility</h4>
+                <p className="text-xs text-slate-550 mt-0.5">Show up instantly on local discovery radars.</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 bg-slate-900/40 p-4 rounded-2xl border border-indigo-500/10">
+              <span className="text-2xl">🎙️</span>
+              <div>
+                <h4 className="font-bold text-sm text-slate-200">Voice-First Broadcasts</h4>
+                <p className="text-xs text-slate-550 mt-0.5">Announce daily specials using regional dialects.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-xs text-slate-600 font-bold uppercase tracking-wider relative z-10">
+          &copy; 2026 ProxiHub Technologies. All rights reserved.
+        </div>
+      </div>
+
+      {/* Right Column: Dynamic Form Container */}
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-12 md:p-20 relative bg-[#090a16]">
+        {/* Mobile Header */}
+        <div className="w-full flex lg:hidden items-center justify-between mb-8">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🚀</span>
+            <span className="text-lg font-black bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">ProxiHub</span>
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => router.push("/")} className="text-xs font-bold text-slate-400 hover:text-slate-200">
+            Cancel
+          </Button>
+        </div>
+
+        <div className="w-full max-w-md flex flex-col gap-8">
+          {/* Progress Timeline Stepper */}
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-slate-500">
+              <span>Step {step} of 3</span>
+              <span className="text-indigo-455">{step === 1 ? "Account Setup" : step === 2 ? "Store profile" : "Verification"}</span>
+            </div>
+            <div className="w-full h-1.5 bg-[#161a30] rounded-full overflow-hidden flex gap-1">
+              <div className={`h-full rounded-full transition-all duration-300 ${step >= 1 ? "bg-gradient-to-r from-blue-500 to-indigo-500 w-1/3" : "w-0"}`}></div>
+              <div className={`h-full rounded-full transition-all duration-300 ${step >= 2 ? "bg-gradient-to-r from-indigo-500 to-purple-500 w-1/3" : "w-0"}`}></div>
+              <div className={`h-full rounded-full transition-all duration-300 ${step >= 3 ? "bg-gradient-to-r from-purple-500 to-pink-500 w-1/3" : "w-0"}`}></div>
+            </div>
+          </div>
+
+          {/* Form Step Headers */}
+          <div>
+            <h2 className="text-2xl font-black text-slate-100 tracking-tight">
+              {step === 1 ? "Create Merchant Account" : step === 2 ? "Configure Storefront" : "Register Business Verification"}
+            </h2>
+            <p className="text-xs text-slate-400 mt-1 font-medium leading-relaxed">
+              {step === 1 ? "Start by configuring credentials for your business entry point." : 
+               step === 2 ? "Describe store parameters to customize buyer viewports." : 
+               "Provide legal registration context to satisfy local dispatch codes."}
+            </p>
+          </div>
+
+          {/* Form Content Panel */}
+          <div className="flex flex-col gap-5">
+            {step === 1 && (
+              <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="text-xs font-bold text-slate-350">Business Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
+                    <Input 
+                      type="email" 
+                      placeholder="e.g. store@gmail.com" 
+                      value={formData.email} 
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="text-xs font-bold text-slate-350">Account Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
+                    <Input 
+                      type="password" 
+                      placeholder="Enter strong password" 
+                      value={formData.password} 
+                      onChange={handlePasswordChange}
+                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
+                    />
+                  </div>
+                  
+                  {/* Password Checklist UI */}
+                  <div className="flex flex-wrap gap-2.5 mt-1.5 pl-1">
+                    <span className={`text-[10px] font-bold flex items-center gap-1 ${passwordCriteria.length ? "text-emerald-450" : "text-slate-500"}`}>
+                      {passwordCriteria.length ? "✓" : "○"} Min 8 characters
+                    </span>
+                    <span className={`text-[10px] font-bold flex items-center gap-1 ${passwordCriteria.number ? "text-emerald-450" : "text-slate-500"}`}>
+                      {passwordCriteria.number ? "✓" : "○"} 1 Number
+                    </span>
+                    <span className={`text-[10px] font-bold flex items-center gap-1 ${passwordCriteria.special ? "text-emerald-450" : "text-slate-500"}`}>
+                      {passwordCriteria.special ? "✓" : "○"} 1 Special character
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="text-xs font-bold text-slate-350">Phone Contact (for geofenced dispatch)</Label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-grow">
+                      <Phone className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
+                      <Input 
+                        type="tel" 
+                        placeholder="Mobile Phone Number" 
+                        value={formData.phone} 
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "") })} 
+                        className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
+                        maxLength={10}
+                      />
+                    </div>
+                    <Button 
+                      type="button" 
+                      onClick={handleSendOtp}
+                      disabled={formData.phone.length < 10}
+                      className={`text-xs font-bold h-11 px-4 rounded-xl transition-all duration-200 ${otpSent ? "bg-slate-800 text-slate-500" : "bg-[#1e2445] text-slate-200 border border-indigo-500/10 hover:bg-[#1e2445]/80"}`}
+                    >
+                      {otpSent ? "Resend" : "Send OTP"}
+                    </Button>
+                  </div>
+                </div>
+
+                {otpSent && !otpVerified && (
+                  <div className="flex flex-col gap-2.5 p-4 rounded-xl bg-indigo-950/20 border border-indigo-500/10 w-full animate-fadeIn">
+                    <Label className="text-[10px] font-black uppercase text-indigo-400">Enter verification OTP Code</Label>
+                    <div className="flex gap-2">
+                      <Input 
+                        type="text" 
+                        placeholder="Enter '1234'" 
+                        value={formData.otp} 
+                        onChange={(e) => setFormData({ ...formData, otp: e.target.value })} 
+                        className="bg-[#0e1227] border border-indigo-500/10 text-center font-bold text-sm h-11 rounded-xl flex-grow"
+                      />
+                      <Button onClick={handleVerifyOtp} className="bg-[#6366f1] hover:bg-[#4f46e5] text-white font-bold h-11 px-5 rounded-xl text-xs">
+                        Verify
+                      </Button>
+                    </div>
+                    {otpError && <p className="text-[10px] text-red-450 font-bold flex items-center gap-1 mt-1"><AlertCircle className="w-3.5 h-3.5" /> {otpError}</p>}
+                  </div>
+                )}
+
+                {otpVerified && (
+                  <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-450 text-xs font-bold">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <span>Mobile number verified successfully.</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col gap-2.5 w-full">
+                  <Label className="text-xs font-bold text-slate-350">Store Layout configuration</Label>
+                  <div className="grid grid-cols-2 gap-3 w-full">
+                    <div 
+                      onClick={() => setFormData({ ...formData, storeType: "stationary" })}
+                      className={`p-4 rounded-2xl cursor-pointer border text-center transition-all flex flex-col items-center gap-2 ${formData.storeType === "stationary" ? "bg-indigo-950/40 border-indigo-500 text-white glow-primary" : "bg-[#0e1227] border-indigo-500/10 text-slate-400 hover:bg-[#161a30]/50"}`}
+                    >
+                      <Building2 className="w-5 h-5 text-indigo-400" />
+                      <div>
+                        <p className="font-bold text-xs">Stationary Shop</p>
+                        <p className="text-[9px] text-slate-500 mt-0.5">Fixed physical geofence</p>
+                      </div>
+                    </div>
+
+                    <div 
+                      onClick={() => setFormData({ ...formData, storeType: "mobile" })}
+                      className={`p-4 rounded-2xl cursor-pointer border text-center transition-all flex flex-col items-center gap-2 ${formData.storeType === "mobile" ? "bg-indigo-950/40 border-indigo-500 text-white glow-primary" : "bg-[#0e1227] border-indigo-500/10 text-slate-400 hover:bg-[#161a30]/50"}`}
+                    >
+                      <Store className="w-5 h-5 text-indigo-400 animate-pulse" />
+                      <div>
+                        <p className="font-bold text-xs">Mobile Cart</p>
+                        <p className="text-[9px] text-slate-500 mt-0.5">Live routing broadcaster</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="text-xs font-bold text-slate-350">Store storefront name</Label>
+                  <div className="relative">
+                    <Store className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
+                    <Input 
+                      type="text" 
+                      placeholder="e.g. Saravana Grocery Store" 
+                      value={formData.storeName} 
+                      onChange={(e) => setFormData({ ...formData, storeName: e.target.value })} 
+                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="text-xs font-bold text-slate-350">Store Description (Visible to buyers)</Label>
+                  <textarea 
+                    placeholder="Describe special products, delivery options..." 
+                    value={formData.description} 
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
+                    className="bg-[#0e1227] border border-indigo-500/10 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-[#6366f1] focus:border-[#6366f1] h-24"
+                    maxLength={150}
+                  />
+                  <p className="text-[10px] text-right font-bold text-slate-500 pr-1">{formData.description.length}/150 characters</p>
+                </div>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="text-xs font-bold text-slate-350">GSTIN / Tax Identification ID</Label>
+                  <div className="relative">
+                    <FileText className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-550" />
+                    <Input 
+                      type="text" 
+                      placeholder="GSTIN Code (e.g. 33AAAAA1111A1Z1)" 
+                      value={formData.taxId} 
+                      onChange={(e) => setFormData({ ...formData, taxId: e.target.value.toUpperCase() })} 
+                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="text-xs font-bold text-slate-350">Official Business Address</Label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3.5 top-[12px] w-4.5 h-4.5 text-slate-500" />
+                    <Input 
+                      type="text" 
+                      placeholder="Shop building, street name, block..." 
+                      value={formData.address} 
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })} 
+                      className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 pl-11 pr-4 rounded-xl"
+                    />
+                  </div>
+                  <Button 
+                    type="button"
+                    onClick={() => setFormData({ ...formData, address: "Saravana Building, 42 Anna Nagar Central, Chennai 600040" })}
+                    className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 w-fit self-end mt-1 bg-transparent hover:bg-transparent px-1 h-auto"
+                  >
+                    📍 Use Current Location GPS
+                  </Button>
+                </div>
+
+                <div className="p-4 rounded-xl bg-purple-955/15 border border-purple-500/15 flex items-start gap-3 mt-2">
+                  <ShieldCheck className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h5 className="font-bold text-xs text-purple-300">Security Verification Check</h5>
+                    <p className="text-[10px] text-slate-500 mt-1 leading-relaxed">
+                      By submitting, you authorize ProxiHub to check coordinates matching coordinates database listings.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-between gap-4 mt-4 w-full">
+            <Button 
+              variant="outline" 
+              onClick={handleBack}
+              className="bg-transparent border border-slate-900 text-slate-300 font-bold px-5 py-2.5 rounded-xl h-11 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back</span>
+            </Button>
+            <Button 
+              onClick={handleNext}
+              disabled={!isStepValid() || loading}
+              className={`flex-grow font-black uppercase tracking-wider py-2.5 rounded-xl h-11 transition-all duration-200 flex items-center justify-center gap-2 ${isStepValid() ? "bg-gradient-to-r from-orange-400 via-pink-500 to-indigo-650 hover:opacity-90 text-white hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-pink-500/10" : "bg-slate-900 text-slate-500 cursor-not-allowed border border-slate-900"}`}
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <span>{step === 3 ? "Complete Registration" : "Continue"}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

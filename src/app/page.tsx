@@ -11,6 +11,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 // ==========================================
 // MOCK DATA - CENTRAL SYNCHRONIZED STORAGE
@@ -54,6 +55,7 @@ const formatTime = (seconds: number) => {
 };
 
 export default function ProxiHubDashboard() {
+  const router = useRouter();
   // Navigation / Role Switcher States
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentRole, setCurrentRole] = useState<"customer" | "vendor" | "service">("customer");
@@ -497,6 +499,18 @@ export default function ProxiHubDashboard() {
             >
               Enter {currentRole === "customer" ? "Customer" : currentRole === "vendor" ? (selectedVendorId === 1 ? "Stationary Store" : "Mobile Cart") : "Service Pro"} Portal
             </Button>
+
+            {(currentRole === "vendor" || currentRole === "service") && (
+              <div className="w-full text-center mt-2.5">
+                <Button 
+                  variant="link" 
+                  onClick={() => router.push("/onboard")} 
+                  className="text-xs text-indigo-400 hover:text-indigo-300 font-bold p-0 h-auto"
+                >
+                  New merchant? Complete multi-step onboarding &rarr;
+                </Button>
+              </div>
+            )}
 
           </div>
         </div>
