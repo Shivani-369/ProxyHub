@@ -372,7 +372,7 @@ export default function ProxiHubDashboard() {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-[#030407] flex items-center justify-center p-4 sm:p-6 text-slate-100 font-sans">
+      <div className="min-h-screen bg-[#030407] flex items-center justify-center p-6 sm:p-10 text-slate-100 font-sans">
         <div className="w-full max-w-md bg-[#0d121f] rounded-3xl border border-slate-900 p-8 shadow-2xl flex flex-col gap-7 transition-all duration-200 hover:scale-[1.02] hover:border-slate-800">
           <div className="text-center flex flex-col items-center">
             <span className="text-4xl animate-bounce duration-1000">🚀</span>

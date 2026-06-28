@@ -219,7 +219,7 @@ export default function MerchantOnboarding() {
       </div>
 
       {/* Right Column: Dynamic Form Container */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-6 py-10 sm:px-12 sm:py-16 md:px-20 md:py-20 relative bg-[#090a16] overflow-y-auto">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-8 py-12 sm:px-16 sm:py-20 md:px-24 md:py-24 relative bg-[#090a16] overflow-y-auto">
         {/* Mobile Header */}
         <div className="w-full flex lg:hidden items-center justify-between mb-8">
           <div className="flex items-center gap-2">
