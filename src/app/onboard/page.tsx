@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
   ArrowLeft, ArrowRight, ShieldCheck, Store, MapPin, Mail, Lock, Phone, 
-  FileText, Building2, CheckCircle2, AlertCircle
+  FileText, Building2, CheckCircle2, AlertCircle, Upload, Video, Image, User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,12 +21,19 @@ export default function MerchantOnboarding() {
     password: "",
     phone: "",
     otp: "",
+    contactName: "",
     storeName: "",
     storeType: "stationary", // stationary | mobile
     description: "",
-    taxId: "",
+    taxId: "", // (GST optional)
+    aadharNumber: "",
     address: ""
   });
+
+  // Simulated Media State
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadedVideo, setUploadedVideo] = useState<string>("");
+  const [imageConsent, setImageConsent] = useState(false);
 
   // Validation / OTP state
   const [otpSent, setOtpSent] = useState(false);
@@ -97,14 +104,23 @@ export default function MerchantOnboarding() {
         passwordCriteria.length &&
         passwordCriteria.number &&
         passwordCriteria.special &&
-        otpVerified
+        otpVerified &&
+        formData.contactName.trim().length > 1
       );
     }
     if (step === 2) {
-      return formData.storeName.trim().length > 2 && formData.description.trim().length > 5;
+      return (
+        formData.storeName.trim().length > 2 && 
+        formData.description.trim().length > 5 &&
+        uploadedImages.length >= 5 &&
+        imageConsent
+      );
     }
     if (step === 3) {
-      return formData.taxId.trim().length > 4 && formData.address.trim().length > 8;
+      return (
+        formData.aadharNumber.trim().length === 12 && 
+        formData.address.trim().length > 8
+      );
     }
     return false;
   };
@@ -197,6 +213,17 @@ export default function MerchantOnboarding() {
           <div className="flex flex-col gap-5">
             {step === 1 && (
               <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="text-xs font-bold text-slate-350">Contact Person Name</Label>
+                  <Input 
+                    type="text" 
+                    placeholder="Full legal name" 
+                    value={formData.contactName} 
+                    onChange={(e) => setFormData({ ...formData, contactName: e.target.value })} 
+                    className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
+                  />
+                </div>
+
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="text-xs font-bold text-slate-350">Business Email</Label>
                   <Input 
@@ -322,6 +349,83 @@ export default function MerchantOnboarding() {
                   />
                 </div>
 
+                {/* Symmetrical fluid image and video upload section */}
+                <div className="flex flex-col gap-3.5 w-full bg-[#0d121f]/50 p-4 rounded-2xl border border-indigo-500/10">
+                  <div>
+                    <Label className="text-xs font-bold text-slate-200">Upload Store Images (Min 5 Required)</Label>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Please upload photos showing your store, items, or registration board.</p>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    <Button 
+                      type="button"
+                      onClick={() => {
+                        setUploadedImages([
+                          "storefront_view.jpg", "product_aisle_1.jpg", 
+                          "billing_counter.jpg", "stock_room.jpg", "license_board.jpg"
+                        ]);
+                      }}
+                      className="text-xs font-bold h-10 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5"
+                    >
+                      <Upload className="w-3.5 h-3.5" /> Select 5 Mock Images
+                    </Button>
+                    <Button 
+                      type="button" 
+                      onClick={() => setUploadedImages([])} 
+                      variant="ghost" 
+                      className="text-xs font-semibold text-slate-450 hover:text-slate-250 h-10 px-3"
+                    >
+                      Reset
+                    </Button>
+                  </div>
+
+                  {uploadedImages.length > 0 && (
+                    <div className="flex flex-col gap-1.5 mt-1.5 w-full">
+                      <div className="flex flex-wrap gap-1.5">
+                        {uploadedImages.map((img, idx) => (
+                          <span key={idx} className="text-[10px] font-bold py-1.5 px-3 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 flex items-center gap-1.5">
+                            <Image className="w-3 h-3 text-slate-500" /> {img}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex items-start gap-2.5 mt-2 p-3 bg-indigo-950/20 rounded-xl border border-indigo-500/10 text-xs">
+                        <input 
+                          type="checkbox" 
+                          id="imageConsent" 
+                          checked={imageConsent} 
+                          onChange={(e) => setImageConsent(e.target.checked)} 
+                          className="mt-0.5 accent-indigo-500"
+                        />
+                        <label htmlFor="imageConsent" className="text-slate-400 font-medium leading-relaxed select-none">
+                          I consent to display these store/product images publicly to ProxiHub buyers for local discovery search.
+                        </label>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-3.5 w-full bg-[#0d121f]/50 p-4 rounded-2xl border border-indigo-500/10">
+                  <div>
+                    <Label className="text-xs font-bold text-slate-200">Upload Store Video Promo (Optional)</Label>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Short video showcasing store products (mp4, webm).</p>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <Button 
+                      type="button"
+                      onClick={() => setUploadedVideo("promo_reel_intro.mp4")}
+                      className="text-xs font-bold h-10 px-4 rounded-xl bg-slate-850 hover:bg-slate-750 text-slate-200 flex items-center gap-1.5"
+                    >
+                      <Video className="w-3.5 h-3.5 text-indigo-400" /> Select Mock Video
+                    </Button>
+                    {uploadedVideo && (
+                      <span className="text-[10px] font-bold py-1.5 px-3 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-450" /> {uploadedVideo}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="text-xs font-bold text-slate-350">Store Description (Visible to buyers)</Label>
                   <textarea 
@@ -339,13 +443,25 @@ export default function MerchantOnboarding() {
             {step === 3 && (
               <div className="flex flex-col gap-4 w-full">
                 <div className="flex flex-col gap-2 w-full">
-                  <Label className="text-xs font-bold text-slate-350">GSTIN / Tax Identification ID</Label>
+                  <Label className="text-xs font-bold text-slate-350">GSTIN / GST Number (Optional)</Label>
                   <Input 
                     type="text" 
                     placeholder="GSTIN Code (33AAAAA1111A1Z1)" 
                     value={formData.taxId} 
                     onChange={(e) => setFormData({ ...formData, taxId: e.target.value.toUpperCase() })} 
                     className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2 w-full">
+                  <Label className="text-xs font-bold text-slate-350">Aadhar KYC verification ID Number</Label>
+                  <Input 
+                    type="text" 
+                    placeholder="12-digit Aadhar Number" 
+                    value={formData.aadharNumber} 
+                    onChange={(e) => setFormData({ ...formData, aadharNumber: e.target.value.replace(/\D/g, "") })} 
+                    className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
+                    maxLength={12}
                   />
                 </div>
 
