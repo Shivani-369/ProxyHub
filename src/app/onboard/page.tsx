@@ -133,14 +133,14 @@ export default function MerchantOnboarding() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
 
         {/* Logo strip */}
-        <div className="relative z-10 px-12 pt-12 pb-0">
-          <div className="flex items-center gap-3">
+        <div className="relative z-10 px-14 pt-14 pb-0">
+          <div className="flex items-center gap-4">
             <span className="text-4xl">🚀</span>
             <div className="flex flex-col">
               <span className="text-2xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-none">
                 ProxiHub Partner
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400/60 mt-1">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400/60 mt-1.5">
                 Merchant Network
               </span>
             </div>
@@ -148,9 +148,9 @@ export default function MerchantOnboarding() {
         </div>
 
         {/* Main value proposition */}
-        <div className="relative z-10 px-12 py-10 flex flex-col gap-8">
+        <div className="relative z-10 px-14 py-12 flex flex-col gap-10">
           {/* Eyebrow tag */}
-          <span className="inline-flex w-fit items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-4 py-1.5 rounded-full">
+          <span className="inline-flex w-fit items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-full">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
             Hyperlocal Commerce Platform
           </span>
@@ -167,24 +167,24 @@ export default function MerchantOnboarding() {
           </p>
 
           {/* Feature cards */}
-          <div className="flex flex-col gap-3 mt-2">
-            <div className="flex items-start gap-4 bg-white/[0.03] hover:bg-white/[0.05] transition-colors p-5 rounded-2xl border border-indigo-500/10">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-start gap-5 bg-white/[0.03] hover:bg-white/[0.05] transition-colors px-6 py-5 rounded-2xl border border-indigo-500/10">
               <span className="text-2xl mt-0.5 flex-shrink-0">🗺️</span>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1.5">
                 <h4 className="font-bold text-sm text-slate-100">5km Geofenced Visibility</h4>
                 <p className="text-xs text-slate-500 leading-relaxed">Show up instantly on local discovery radars and route maps.</p>
               </div>
             </div>
-            <div className="flex items-start gap-4 bg-white/[0.03] hover:bg-white/[0.05] transition-colors p-5 rounded-2xl border border-indigo-500/10">
+            <div className="flex items-start gap-5 bg-white/[0.03] hover:bg-white/[0.05] transition-colors px-6 py-5 rounded-2xl border border-indigo-500/10">
               <span className="text-2xl mt-0.5 flex-shrink-0">🎙️</span>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1.5">
                 <h4 className="font-bold text-sm text-slate-100">Voice-First Broadcasts</h4>
                 <p className="text-xs text-slate-500 leading-relaxed">Announce daily specials in Tamil, Hindi, Telugu or English.</p>
               </div>
             </div>
-            <div className="flex items-start gap-4 bg-white/[0.03] hover:bg-white/[0.05] transition-colors p-5 rounded-2xl border border-indigo-500/10">
+            <div className="flex items-start gap-5 bg-white/[0.03] hover:bg-white/[0.05] transition-colors px-6 py-5 rounded-2xl border border-indigo-500/10">
               <span className="text-2xl mt-0.5 flex-shrink-0">📦</span>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1.5">
                 <h4 className="font-bold text-sm text-slate-100">Collective Group Pools</h4>
                 <p className="text-xs text-slate-500 leading-relaxed">Drive bulk orders from the neighborhood at discounted rates.</p>
               </div>
@@ -192,18 +192,18 @@ export default function MerchantOnboarding() {
           </div>
 
           {/* Social proof strip */}
-          <div className="flex items-center gap-6 pt-2 border-t border-slate-800/50 mt-2">
-            <div className="flex flex-col gap-0.5">
+          <div className="flex items-center gap-8 pt-6 border-t border-slate-800/50 mt-2">
+            <div className="flex flex-col gap-1">
               <span className="text-xl font-black text-slate-100">10,000+</span>
               <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Local Buyers</span>
             </div>
-            <div className="w-px h-8 bg-slate-800"></div>
-            <div className="flex flex-col gap-0.5">
+            <div className="w-px h-9 bg-slate-800"></div>
+            <div className="flex flex-col gap-1">
               <span className="text-xl font-black text-slate-100">5 min</span>
               <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">To Go Live</span>
             </div>
-            <div className="w-px h-8 bg-slate-800"></div>
-            <div className="flex flex-col gap-0.5">
+            <div className="w-px h-9 bg-slate-800"></div>
+            <div className="flex flex-col gap-1">
               <span className="text-xl font-black text-slate-100">5km</span>
               <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Radius Reach</span>
             </div>
@@ -211,7 +211,7 @@ export default function MerchantOnboarding() {
         </div>
 
         {/* Footer */}
-        <div className="relative z-10 px-12 pb-10">
+        <div className="relative z-10 px-14 pb-12">
           <p className="text-[10px] text-slate-700 font-bold uppercase tracking-widest">
             &copy; 2026 ProxiHub Technologies. All rights reserved.
           </p>
