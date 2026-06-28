@@ -91,10 +91,8 @@ export default function MerchantOnboarding() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      alert("Merchant Onboarding Complete! Welcome to ProxiHub.");
-      // Redirect back to landing
-      router.push("/");
-    }, 1500);
+      setStep(4);
+    }, 1200);
   };
 
   const isStepValid = () => {
@@ -185,29 +183,33 @@ export default function MerchantOnboarding() {
 
         <div className="w-full max-w-md flex flex-col gap-8">
           {/* Progress Timeline Stepper */}
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-slate-500">
-              <span>Step {step} of 3</span>
-              <span className="text-indigo-455">{step === 1 ? "Account Setup" : step === 2 ? "Store profile" : "Verification"}</span>
+          {step < 4 && (
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-slate-500">
+                <span>Step {step} of 3</span>
+                <span className="text-indigo-455">{step === 1 ? "Account Setup" : step === 2 ? "Store profile" : "Verification"}</span>
+              </div>
+              <div className="w-full h-1.5 bg-[#161a30] rounded-full overflow-hidden flex gap-1">
+                <div className={`h-full rounded-full transition-all duration-300 ${step >= 1 ? "bg-gradient-to-r from-blue-500 to-indigo-500 w-1/3" : "w-0"}`}></div>
+                <div className={`h-full rounded-full transition-all duration-300 ${step >= 2 ? "bg-gradient-to-r from-indigo-500 to-purple-500 w-1/3" : "w-0"}`}></div>
+                <div className={`h-full rounded-full transition-all duration-300 ${step >= 3 ? "bg-gradient-to-r from-purple-500 to-pink-500 w-1/3" : "w-0"}`}></div>
+              </div>
             </div>
-            <div className="w-full h-1.5 bg-[#161a30] rounded-full overflow-hidden flex gap-1">
-              <div className={`h-full rounded-full transition-all duration-300 ${step >= 1 ? "bg-gradient-to-r from-blue-500 to-indigo-500 w-1/3" : "w-0"}`}></div>
-              <div className={`h-full rounded-full transition-all duration-300 ${step >= 2 ? "bg-gradient-to-r from-indigo-500 to-purple-500 w-1/3" : "w-0"}`}></div>
-              <div className={`h-full rounded-full transition-all duration-300 ${step >= 3 ? "bg-gradient-to-r from-purple-500 to-pink-500 w-1/3" : "w-0"}`}></div>
-            </div>
-          </div>
+          )}
 
           {/* Form Step Headers */}
-          <div>
-            <h2 className="text-2xl font-black text-slate-100 tracking-tight">
-              {step === 1 ? "Create Merchant Account" : step === 2 ? "Configure Storefront" : "Register Business Verification"}
-            </h2>
-            <p className="text-xs text-slate-400 mt-1 font-medium leading-relaxed">
-              {step === 1 ? "Start by configuring credentials for your business entry point." : 
-               step === 2 ? "Describe store parameters to customize buyer viewports." : 
-               "Provide legal registration context to satisfy local dispatch codes."}
-            </p>
-          </div>
+          {step < 4 && (
+            <div>
+              <h2 className="text-2xl font-black text-slate-100 tracking-tight">
+                {step === 1 ? "Create Merchant Account" : step === 2 ? "Configure Storefront" : "Register Business Verification"}
+              </h2>
+              <p className="text-xs text-slate-400 mt-1 font-medium leading-relaxed">
+                {step === 1 ? "Start by configuring credentials for your business entry point." : 
+                 step === 2 ? "Describe store parameters to customize buyer viewports." : 
+                 "Provide legal registration context to satisfy local dispatch codes."}
+              </p>
+            </div>
+          )}
 
           {/* Form Content Panel */}
           <div className="flex flex-col gap-5">
@@ -497,30 +499,32 @@ export default function MerchantOnboarding() {
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex items-center justify-between gap-4 mt-4 w-full">
-            <Button 
-              variant="outline" 
-              onClick={handleBack}
-              className="bg-transparent border border-slate-900 text-slate-300 font-bold px-5 py-2.5 rounded-xl h-11 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back</span>
-            </Button>
-            <Button 
-              onClick={handleNext}
-              disabled={!isStepValid() || loading}
-              className={`flex-grow font-black uppercase tracking-wider py-2.5 rounded-xl h-11 transition-all duration-200 flex items-center justify-center gap-2 ${isStepValid() ? "bg-gradient-to-r from-orange-400 via-pink-500 to-indigo-650 hover:opacity-90 text-white hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-pink-500/10" : "bg-slate-900 text-slate-500 cursor-not-allowed border border-slate-900"}`}
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  <span>{step === 3 ? "Complete Registration" : "Continue"}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </Button>
-          </div>
+          {step < 4 && (
+            <div className="flex items-center justify-between gap-4 mt-4 w-full">
+              <Button 
+                variant="outline" 
+                onClick={handleBack}
+                className="bg-transparent border border-slate-900 text-slate-300 font-bold px-5 py-2.5 rounded-xl h-11 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </Button>
+              <Button 
+                onClick={handleNext}
+                disabled={!isStepValid() || loading}
+                className={`flex-grow font-black uppercase tracking-wider py-2.5 rounded-xl h-11 transition-all duration-200 flex items-center justify-center gap-2 ${isStepValid() ? "bg-gradient-to-r from-orange-400 via-pink-500 to-indigo-650 hover:opacity-90 text-white hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-pink-500/10" : "bg-slate-900 text-slate-500 cursor-not-allowed border border-slate-900"}`}
+              >
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <span>{step === 3 ? "Complete Registration" : "Continue"}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
