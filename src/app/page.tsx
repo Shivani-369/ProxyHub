@@ -726,8 +726,8 @@ export default function ProxiHubDashboard() {
               
               {/* Map View Sub-tab */}
               {activeTab === "map" && (
-                <div className="flex-grow flex flex-col gap-8">
-                  <div className="glassmorphism p-6 rounded-3xl border-slate-900 flex flex-wrap gap-6 items-center justify-between shadow-xl">
+                <div className="flex-grow flex flex-col gap-10">
+                  <div className="glassmorphism p-7 rounded-3xl border-slate-900 flex flex-wrap gap-6 items-center justify-between shadow-xl">
                     <div className="flex items-center gap-4 flex-grow max-w-xl">
                       <div className="relative flex-grow">
                         <Search className="absolute left-4 top-[12px] w-4 h-4 text-slate-500" />
@@ -778,10 +778,10 @@ export default function ProxiHubDashboard() {
                     </Button>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 flex-grow">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-grow">
                     {/* Live geofenced map block (visible on lg, or when active sub-tab is 'map' on mobile) */}
-                    <div className={`lg:col-span-2 glassmorphism rounded-3xl border-slate-900 p-6 min-h-[500px] flex flex-col relative overflow-hidden shadow-2xl ${customerMapSubTab === "map" ? "flex" : "hidden lg:flex"}`}>
-                      <h3 className="text-sm font-bold uppercase tracking-wider text-slate-350 mb-4 flex items-center gap-2">
+                    <div className={`lg:col-span-2 glassmorphism rounded-3xl border-slate-900 p-8 min-h-[500px] flex flex-col relative overflow-hidden shadow-2xl ${customerMapSubTab === "map" ? "flex" : "hidden lg:flex"}`}>
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-slate-350 mb-6 flex items-center gap-2">
                         <MapIcon className="w-4 h-4 text-blue-400" />
                         <span>Live geofenced discovery map</span>
                       </h3>
@@ -866,15 +866,15 @@ export default function ProxiHubDashboard() {
                     </div>
 
                     {/* Listings Sidebar (visible on lg, or when active sub-tab is 'list' on mobile) */}
-                    <div className={`glassmorphism rounded-3xl border-slate-900 p-6 flex flex-col h-[560px] shadow-2xl ${customerMapSubTab === "list" ? "flex" : "hidden lg:flex"}`}>
-                      <h3 className="text-sm font-bold uppercase tracking-wider text-slate-350 mb-4 pb-3 border-b border-slate-900/60 flex items-center justify-between">
+                    <div className={`glassmorphism rounded-3xl border-slate-900 p-7 flex flex-col h-[580px] shadow-2xl ${customerMapSubTab === "list" ? "flex" : "hidden lg:flex"}`}>
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-slate-350 mb-5 pb-4 border-b border-slate-900/60 flex items-center justify-between">
                         <span>Nearby Vendors ({filteredVendors.length})</span>
                       </h3>
                       
                       <div className="flex-grow overflow-y-auto flex flex-col gap-4.5 pr-1">
                         {filteredVendors.map((vendor) => (
                           <Card key={vendor.id} className="border border-slate-900 hover:border-slate-800 transition-all duration-200 hover:scale-[1.02] active:scale-[0.99] cursor-pointer shadow-lg">
-                            <CardHeader className="p-4">
+                            <CardHeader className="p-5">
                               <div className="flex justify-between items-start">
                                 <div>
                                   <CardTitle className="text-sm font-bold text-slate-200 leading-snug">{vendor.name}</CardTitle>
@@ -885,7 +885,7 @@ export default function ProxiHubDashboard() {
                                 </Badge>
                               </div>
                             </CardHeader>
-                            <CardContent className="p-4 pt-0 flex flex-col gap-3">
+                            <CardContent className="px-5 pb-4 pt-0 flex flex-col gap-3">
                               <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-900 flex justify-between items-center text-xs">
                                 <div>
                                   <p className="text-[9px] text-slate-600 uppercase tracking-widest font-black">Typical Price Range</p>
@@ -900,7 +900,7 @@ export default function ProxiHubDashboard() {
                                 ))}
                               </div>
                             </CardContent>
-                            <CardFooter className="p-4 pt-0 flex items-center justify-between text-[11px] font-semibold border-t-0 bg-transparent">
+                            <CardFooter className="px-5 pb-5 pt-0 flex items-center justify-between text-[11px] font-semibold border-t-0 bg-transparent">
                               <span className="text-slate-500">⭐ {vendor.rating} Ratings</span>
                               <Button variant="link" className="text-blue-450 font-bold uppercase tracking-wider text-[10px] p-0 h-auto transition-all duration-200 hover:scale-[1.05]">
                                 Call or Chat &rarr;
@@ -932,7 +932,7 @@ export default function ProxiHubDashboard() {
                       const percent = Math.floor((c.joined / c.target) * 100);
                       return (
                         <Card key={c.id} className="shadow-xl bg-[#0d121f] border border-slate-900 flex flex-col transition-all duration-200 hover:scale-[1.02] hover:border-slate-800">
-                          <CardHeader className="p-6">
+                          <CardHeader className="p-7">
                             <div className="flex justify-between items-start mb-3">
                               <Badge variant="secondary" className="text-[9px] font-black uppercase tracking-widest bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                                 {c.discount}
@@ -944,7 +944,7 @@ export default function ProxiHubDashboard() {
                             <CardTitle className="font-bold text-slate-105 text-base">{c.title}</CardTitle>
                             <CardDescription className="text-xs text-slate-450 mt-1 font-medium">Merchant: {c.storeName}</CardDescription>
                           </CardHeader>
-                          <CardContent className="p-6 pt-0 flex-grow">
+                          <CardContent className="p-7 pt-0 flex-grow">
                             <p className="text-xs text-slate-300 font-bold mb-4">Item: {c.item}</p>
                             <div className="my-5 bg-slate-950 p-4 rounded-xl border border-slate-900 flex justify-between items-center">
                               <div>
@@ -967,7 +967,7 @@ export default function ProxiHubDashboard() {
                               </div>
                             </div>
                           </CardContent>
-                          <CardFooter className="p-6 pt-0 border-t-0 bg-transparent">
+                          <CardFooter className="p-7 pt-0 border-t-0 bg-transparent">
                             <Button 
                               onClick={() => {
                                 setCollectives(prev => prev.map(p => p.id === c.id ? { ...p, joined: p.joined + 1 } : p));
@@ -988,8 +988,8 @@ export default function ProxiHubDashboard() {
               {/* Neighborhood Hub Sub-tab */}
               {activeTab === "hub" && (
                 <div className="flex-grow flex flex-col gap-10 max-w-3xl mx-auto w-full">
-                  <Card className="shadow-xl bg-[#0d121f] border border-slate-900 p-6 flex flex-col gap-5">
-                    <CardHeader className="p-0 pb-3 border-b border-slate-900 flex flex-row justify-between items-center">
+                  <Card className="shadow-xl bg-[#0d121f] border border-slate-900 p-7 flex flex-col gap-6">
+                    <CardHeader className="p-0 pb-4 border-b border-slate-900 flex flex-row justify-between items-center">
                       <CardTitle className="text-sm font-bold text-slate-202 flex items-center gap-2"><MessageSquare className="w-4.5 h-4.5 text-blue-400" /> Share Neighborhood Update</CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
@@ -1017,7 +1017,7 @@ export default function ProxiHubDashboard() {
 
                   <div className="flex flex-col gap-6">
                     {hubPosts.map((post) => (
-                      <Card key={post.id} className="shadow-xl bg-[#0d121f] border border-slate-900 p-6 flex flex-col gap-3 hover:border-slate-800 transition-all">
+                      <Card key={post.id} className="shadow-xl bg-[#0d121f] border border-slate-900 p-7 flex flex-col gap-4 hover:border-slate-800 transition-all">
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-3">
                             <div className="w-8.5 h-8.5 rounded-full bg-slate-950 border border-slate-900 flex items-center justify-center text-xs">👤</div>
@@ -1127,7 +1127,7 @@ export default function ProxiHubDashboard() {
                       <div className="flex flex-col gap-6">
                         {ads.map((ad) => (
                           <Card key={ad.id} className="bg-[#0d121f] border border-slate-900 shadow-xl hover:border-slate-800 transition-all">
-                            <CardHeader className="p-6 pb-4">
+                            <CardHeader className="p-7 pb-5">
                               <div className="flex justify-between items-start mb-2">
                                 <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-black uppercase tracking-widest">
                                   +{ad.rewardAmount} Payout
@@ -1137,7 +1137,7 @@ export default function ProxiHubDashboard() {
                               <CardTitle className="text-sm font-bold text-slate-200 mt-1">{ad.title}</CardTitle>
                               <CardDescription className="text-[10px] text-slate-550 font-bold mt-1 uppercase tracking-wider">Advertiser: {ad.advertiser}</CardDescription>
                             </CardHeader>
-                            <CardFooter className="p-6 pt-0 border-t-0 bg-transparent">
+                            <CardFooter className="p-7 pt-0 border-t-0 bg-transparent">
                               <Button 
                                 onClick={() => {
                                   setPlayingAd(ad);
@@ -1166,7 +1166,7 @@ export default function ProxiHubDashboard() {
                             </div>
                             <Button variant="ghost" onClick={() => { setPlayingAd(null); setAdTimerActive(false); }} className="text-xs text-slate-550 hover:text-slate-300 font-bold uppercase">Cancel</Button>
                           </CardHeader>
-                          <CardContent className="p-6 pt-0 flex flex-col gap-4">
+                          <CardContent className="p-7 pt-0 flex flex-col gap-5">
                             <div className="w-full aspect-video bg-slate-950 rounded-2xl overflow-hidden relative flex items-center justify-center border border-slate-900/60 shadow-inner">
                               {playingAd.type === "video" ? (
                                 <div className="w-full h-full relative flex flex-col items-center justify-center">
@@ -1217,17 +1217,17 @@ export default function ProxiHubDashboard() {
                 <div className="flex-grow flex flex-col gap-10 max-w-3xl mx-auto w-full">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <Card className="bg-gradient-to-br from-slate-900 to-purple-950/20 shadow-xl bg-[#0d121f] border border-slate-900">
-                      <CardHeader className="p-6">
+                      <CardHeader className="p-7">
                         <CardDescription className="text-xs text-slate-500 uppercase font-bold tracking-wider">Available Wallet Balance</CardDescription>
                         <CardTitle className="text-3xl font-black text-emerald-405 mt-3">₹{walletBalance.toFixed(2)}</CardTitle>
                       </CardHeader>
                     </Card>
 
                     <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
-                      <CardHeader className="p-6">
+                      <CardHeader className="p-7">
                         <CardTitle className="text-sm font-bold text-slate-200">UPI Payout Portal</CardTitle>
                       </CardHeader>
-                      <CardContent className="p-6 pt-0">
+                      <CardContent className="p-7 pt-0">
                         <form onSubmit={handleWithdrawal} className="flex flex-col gap-4">
                           <Input type="text" placeholder="UPI ID (shivam@upi)" value={withdrawUpi} onChange={(e) => setWithdrawUpi(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
                           <Input type="number" placeholder="Amount (min ₹100)" value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
@@ -1238,10 +1238,10 @@ export default function ProxiHubDashboard() {
                   </div>
 
                   <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
-                    <CardHeader className="p-6">
+                    <CardHeader className="p-7">
                       <CardTitle className="text-xs text-slate-500 font-bold uppercase tracking-wider">Earning Ledger logs</CardTitle>
                     </CardHeader>
-                    <CardContent className="p-6 pt-0 flex flex-col gap-4">
+                    <CardContent className="p-7 pt-0 flex flex-col gap-4">
                       {walletLogs.map((log) => (
                         <div key={log.id} className="p-5 rounded-2xl bg-slate-950/40 border border-slate-900 flex items-center justify-between text-xs hover:border-slate-800 transition-all">
                           <div className="flex items-center gap-4">
