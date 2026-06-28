@@ -126,45 +126,95 @@ export default function MerchantOnboarding() {
   return (
     <div className="min-h-screen bg-[#090a16] text-slate-100 font-sans flex text-sm">
       {/* Left Column: Branding / Value Prop (Desktop only) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-[#141834] to-[#090a16] p-12 flex-col justify-between relative overflow-hidden border-r border-indigo-500/10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-        
-        <div className="flex items-center gap-3 relative z-10">
-          <span className="text-3xl">🚀</span>
-          <span className="text-2xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            ProxiHub Partner
-          </span>
-        </div>
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-[#141834] via-[#0f1228] to-[#090a16] flex-col justify-between relative overflow-hidden border-r border-indigo-500/10">
+        {/* Ambient glows */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-600/8 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/8 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
 
-        <div className="my-auto max-w-lg relative z-10 flex flex-col gap-6">
-          <h1 className="text-4xl font-black tracking-tight leading-tight">
-            Connect directly with customers in your neighborhood.
-          </h1>
-          <p className="text-slate-400 leading-relaxed text-sm">
-            Onboard in under 5 minutes to launch collective pools, broadcast your live cart routes, and publish geofenced ads to 10,000+ local buyers.
-          </p>
-          
-          <div className="flex flex-col gap-4 mt-6">
-            <div className="flex items-center gap-3 bg-slate-900/40 p-4 rounded-2xl border border-indigo-500/10">
-              <span className="text-2xl">🗺️</span>
-              <div>
-                <h4 className="font-bold text-sm text-slate-200">5km Geofenced Visibility</h4>
-                <p className="text-xs text-slate-550 mt-0.5">Show up instantly on local discovery radars.</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 bg-slate-900/40 p-4 rounded-2xl border border-indigo-500/10">
-              <span className="text-2xl">🎙️</span>
-              <div>
-                <h4 className="font-bold text-sm text-slate-200">Voice-First Broadcasts</h4>
-                <p className="text-xs text-slate-550 mt-0.5">Announce daily specials using regional dialects.</p>
-              </div>
+        {/* Logo strip */}
+        <div className="relative z-10 px-12 pt-12 pb-0">
+          <div className="flex items-center gap-3">
+            <span className="text-4xl">🚀</span>
+            <div className="flex flex-col">
+              <span className="text-2xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-none">
+                ProxiHub Partner
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400/60 mt-1">
+                Merchant Network
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="text-xs text-slate-600 font-bold uppercase tracking-wider relative z-10">
-          &copy; 2026 ProxiHub Technologies. All rights reserved.
+        {/* Main value proposition */}
+        <div className="relative z-10 px-12 py-10 flex flex-col gap-8">
+          {/* Eyebrow tag */}
+          <span className="inline-flex w-fit items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-4 py-1.5 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+            Hyperlocal Commerce Platform
+          </span>
+
+          <h1 className="text-[2.6rem] font-black tracking-tight leading-[1.15] text-slate-100">
+            Connect directly with customers in your{" "}
+            <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+              neighborhood.
+            </span>
+          </h1>
+
+          <p className="text-slate-400 leading-relaxed text-sm max-w-sm">
+            Onboard in under 5 minutes to launch collective pools, broadcast your live cart routes, and publish geofenced ads to 10,000+ local buyers.
+          </p>
+
+          {/* Feature cards */}
+          <div className="flex flex-col gap-3 mt-2">
+            <div className="flex items-start gap-4 bg-white/[0.03] hover:bg-white/[0.05] transition-colors p-5 rounded-2xl border border-indigo-500/10">
+              <span className="text-2xl mt-0.5 flex-shrink-0">🗺️</span>
+              <div className="flex flex-col gap-1">
+                <h4 className="font-bold text-sm text-slate-100">5km Geofenced Visibility</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">Show up instantly on local discovery radars and route maps.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-white/[0.03] hover:bg-white/[0.05] transition-colors p-5 rounded-2xl border border-indigo-500/10">
+              <span className="text-2xl mt-0.5 flex-shrink-0">🎙️</span>
+              <div className="flex flex-col gap-1">
+                <h4 className="font-bold text-sm text-slate-100">Voice-First Broadcasts</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">Announce daily specials in Tamil, Hindi, Telugu or English.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 bg-white/[0.03] hover:bg-white/[0.05] transition-colors p-5 rounded-2xl border border-indigo-500/10">
+              <span className="text-2xl mt-0.5 flex-shrink-0">📦</span>
+              <div className="flex flex-col gap-1">
+                <h4 className="font-bold text-sm text-slate-100">Collective Group Pools</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">Drive bulk orders from the neighborhood at discounted rates.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Social proof strip */}
+          <div className="flex items-center gap-6 pt-2 border-t border-slate-800/50 mt-2">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xl font-black text-slate-100">10,000+</span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Local Buyers</span>
+            </div>
+            <div className="w-px h-8 bg-slate-800"></div>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xl font-black text-slate-100">5 min</span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">To Go Live</span>
+            </div>
+            <div className="w-px h-8 bg-slate-800"></div>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xl font-black text-slate-100">5km</span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Radius Reach</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="relative z-10 px-12 pb-10">
+          <p className="text-[10px] text-slate-700 font-bold uppercase tracking-widest">
+            &copy; 2026 ProxiHub Technologies. All rights reserved.
+          </p>
         </div>
       </div>
 
