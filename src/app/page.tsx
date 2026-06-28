@@ -1219,14 +1219,14 @@ export default function ProxiHubDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <Card className="bg-gradient-to-br from-slate-900 to-purple-950/20 shadow-xl bg-[#0d121f] border border-slate-900">
                       <CardHeader className="p-7">
-                        <CardDescription className="text-xs text-slate-500 uppercase font-bold tracking-wider">Available Wallet Balance</CardDescription>
-                        <CardTitle className="text-3xl font-black text-emerald-405 mt-3">₹{walletBalance.toFixed(2)}</CardTitle>
+                        <CardDescription className="text-sm text-slate-400 uppercase font-bold tracking-wider">Available Wallet Balance</CardDescription>
+                        <CardTitle className="text-4xl font-black text-emerald-405 mt-4">₹{walletBalance.toFixed(2)}</CardTitle>
                       </CardHeader>
                     </Card>
 
                     <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
                       <CardHeader className="p-7">
-                        <CardTitle className="text-sm font-bold text-slate-200">UPI Payout Portal</CardTitle>
+                        <CardTitle className="text-base font-bold text-slate-100">UPI Payout Portal</CardTitle>
                       </CardHeader>
                       <CardContent className="p-7 pt-0">
                         <form onSubmit={handleWithdrawal} className="flex flex-col gap-4">
@@ -1240,19 +1240,19 @@ export default function ProxiHubDashboard() {
 
                   <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
                     <CardHeader className="p-7">
-                      <CardTitle className="text-xs text-slate-500 font-bold uppercase tracking-wider">Earning Ledger logs</CardTitle>
+                      <CardTitle className="text-sm text-slate-400 font-bold uppercase tracking-wider">Earning Ledger logs</CardTitle>
                     </CardHeader>
                     <CardContent className="p-7 pt-0 flex flex-col gap-4">
                       {walletLogs.map((log) => (
-                        <div key={log.id} className="p-5 rounded-2xl bg-slate-950/40 border border-slate-900 flex items-center justify-between text-xs hover:border-slate-800 transition-all">
+                        <div key={log.id} className="p-5 rounded-2xl bg-slate-950/40 border border-slate-900 flex items-center justify-between text-sm hover:border-slate-800 transition-all">
                           <div className="flex items-center gap-4">
-                            <span className="text-lg bg-slate-900 p-2.5 rounded-xl border border-slate-900">{log.type === "ad_reward" ? "💰" : "💳"}</span>
+                            <span className="text-xl bg-slate-900 p-2.5 rounded-xl border border-slate-900">{log.type === "ad_reward" ? "💰" : "💳"}</span>
                             <div>
-                              <p className="font-bold text-slate-200">{log.desc}</p>
-                              <p className="text-[10px] text-slate-550 mt-1">{log.time}</p>
+                              <p className="font-bold text-slate-100">{log.desc}</p>
+                              <p className="text-xs text-slate-500 mt-1 font-semibold">{log.time}</p>
                             </div>
                           </div>
-                          <span className={`font-black ${log.type === "ad_reward" ? "text-emerald-450" : "text-amber-450"}`}>{log.type === "ad_reward" ? `+ ₹${log.amount.toFixed(2)}` : `- ₹${log.amount.toFixed(2)}`}</span>
+                          <span className={`text-base font-black ${log.type === "ad_reward" ? "text-emerald-450" : "text-amber-450"}`}>{log.type === "ad_reward" ? `+ ₹${log.amount.toFixed(2)}` : `- ₹${log.amount.toFixed(2)}`}</span>
                         </div>
                       ))}
                     </CardContent>
