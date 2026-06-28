@@ -548,14 +548,7 @@ export default function ProxiHubDashboard() {
                 <span>5km Map Discovery</span>
               </Button>
 
-              <Button
-                variant={activeTab === "map" && customerMapSubTab === "list" ? "secondary" : "ghost"}
-                onClick={() => { setActiveTab("map"); setCustomerMapSubTab("list"); }}
-                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <Store className="w-3.5 h-3.5 mr-2" />
-                <span>Nearby Vendors</span>
-              </Button>
+
 
               <Button
                 variant={activeTab === "pools" ? "secondary" : "ghost"}
@@ -590,7 +583,7 @@ export default function ProxiHubDashboard() {
                 className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <DollarSign className="w-3.5 h-3.5 mr-2" />
-                <span>ProxiRewards Ads</span>
+                <span>ProxiAds</span>
               </Button>
 
               <Button
@@ -1113,7 +1106,7 @@ export default function ProxiHubDashboard() {
                   <div className="glassmorphism p-8 rounded-3xl border-slate-900 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/20 shadow-md">
                     <h2 className="text-xl font-bold text-emerald-400 flex items-center gap-3">
                       <DollarSign className="w-6 h-6 text-emerald-500" />
-                      <span>ProxiRewards Hyperlocal Ads Network</span>
+                      <span>ProxiAds Hyperlocal Ads Network</span>
                     </h2>
                     <p className="text-sm text-slate-400 max-w-2xl leading-relaxed mt-1">
                       Watch campaigns published by local neighborhood businesses. Our advanced anti-cheat validator verifies ad visibility to prevent simulated fraud. Credit rewards straight to your UPI wallet limit!
