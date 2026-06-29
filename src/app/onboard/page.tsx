@@ -133,7 +133,7 @@ export default function MerchantOnboarding() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
 
         {/* Logo strip */}
-        <div className="relative z-10 px-20 pt-20 pb-0">
+        <div className="relative z-10 px-24 pt-24 pb-0">
           <div className="flex items-center gap-4">
             <span className="text-4xl">🚀</span>
             <div className="flex flex-col">
@@ -148,7 +148,7 @@ export default function MerchantOnboarding() {
         </div>
 
         {/* Main value proposition */}
-        <div className="relative z-10 px-20 py-16 flex flex-col gap-12">
+        <div className="relative z-10 px-24 py-20 flex flex-col gap-12">
           {/* Eyebrow tag */}
           <span className="inline-flex w-fit items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-full">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
@@ -211,7 +211,7 @@ export default function MerchantOnboarding() {
         </div>
 
         {/* Footer */}
-        <div className="relative z-10 px-20 pb-16">
+        <div className="relative z-10 px-24 pb-20">
           <p className="text-[10px] text-slate-700 font-bold uppercase tracking-widest">
             &copy; 2026 ProxiHub Technologies. All rights reserved.
           </p>
