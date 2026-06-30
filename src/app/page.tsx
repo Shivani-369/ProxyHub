@@ -494,20 +494,9 @@ export default function ProxiHubDashboard() {
             {currentRole === "customer" && (
               <div className="w-full">
                 {(!isCustomerGoogleConnected || !customerAddress) ? (
-                  <div className="flex flex-col gap-3 w-full text-center py-2">
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Explore local geofenced maps, neighborhood buy pools, and play rewards campaigns locally.
-                    </p>
-                    <div className="w-full text-center mt-1">
-                      <Button 
-                        variant="link" 
-                        onClick={() => router.push("/customer-onboard")} 
-                        className="text-xs text-indigo-400 hover:text-indigo-300 font-bold p-0 h-auto"
-                      >
-                        New customer? Complete Google & GPS onboarding &rarr;
-                      </Button>
-                    </div>
-                  </div>
+                  <p className="text-xs text-slate-400 leading-relaxed text-center py-4">
+                    Explore local geofenced maps, neighborhood buy pools, and play rewards campaigns locally.
+                  </p>
                 ) : (
                   <div className="flex flex-col gap-2.5 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-xs text-left w-full mt-2">
                     <div className="flex items-center gap-2 text-emerald-450 font-bold">
@@ -541,6 +530,18 @@ export default function ProxiHubDashboard() {
             >
               Enter {currentRole === "customer" ? "Customer" : currentRole === "vendor" ? (selectedVendorId === 1 ? "Stationary Store" : "Mobile Cart") : "Service Pro"} Portal
             </Button>
+
+            {currentRole === "customer" && (!isCustomerGoogleConnected || !customerAddress) && (
+              <div className="w-full text-center mt-2.5">
+                <Button 
+                  variant="link" 
+                  onClick={() => router.push("/customer-onboard")} 
+                  className="text-xs text-indigo-400 hover:text-indigo-300 font-bold p-0 h-auto"
+                >
+                  New customer? Complete customer onboarding &rarr;
+                </Button>
+              </div>
+            )}
 
             {(currentRole === "vendor" || currentRole === "service") && (
               <div className="w-full text-center mt-2.5">
