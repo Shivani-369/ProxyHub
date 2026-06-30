@@ -59,7 +59,7 @@ export default function MerchantOnboarding() {
     if (formData.phone.length < 10) return;
     setOtpSent(true);
     setOtpError("");
-    alert("Mock OTP Sent! Enter '1234' to verify.");
+    alert("Mock OTP Sent via WhatsApp! Enter '1234' to verify.");
   };
 
   const handleVerifyOtp = () => {
@@ -263,8 +263,62 @@ export default function MerchantOnboarding() {
 
           {/* Form Content Panel */}
           <div className="flex flex-col gap-5">
+            {step === 4 && (
+              <div className="w-full bg-[#0d121f] rounded-3xl border border-slate-900 overflow-hidden shadow-2xl flex flex-col transition-all duration-300">
+                {/* Green Header */}
+                <div className="bg-[#10b981] p-8 text-center flex flex-col items-center justify-center gap-3">
+                  <div className="w-16 h-16 rounded-full border-4 border-white flex items-center justify-center">
+                    <span className="text-white text-3xl font-bold">✓</span>
+                  </div>
+                  <h3 className="text-lg font-black tracking-widest text-white uppercase mt-1">SUCCESS</h3>
+                </div>
+
+                {/* Body Content */}
+                <div className="p-8 flex flex-col items-center text-center gap-6">
+                  <p className="text-sm text-slate-350 font-semibold leading-relaxed max-w-xs">
+                    Congratulations, your account has been successfully created.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      localStorage.setItem("merchantEmail", formData.email);
+                      localStorage.setItem("merchantName", formData.storeName);
+                      localStorage.setItem("merchantOnboarded", "true");
+                      router.push(`/?role=vendor&login=true`);
+                    }}
+                    className="w-full bg-[#10b981] hover:bg-[#059669] text-white font-bold h-11 px-8 rounded-full transition-all duration-200 shadow-lg shadow-emerald-500/10"
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {step === 1 && (
               <div className="flex flex-col gap-4 w-full">
+                {/* Google Sign-in Option */}
+                <div className="flex flex-col gap-2.5 pb-2 border-b border-indigo-500/10 w-full">
+                  <Button 
+                    type="button"
+                    onClick={() => {
+                      setFormData({ 
+                        ...formData, 
+                        email: "merchant.google@gmail.com",
+                        contactName: "Google Partner Business"
+                      });
+                      alert("Successfully connected with Google! Email collected: merchant.google@gmail.com");
+                    }}
+                    className="w-full bg-[#161a30] hover:bg-[#1e2445] text-slate-200 border border-indigo-500/20 text-xs font-bold h-11 rounded-xl flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-4 h-4 mr-1.5" viewBox="0 0 24 24" fill="none">
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                    </svg>
+                    <span>Continue with Google</span>
+                  </Button>
+                </div>
+
                 <div className="flex flex-col gap-2 w-full">
                   <Label className="text-xs font-bold text-slate-350">Contact Person Name</Label>
                   <Input 
@@ -312,11 +366,11 @@ export default function MerchantOnboarding() {
                 </div>
 
                 <div className="flex flex-col gap-2 w-full">
-                  <Label className="text-xs font-bold text-slate-350">Phone Contact (for geofenced dispatch)</Label>
+                  <Label className="text-xs font-bold text-slate-350">WhatsApp Number Only (for verification)</Label>
                   <div className="flex gap-2">
                     <Input 
                       type="tel" 
-                      placeholder="Mobile Phone Number" 
+                      placeholder="WhatsApp Mobile Number" 
                       value={formData.phone} 
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, "") })} 
                       className="bg-[#0e1227] border border-indigo-500/10 focus-visible:ring-[#6366f1] text-sm h-11 w-full text-slate-100 px-4 rounded-xl"
@@ -328,14 +382,14 @@ export default function MerchantOnboarding() {
                       disabled={formData.phone.length < 10}
                       className={`text-xs font-bold h-11 px-4 rounded-xl transition-all duration-200 ${otpSent ? "bg-slate-800 text-slate-500" : "bg-[#1e2445] text-slate-200 border border-indigo-500/10 hover:bg-[#1e2445]/80"}`}
                     >
-                      {otpSent ? "Resend" : "Send OTP"}
+                      {otpSent ? "Resend" : "Send WhatsApp OTP"}
                     </Button>
                   </div>
                 </div>
 
                 {otpSent && !otpVerified && (
                   <div className="flex flex-col gap-2.5 p-4 rounded-xl bg-indigo-950/20 border border-indigo-500/10 w-full animate-fadeIn">
-                    <Label className="text-[10px] font-black uppercase text-indigo-400">Enter verification OTP Code</Label>
+                    <Label className="text-[10px] font-black uppercase text-indigo-400">Enter verification OTP Code (sent via WhatsApp)</Label>
                     <div className="flex gap-2">
                       <Input 
                         type="text" 

@@ -181,6 +181,51 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 100vh;
 }
 
+/* ============================================
+   Mobile Responsiveness & Spacing Overrides
+   Ensures card padding, margins, and page boundaries
+   scale down appropriately on phone screens (< 640px)
+   ============================================ */
+@media (max-width: 640px) {
+  /* Scale down outer margins/paddings from page boundaries */
+  .main-viewport {
+    padding: 16px 12px !important;
+    gap: 16px !important;
+  }
+  
+  /* Reset large page padding utility wrappers */
+  .px-8 {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .py-12 {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+  
+  /* Standard card and glassmorphic inner paddings */
+  .p-8, .p-7, .p-6 {
+    padding: 16px !important;
+  }
+  .p-5 {
+    padding: 12px !important;
+  }
+  .px-6 {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  /* Compact layout border-radius for cards on mobile */
+  .rounded-3xl {
+    border-radius: 16px !important;
+  }
+  
+  .premium-card {
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+}
+
 .sidebar-panel {
   width: var(--sidebar-width);
   flex-shrink: 0;

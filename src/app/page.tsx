@@ -58,6 +58,10 @@ export default function ProxiHubDashboard() {
   const router = useRouter();
   // Navigation / Role Switcher States
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerAddress, setCustomerAddress] = useState("");
+  const [isCustomerGoogleConnected, setIsCustomerGoogleConnected] = useState(false);
+  const [isGpsLoading, setIsGpsLoading] = useState(false);
   const [currentRole, setCurrentRole] = useState<"customer" | "vendor" | "service">("customer");
   const [activeTab, setActiveTab] = useState("map"); // customer sub-tabs
   const [customerMapSubTab, setCustomerMapSubTab] = useState<"map" | "list">("map");
@@ -192,6 +196,16 @@ export default function ProxiHubDashboard() {
 
     return matchesFence && matchesSearch;
   });
+
+  // Check customer onboarding details on load
+  useEffect(() => {
+    const onboarded = localStorage.getItem("customerOnboarded");
+    if (onboarded === "true") {
+      setCustomerEmail(localStorage.getItem("customerEmail") || "");
+      setCustomerAddress(localStorage.getItem("customerAddress") || "");
+      setIsCustomerGoogleConnected(true);
+    }
+  }, []);
 
   // Ticking down Gold Rush timers
   useEffect(() => {
@@ -478,9 +492,32 @@ export default function ProxiHubDashboard() {
             )}
 
             {currentRole === "customer" && (
-              <p className="text-xs text-slate-400 leading-relaxed text-center py-4 w-full">
-                Explore local geofenced maps, neighborhood buy pools, and play rewards campaigns locally.
-              </p>
+              <div className="w-full">
+                {(!isCustomerGoogleConnected || !customerAddress) ? (
+                  <div className="flex flex-col gap-3 w-full text-center py-2">
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      Explore local geofenced maps, neighborhood buy pools, and play rewards campaigns locally.
+                    </p>
+                    <div className="w-full text-center mt-1">
+                      <Button 
+                        variant="link" 
+                        onClick={() => router.push("/customer-onboard")} 
+                        className="text-xs text-indigo-400 hover:text-indigo-300 font-bold p-0 h-auto"
+                      >
+                        New customer? Complete Google & GPS onboarding &rarr;
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2.5 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-xs text-left w-full mt-2">
+                    <div className="flex items-center gap-2 text-emerald-450 font-bold">
+                      <span>✓ Onboarding Verified</span>
+                    </div>
+                    <p className="text-slate-450 font-semibold mt-1">Email: {customerEmail}</p>
+                    <p className="text-slate-450 font-semibold text-[11px] truncate">Address: {customerAddress}</p>
+                  </div>
+                )}
+              </div>
             )}
 
             <Button 
@@ -495,7 +532,12 @@ export default function ProxiHubDashboard() {
                 }
                 setIsLoggedIn(true);
               }}
-              className="bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 font-bold uppercase tracking-wider py-3 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full mt-2 animate-pulse"
+              disabled={currentRole === "customer" && (!isCustomerGoogleConnected || !customerAddress)}
+              className={`font-bold uppercase tracking-wider py-3 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full mt-2 ${
+                currentRole === "customer" && (!isCustomerGoogleConnected || !customerAddress)
+                  ? "bg-slate-900/60 text-slate-500 border border-slate-900 cursor-not-allowed"
+                  : "bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 animate-pulse"
+              }`}
             >
               Enter {currentRole === "customer" ? "Customer" : currentRole === "vendor" ? (selectedVendorId === 1 ? "Stationary Store" : "Mobile Cart") : "Service Pro"} Portal
             </Button>
@@ -548,24 +590,13 @@ export default function ProxiHubDashboard() {
                 <span>5km Map Discovery</span>
               </Button>
 
-
-
               <Button
-                variant={activeTab === "pools" ? "secondary" : "ghost"}
-                onClick={() => setActiveTab("pools")}
-                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                variant="ghost"
+                disabled={true}
+                className="w-full justify-start text-xs font-semibold h-10 text-slate-600 opacity-40 cursor-not-allowed hover:bg-transparent"
               >
                 <Users className="w-3.5 h-3.5 mr-2" />
-                <span>Collective Pools</span>
-              </Button>
-
-              <Button
-                variant={activeTab === "hub" ? "secondary" : "ghost"}
-                onClick={() => setActiveTab("hub")}
-                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <MessageSquare className="w-3.5 h-3.5 mr-2" />
-                <span>Neighborhood Hub</span>
+                <span>Collective Pools (Disabled)</span>
               </Button>
 
               <Button
@@ -578,12 +609,21 @@ export default function ProxiHubDashboard() {
               </Button>
 
               <Button
-                variant={activeTab === "rewards" ? "secondary" : "ghost"}
-                onClick={() => setActiveTab("rewards")}
-                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                variant="ghost"
+                disabled={true}
+                className="w-full justify-start text-xs font-semibold h-10 text-slate-600 opacity-40 cursor-not-allowed hover:bg-transparent"
               >
                 <DollarSign className="w-3.5 h-3.5 mr-2" />
-                <span>ProxiAds</span>
+                <span>ProxiAds (Disabled)</span>
+              </Button>
+
+              <Button
+                variant={activeTab === "proxirewards" ? "secondary" : "ghost"}
+                onClick={() => setActiveTab("proxirewards")}
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Star className="w-3.5 h-3.5 mr-2 text-amber-400" />
+                <span>ProxiRewards</span>
               </Button>
 
               <Button
@@ -979,63 +1019,84 @@ export default function ProxiHubDashboard() {
                 </div>
               )}
 
-              {/* Neighborhood Hub Sub-tab */}
-              {activeTab === "hub" && (
-                <div className="flex-grow flex flex-col gap-10 max-w-3xl mx-auto w-full">
-                  <Card className="shadow-xl bg-[#0d121f] border border-slate-900 p-7 flex flex-col gap-6">
-                    <CardHeader className="p-0 pb-4 border-b border-slate-900 flex flex-row justify-between items-center">
-                      <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2.5"><MessageSquare className="w-5 h-5 text-blue-400" /> Share Neighborhood Update</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <form onSubmit={(e) => {
-                        e.preventDefault();
-                        const formData = new FormData(e.currentTarget);
-                        const text = formData.get("postText") as string;
-                        if (!text) return;
-                        const newPost = {
-                          id: Date.now(),
-                          author: "You (Verified)",
-                          role: "Resident",
-                          text: text,
-                          timestamp: "Just now",
-                          likes: 0
-                        };
-                        setHubPosts(prev => [newPost, ...prev]);
-                        e.currentTarget.reset();
-                      }} className="flex flex-col gap-4">
-                        <textarea name="postText" placeholder="Water logging at junction? Mobile cart arrived? Post updates here..." className="w-full min-h-[100px] bg-slate-950 border border-slate-900 rounded-2xl p-4 text-sm text-slate-200 placeholder-slate-550 focus:outline-none focus:border-blue-500 resize-none font-medium" />
-                        <Button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-3 rounded-2xl self-end px-6 h-10 flex items-center gap-2"><Send className="w-3.5 h-3.5" /> Post Update</Button>
-                      </form>
-                    </CardContent>
-                  </Card>
-
-                  <div className="flex flex-col gap-6">
-                    {hubPosts.map((post) => (
-                      <Card key={post.id} className="shadow-xl bg-[#0d121f] border border-slate-900 p-7 flex flex-col gap-4 hover:border-slate-800 transition-all">
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8.5 h-8.5 rounded-full bg-slate-950 border border-slate-900 flex items-center justify-center text-xs">👤</div>
-                            <div>
-                              <p className="text-sm font-bold text-slate-100">{post.author}</p>
-                              <p className="text-[10px] text-slate-500 mt-1 font-bold uppercase tracking-wider">{post.role}</p>
-                            </div>
-                          </div>
-                          <span className="text-xs text-slate-500 font-bold">{post.timestamp}</span>
-                        </div>
-                        <p className="text-sm text-slate-300 leading-relaxed font-medium mt-1">{post.text}</p>
-                        <div className="flex items-center gap-4 border-t border-slate-900/60 pt-4 mt-2 text-xs font-bold text-slate-500">
-                          <button 
-                            onClick={() => {
-                              setHubPosts(prev => prev.map(p => p.id === post.id ? { ...p, likes: p.likes + 1 } : p));
-                            }} 
-                            className="flex items-center gap-2.5 hover:text-blue-400 transition-colors"
-                          >
-                            <span>👍</span> {post.likes} Upvotes
-                          </button>
-                        </div>
-                      </Card>
-                    ))}
+              {/* ProxiRewards Sub-tab */}
+              {activeTab === "proxirewards" && (
+                <div className="flex-grow flex flex-col gap-10 max-w-4xl mx-auto w-full">
+                  <div className="glassmorphism p-8 rounded-3xl border-slate-900 bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/20 shadow-md">
+                    <h2 className="text-xl font-bold text-amber-400 flex items-center gap-3">
+                      <Star className="w-6 h-6 text-amber-500 fill-amber-500/30" />
+                      <span>ProxiRewards Partner Points</span>
+                    </h2>
+                    <p className="text-sm text-slate-400 max-w-2xl leading-relaxed mt-1">
+                      Earn loyalty points by engaging with hyperlocal events, validating coordinate points, or completing local merchant runs. Points translate directly to payout credits.
+                    </p>
                   </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Points Display Card */}
+                    <Card className="bg-[#0d121f] border border-slate-900 p-6 flex flex-col justify-between rounded-2xl shadow-xl md:col-span-1">
+                      <div>
+                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-wider">Total Points Balance</span>
+                        <h3 className="text-4xl font-black text-amber-400 mt-2">1,850</h3>
+                        <p className="text-xs text-slate-400 mt-1">Equivalent to ₹185.00 INR</p>
+                      </div>
+                      <div className="mt-6">
+                        <Button 
+                          onClick={() => alert("Points successfully converted and credited to your wallet balance!")}
+                          className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs h-10 rounded-xl"
+                        >
+                          Redeem Points &rarr;
+                        </Button>
+                      </div>
+                    </Card>
+
+                    {/* How to Earn Card */}
+                    <Card className="bg-[#0d121f] border border-slate-900 p-6 rounded-2xl shadow-xl md:col-span-2">
+                      <h4 className="font-bold text-slate-200 text-sm mb-4">Quick Ways to Earn Points</h4>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-slate-950 border border-slate-900 text-xs">
+                          <span className="text-slate-300 font-semibold">Verify new geofenced route listings</span>
+                          <span className="text-amber-400 font-bold">+150 pts</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-slate-950 border border-slate-900 text-xs">
+                          <span className="text-slate-300 font-semibold">Complete first buy-pool transaction</span>
+                          <span className="text-amber-400 font-bold">+250 pts</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-slate-950 border border-slate-900 text-xs">
+                          <span className="text-slate-300 font-semibold">Broadcast cart updates on WhatsApp</span>
+                          <span className="text-amber-400 font-bold">+100 pts</span>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+
+                  {/* Points Ledger */}
+                  <Card className="bg-[#0d121f] border border-slate-900 p-6 rounded-2xl shadow-xl">
+                    <h4 className="font-bold text-slate-200 text-sm mb-4">Points Transaction History</h4>
+                    <div className="flex flex-col gap-3.5">
+                      <div className="flex justify-between items-center border-b border-slate-900 pb-3 text-xs">
+                        <div>
+                          <p className="font-bold text-slate-200">First Onboarding Completion Bonus</p>
+                          <p className="text-[10px] text-slate-500 mt-1">June 28, 2026</p>
+                        </div>
+                        <span className="text-emerald-450 font-bold">+1,000 pts</span>
+                      </div>
+                      <div className="flex justify-between items-center border-b border-slate-900 pb-3 text-xs">
+                        <div>
+                          <p className="font-bold text-slate-200">GPS Location Coordinates Verification</p>
+                          <p className="text-[10px] text-slate-500 mt-1">June 29, 2026</p>
+                        </div>
+                        <span className="text-emerald-450 font-bold">+800 pts</span>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <div>
+                          <p className="font-bold text-slate-200">Promo Ad Watch: murugan_sweets.mp4</p>
+                          <p className="text-[10px] text-slate-555 mt-1">June 29, 2026</p>
+                        </div>
+                        <span className="text-emerald-450 font-bold">+50 pts</span>
+                      </div>
+                    </div>
+                  </Card>
                 </div>
               )}
 
