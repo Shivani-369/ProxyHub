@@ -200,13 +200,31 @@ export default function ProxiHubDashboard() {
     return matchesFence && matchesSearch;
   });
 
-  // Check customer onboarding details on load
+  // Check customer onboarding details on load & handle login redirects
   useEffect(() => {
     const onboarded = localStorage.getItem("customerOnboarded");
     if (onboarded === "true") {
       setCustomerEmail(localStorage.getItem("customerEmail") || "");
       setCustomerAddress(localStorage.getItem("customerAddress") || "");
       setIsCustomerGoogleConnected(true);
+    }
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const roleParam = params.get("role");
+      const loginParam = params.get("login");
+      if (loginParam === "true") {
+        if (roleParam === "customer") {
+          setCurrentRole("customer");
+          setShowLoginForm(true);
+        } else if (roleParam === "vendor" || roleParam === "merchant") {
+          setCurrentRole("vendor");
+          setShowLoginForm(true);
+        } else if (roleParam === "service") {
+          setCurrentRole("service");
+          setShowLoginForm(true);
+        }
+      }
     }
   }, []);
 

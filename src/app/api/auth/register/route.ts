@@ -23,15 +23,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields: email, password, and role" }, { status: 400 })
     }
 
-    // Check if user already exists globally since email is unique
+    // Check if user already exists with this email and role combination
     const existingUser = await prisma.user.findFirst({
       where: {
-        email
+        email,
+        role
       }
     })
 
     if (existingUser) {
-      return NextResponse.json({ error: "An account with this email address already exists. Please log in directly." }, { status: 400 })
+      return NextResponse.json({ error: "An account with this email address already exists for this role. Please log in directly." }, { status: 400 })
     }
 
     const passwordHash = await bcrypt.hash(password, 10)
