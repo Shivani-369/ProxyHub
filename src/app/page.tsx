@@ -571,7 +571,7 @@ export default function ProxiHubDashboard() {
             <div className="flex items-center gap-3 mb-3">
               <span className="text-3xl">🚀</span>
               <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-blue-400 via-emerald-400 to-indigo-400 bg-clip-text text-transparent">
-                ProxiHub <span className="font-light text-slate-400 text-xs">v4.0</span>
+                ProxiHub
               </h1>
             </div>
             <p className="text-[10px] text-slate-550 uppercase tracking-widest font-black leading-none">Unified Dashboard</p>
@@ -1405,41 +1405,38 @@ export default function ProxiHubDashboard() {
                       <div className="flex flex-col gap-10">
                         <Card className="bg-[#0d121f] shadow-xl border border-slate-900 p-6 flex flex-col gap-4">
                           <CardHeader className="p-0 pb-3 border-b border-slate-900">
-                            <CardTitle className="text-base font-bold text-cyan-400 flex items-center gap-2.5"><Users className="w-5 h-5" /> Start Group-buy Pool</CardTitle>
+                            <CardTitle className="text-base font-bold text-amber-400 flex items-center gap-2.5"><Zap className="w-5 h-5 text-amber-500" /> Start Limited Period Gold-Rush</CardTitle>
                           </CardHeader>
                           <CardContent className="p-0">
                             <form onSubmit={(e) => {
                               e.preventDefault();
-                              if (!newPoolTitle || !newPoolItem || !newPoolPrice || !newPoolOriginalPrice) return;
+                              if (!newPoolTitle || !newPoolPrice || !newPoolOriginalPrice) return;
                               
-                              const newPool = {
+                              const newGoldRush = {
                                 id: Date.now(),
-                                storeName: "Saravana Grocery Store",
-                                title: newPoolTitle,
-                                item: newPoolItem,
-                                price: parseFloat(newPoolPrice),
-                                originalPrice: parseFloat(newPoolOriginalPrice),
-                                discount: `${Math.floor((1 - parseFloat(newPoolPrice)/parseFloat(newPoolOriginalPrice)) * 100)}% OFF`,
-                                joined: 0,
-                                target: parseInt(newPoolTarget),
-                                deadline: "24 hours"
+                                storeName: selectedVendorId === 1 ? "Saravana Grocery Store" : "Ooty Veggie Cart",
+                                title: "Gold Rush Hour!",
+                                item: newPoolTitle,
+                                dealPrice: `₹${newPoolPrice}`,
+                                regularPrice: `₹${newPoolOriginalPrice}`,
+                                remaining: parseInt(newPoolTarget) || 50,
+                                claimsLeft: parseInt(newPoolTarget) || 50
                               };
 
-                              setCollectives(prev => [newPool, ...prev]);
-                              alert(`Neighborhood group-buy pool "${newPoolTitle}" started and published!`);
+                              setGoldRushes(prev => [newGoldRush, ...prev]);
+                              alert(`Gold Rush for "${newPoolTitle}" started and published!`);
                               setNewPoolTitle("");
-                              setNewPoolItem("");
                               setNewPoolPrice("");
                               setNewPoolOriginalPrice("");
                             }} className="flex flex-col gap-3">
-                              <Input type="text" placeholder="Pool title (Block C Sunflower Oil Pool)" value={newPoolTitle} onChange={(e) => setNewPoolTitle(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
-                              <Input type="text" placeholder="Item name (Gold Winner 5L Can)" value={newPoolItem} onChange={(e) => setNewPoolItem(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                              <Input type="text" placeholder="Item name (e.g. Fresh Mangoes 1kg)" value={newPoolTitle} onChange={(e) => setNewPoolTitle(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
                               <div className="grid grid-cols-2 gap-3 items-center">
-                                <Input type="number" placeholder="Discounted Price (₹)" value={newPoolPrice} onChange={(e) => setNewPoolPrice(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                                <Input type="number" placeholder="Offer Price (₹)" value={newPoolPrice} onChange={(e) => setNewPoolPrice(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
                                 <Input type="number" placeholder="Retail Price (₹)" value={newPoolOriginalPrice} onChange={(e) => setNewPoolOriginalPrice(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
                               </div>
-                              <Button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm px-4 py-2 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
-                                Launch Neighborhood Pool
+                              <Input type="number" placeholder="Quantity limit" value={newPoolTarget} onChange={(e) => setNewPoolTarget(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                              <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm px-4 py-2 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+                                Launch Gold-Rush
                               </Button>
                             </form>
                           </CardContent>
@@ -1597,7 +1594,7 @@ export default function ProxiHubDashboard() {
               )}
 
               {vendorActiveTab === "ads" && (
-                <div className="flex flex-col gap-10 w-full">
+                <div className="flex flex-col gap-10 w-full opacity-50 grayscale pointer-events-none">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
                       <CardHeader className="p-5">
@@ -1744,12 +1741,51 @@ export default function ProxiHubDashboard() {
                         ))}
                       </CardContent>
                     </Card>
+
+                    <Card className="flex flex-col gap-5 shadow-xl bg-[#0d121f] border border-slate-900 p-6">
+                      <CardHeader className="p-0 pb-3 border-b border-slate-900">
+                        <CardTitle className="text-base font-bold text-amber-400 flex items-center gap-2.5"><Zap className="w-5 h-5 text-amber-500" /> Start Limited Period Gold-Rush</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-0">
+                        <form onSubmit={(e) => {
+                          e.preventDefault();
+                          if (!newPoolTitle || !newPoolPrice || !newPoolOriginalPrice) return;
+                          
+                          const newGoldRush = {
+                            id: Date.now(),
+                            storeName: "Local Service Provider",
+                            title: "Gold Rush Hour!",
+                            item: newPoolTitle,
+                            dealPrice: `₹${newPoolPrice}`,
+                            regularPrice: `₹${newPoolOriginalPrice}`,
+                            remaining: parseInt(newPoolTarget) || 50,
+                            claimsLeft: parseInt(newPoolTarget) || 50
+                          };
+
+                          setGoldRushes(prev => [newGoldRush, ...prev]);
+                          alert(`Gold Rush for "${newPoolTitle}" started and published!`);
+                          setNewPoolTitle("");
+                          setNewPoolPrice("");
+                          setNewPoolOriginalPrice("");
+                        }} className="flex flex-col gap-3">
+                          <Input type="text" placeholder="Service (e.g. Free AC Inspection)" value={newPoolTitle} onChange={(e) => setNewPoolTitle(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                          <div className="grid grid-cols-2 gap-3 items-center">
+                            <Input type="number" placeholder="Offer Price (₹)" value={newPoolPrice} onChange={(e) => setNewPoolPrice(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                            <Input type="number" placeholder="Regular Rate (₹)" value={newPoolOriginalPrice} onChange={(e) => setNewPoolOriginalPrice(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                          </div>
+                          <Input type="number" placeholder="Client limit" value={newPoolTarget} onChange={(e) => setNewPoolTarget(e.target.value)} className="bg-slate-955 border border-slate-900 px-4 py-2 text-sm rounded-xl" />
+                          <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm px-4 py-2 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+                            Launch Gold-Rush
+                          </Button>
+                        </form>
+                      </CardContent>
+                    </Card>
                   </div>
                 </div>
               )}
 
               {vendorActiveTab === "ads" && (
-                <div className="flex flex-col gap-10 w-full">
+                <div className="flex flex-col gap-10 w-full opacity-50 grayscale pointer-events-none">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <Card className="shadow-xl bg-[#0d121f] border border-slate-900">
                       <CardHeader className="p-5">

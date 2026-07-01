@@ -11,7 +11,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "ProxiHub v4.0 - Ultimate Hyperlocal Discovery & ProxiRewards",
+  title: "ProxiHub - Ultimate Hyperlocal Discovery & ProxiRewards",
   description: "Eliminating the digital visibility gap for India's 60M+ unorganized local vendors with a proximity-first discovery engine, VoiceFirst UI, Community Collectives, and ProxiRewards ad platform.",
 };
 
