@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  MERCHANT
+  SERVICE_PRO
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customerProfile CustomerProfile?
+  merchantProfile MerchantProfile?
+}
+
+model CustomerProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address       String?
+  rewardsPoints Int      @default(0)
+  transactions  RewardTransaction[]
+}
+
+model MerchantProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passwordHash String?
+  phone        String?
+  contactName  String?
+  storeName    String?
+  storeType    String?
+  description  String?
+  taxId        String?
+  aadharNumber String?
+  address      String?
+  isVerified   Boolean  @default(false)
+}
+
+model RewardTransaction {
+  id                String          @id @default(cuid())
+  customerProfileId String
+  customer          CustomerProfile @relation(fields: [customerProfileId], references: [id], onDelete: Cascade)
+  amount            Int
+  description       String
+  createdAt         DateTime        @default(now())
+}
