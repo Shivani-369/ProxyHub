@@ -654,7 +654,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={vendorActiveTab === "ads" ? "secondary" : "ghost"}
                 onClick={() => setVendorActiveTab("ads")}
-                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] opacity-50 grayscale pointer-events-none"
               >
                 <Target className="w-3.5 h-3.5 mr-2" />
                 <span>Hyperlocal Ads</span>
@@ -678,7 +678,7 @@ export default function ProxiHubDashboard() {
               <Button
                 variant={vendorActiveTab === "ads" ? "secondary" : "ghost"}
                 onClick={() => setVendorActiveTab("ads")}
-                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full justify-start text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] opacity-50 grayscale pointer-events-none"
               >
                 <Target className="w-3.5 h-3.5 mr-2" />
                 <span>Hyperlocal Ads</span>
