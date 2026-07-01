@@ -95,6 +95,7 @@ export default function CustomerOnboarding() {
       localStorage.setItem("customerAddress", address || "Plot 12A, Shanti Colony Main Road, Anna Nagar, Chennai 600040");
       localStorage.setItem("customerOnboarded", "true");
       
+      alert("Onboarding successful! Redirecting to login page...");
       router.push("/?role=customer&login=true");
     } catch (err) {
       console.error(err);
