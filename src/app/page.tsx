@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { 
   MapPin, Store, Wrench, Search, Volume2, Mic, MicOff, Star, ShieldAlert, BadgeCheck, 
   MapIcon, Clock, Users, MessageSquare, Play, Sparkles, Send, Bell, User, Plus, Trash2, 
-  Edit2, X, Power, BarChart, Target, QrCode, Radio, Truck, CreditCard, DollarSign, Zap
+  Edit2, X, Power, BarChart, Target, QrCode, Radio, Truck, CreditCard, DollarSign, Zap, ArrowLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -58,6 +58,9 @@ export default function ProxiHubDashboard() {
   const router = useRouter();
   // Navigation / Role Switcher States
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [loginEmailInput, setLoginEmailInput] = useState("");
+  const [loginPasswordInput, setLoginPasswordInput] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [isCustomerGoogleConnected, setIsCustomerGoogleConnected] = useState(false);
@@ -385,6 +388,130 @@ export default function ProxiHubDashboard() {
   };
 
   if (!isLoggedIn) {
+    if (showLoginForm) {
+      return (
+        <div className="min-h-screen bg-[#030407] flex items-center justify-center p-6 sm:p-10 text-slate-100 font-sans">
+          <div className="w-full max-w-md bg-[#0d121f] rounded-3xl border border-slate-900 p-8 shadow-2xl flex flex-col gap-6 transition-all duration-200 hover:scale-[1.02] hover:border-slate-800">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowLoginForm(false)}
+                className="text-slate-400 hover:text-white p-2 h-auto"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <h2 className="text-lg font-black text-slate-200">
+                Login to {currentRole === "customer" ? "Customer" : currentRole === "vendor" ? "Merchant" : "Service"} Portal
+              </h2>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <Label className="text-xs font-bold text-slate-350 text-left">Email ID</Label>
+                <Input
+                  type="email"
+                  placeholder="Enter email address"
+                  value={loginEmailInput}
+                  onChange={(e) => setLoginEmailInput(e.target.value)}
+                  className="bg-slate-950 border border-slate-900 focus-visible:ring-[#d4af37] text-sm h-11 w-full text-slate-100 placeholder-slate-600 rounded-xl"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-xs font-bold text-slate-350 text-left">Password</Label>
+                <Input
+                  type="password"
+                  placeholder="Enter password"
+                  value={loginPasswordInput}
+                  onChange={(e) => setLoginPasswordInput(e.target.value)}
+                  className="bg-slate-950 border border-slate-900 focus-visible:ring-[#d4af37] text-sm h-11 w-full text-slate-100 placeholder-slate-600 rounded-xl"
+                />
+              </div>
+
+              <Button
+                onClick={async () => {
+                  if (!loginEmailInput || !loginPasswordInput) {
+                    alert("Please enter both Email and Password.");
+                    return;
+                  }
+                  
+                  try {
+                    const mappedRole = currentRole === "customer" ? "CUSTOMER" : currentRole === "vendor" ? "MERCHANT" : "SERVICE_PRO";
+                    const res = await fetch("/api/auth/login", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        email: loginEmailInput,
+                        password: loginPasswordInput,
+                        role: mappedRole
+                      })
+                    });
+                    
+                    const data = await res.json();
+                    
+                    if (!res.ok) {
+                      alert(data.error || "Failed to authenticate.");
+                      return;
+                    }
+                    
+                    if (currentRole === "customer") {
+                      const profile = data.user.customerProfile;
+                      setCustomerEmail(data.user.email);
+                      setIsCustomerGoogleConnected(true);
+                      setCustomerAddress(profile?.address || "");
+                      localStorage.setItem("customerEmail", data.user.email);
+                      localStorage.setItem("customerAddress", profile?.address || "");
+                      localStorage.setItem("customerOnboarded", "true");
+                    } else {
+                      const profile = data.user.merchantProfile;
+                      if (currentRole === "vendor") {
+                        const finalName = profile?.storeName || loginShopName || (selectedVendorId === 1 ? "Saravana Grocery Store" : "Ooty Veggie Cart");
+                        setVendors(prev => prev.map(v => v.id === selectedVendorId ? { ...v, name: finalName, category: profile?.storeType || loginCategory } : v));
+                      } else if (currentRole === "service") {
+                        const finalName = profile?.storeName || loginShopName || "Priya Electrical Services";
+                        setVendors(prev => prev.map(v => v.id === 3 ? { ...v, name: finalName, priceRange: `₹${profile?.description || loginServiceRate} Base Rate` } : v));
+                        setProviderDiagnosticRate(profile?.description || loginServiceRate);
+                      }
+                    }
+                    
+                    setIsLoggedIn(true);
+                  } catch (err) {
+                    console.error(err);
+                    alert("An error occurred during authentication.");
+                  }
+                }}
+                className="font-bold uppercase tracking-wider py-3.5 rounded-2xl bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full mt-2"
+              >
+                Authenticate & Enter Portal
+              </Button>
+
+              <div className="w-full text-center border-t border-slate-900/60 pt-4 mt-2">
+                <p className="text-xs text-slate-500 mb-1.5">Don't have an account?</p>
+                {currentRole === "customer" ? (
+                  <Button 
+                    variant="link" 
+                    onClick={() => router.push("/customer-onboard")} 
+                    className="text-xs text-indigo-400 hover:text-indigo-300 font-bold p-0 h-auto"
+                  >
+                    Complete customer onboarding &rarr;
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="link" 
+                    onClick={() => router.push("/onboard")} 
+                    className="text-xs text-indigo-400 hover:text-indigo-300 font-bold p-0 h-auto"
+                  >
+                    Complete merchant onboarding &rarr;
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-[#030407] flex items-center justify-center p-6 sm:p-10 text-slate-100 font-sans">
         <div className="w-full max-w-md bg-[#0d121f] rounded-3xl border border-slate-900 p-8 shadow-2xl flex flex-col gap-7 transition-all duration-200 hover:scale-[1.02] hover:border-slate-800">
@@ -511,49 +638,12 @@ export default function ProxiHubDashboard() {
 
             <Button 
               onClick={() => {
-                if (currentRole === "vendor") {
-                  const finalName = loginShopName || (selectedVendorId === 1 ? "Saravana Grocery Store" : "Ooty Veggie Cart");
-                  setVendors(prev => prev.map(v => v.id === selectedVendorId ? { ...v, name: finalName, category: loginCategory } : v));
-                } else if (currentRole === "service") {
-                  const finalName = loginShopName || "Priya Electrical Services";
-                  setVendors(prev => prev.map(v => v.id === 3 ? { ...v, name: finalName, priceRange: `₹${loginServiceRate} Base Rate` } : v));
-                  setProviderDiagnosticRate(loginServiceRate);
-                }
-                setIsLoggedIn(true);
+                setShowLoginForm(true);
               }}
-              disabled={currentRole === "customer" && (!isCustomerGoogleConnected || !customerAddress)}
-              className={`font-bold uppercase tracking-wider py-3 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full mt-2 ${
-                currentRole === "customer" && (!isCustomerGoogleConnected || !customerAddress)
-                  ? "bg-slate-900/60 text-slate-500 border border-slate-900 cursor-not-allowed"
-                  : "bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 animate-pulse"
-              }`}
+              className="font-bold uppercase tracking-wider py-3 rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full mt-2 bg-[#d4af37] hover:bg-[#aa841c] text-slate-950 animate-pulse"
             >
               Enter {currentRole === "customer" ? "Customer" : currentRole === "vendor" ? (selectedVendorId === 1 ? "Stationary Store" : "Mobile Cart") : "Service Pro"} Portal
             </Button>
-
-            {currentRole === "customer" && (!isCustomerGoogleConnected || !customerAddress) && (
-              <div className="w-full text-center mt-2.5">
-                <Button 
-                  variant="link" 
-                  onClick={() => router.push("/customer-onboard")} 
-                  className="text-xs text-indigo-400 hover:text-indigo-300 font-bold p-0 h-auto"
-                >
-                  New customer? Complete customer onboarding &rarr;
-                </Button>
-              </div>
-            )}
-
-            {(currentRole === "vendor" || currentRole === "service") && (
-              <div className="w-full text-center mt-2.5">
-                <Button 
-                  variant="link" 
-                  onClick={() => router.push("/onboard")} 
-                  className="text-xs text-indigo-400 hover:text-indigo-300 font-bold p-0 h-auto"
-                >
-                  New merchant? Complete multi-step onboarding &rarr;
-                </Button>
-              </div>
-            )}
 
           </div>
         </div>

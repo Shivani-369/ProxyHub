@@ -39,6 +39,7 @@ export default function MerchantOnboarding() {
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [otpError, setOtpError] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState("");
   const [passwordCriteria, setPasswordCriteria] = useState({
     length: false,
     number: false,
@@ -57,17 +58,19 @@ export default function MerchantOnboarding() {
 
   const handleSendOtp = () => {
     if (formData.phone.length < 10) return;
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    setGeneratedOtp(code);
     setOtpSent(true);
     setOtpError("");
-    alert("Mock OTP Sent via WhatsApp! Enter '1234' to verify.");
+    alert(`💬 [WhatsApp Notification Mock]\nTo: ${formData.phone}\nMessage: ProxiHub OTP: Your verification code is ${code}. Please enter this code to verify your phone number.`);
   };
 
   const handleVerifyOtp = () => {
-    if (formData.otp === "1234") {
+    if (formData.otp === generatedOtp) {
       setOtpVerified(true);
       setOtpError("");
     } else {
-      setOtpError("Invalid code. Use '1234' for verification.");
+      setOtpError("Invalid code. Please check the WhatsApp mock alert and try again.");
     }
   };
 
@@ -87,12 +90,41 @@ export default function MerchantOnboarding() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          role: "MERCHANT",
+          contactName: formData.contactName,
+          phone: formData.phone,
+          storeName: formData.storeName,
+          storeType: formData.storeType,
+          description: formData.description,
+          taxId: formData.taxId,
+          aadharNumber: formData.aadharNumber,
+          address: formData.address
+        })
+      });
+
+      const data = await res.json();
       setLoading(false);
+
+      if (!res.ok) {
+        alert(data.error || "Failed to complete merchant onboarding.");
+        return;
+      }
+
       setStep(4);
-    }, 1200);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      alert("Error submitting onboarding request.");
+    }
   };
 
   const isStepValid = () => {
