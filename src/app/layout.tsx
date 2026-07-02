@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: "Eliminating the digital visibility gap for India's 60M+ unorganized local vendors with a proximity-first discovery engine, VoiceFirst UI, Community Collectives, and ProxiRewards ad platform.",
 };
 
+import Script from "next/script";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,7 +27,10 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
+      </body>
     </html>
   );
 }
