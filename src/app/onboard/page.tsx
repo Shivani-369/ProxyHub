@@ -57,7 +57,7 @@ export default function MerchantOnboarding() {
 
         try {
           (window as any).google.accounts.id.initialize({
-            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "820214489167-d3770kbe7f3udv0f7nmgq2261ru170dc.apps.googleusercontent.com",
+            client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "215638618491-kfup18k1b3g7qqpr7sl9s7m430c840uh.apps.googleusercontent.com",
             callback: (response: any) => {
               const base64Url = response.credential.split('.')[1];
               const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
